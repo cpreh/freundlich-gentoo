@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.358 2008/07/06 02:41:54 halcy0n Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.365 2008/10/27 05:06:41 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -78,17 +78,12 @@ GCC_CONFIG_VER=${GCC_CONFIG_VER:-$(replace_version_separator 3 '-' ${GCC_PV})}
 if [[ ${GCC_PV} != ${GCC_PV/_pre/-} ]] ; then
 	PRERELEASE=${GCC_PV/_pre/-}
 fi
-if [[ ${GCC_PV} != ${GCC_PV/_rc/-} ]] ; then
-	SNAPSHOT=${GCC_PV/_rc/-RC-}
-fi
-
 # make _alpha and _beta ebuilds automatically use a snapshot
 if [[ ${GCC_PV} != ${GCC_PV/_alpha/} ]] ; then
 	SNAPSHOT=${GCC_BRANCH_VER}-${GCC_PV##*_alpha}
 elif [[ ${GCC_PV} != ${GCC_PV/_beta/} ]] ; then
 	SNAPSHOT=${GCC_BRANCH_VER}-${GCC_PV##*_beta}
 fi
-
 export GCC_FILESDIR=${GCC_FILESDIR:-${FILESDIR}}
 
 if [[ ${ETYPE} == "gcc-library" ]] ; then
@@ -160,6 +155,7 @@ else
 			tc_version_is_at_least "4.0" && IUSE="${IUSE} objc-gc mudflap"
 			tc_version_is_at_least "4.1" && IUSE="${IUSE} objc++"
 			tc_version_is_at_least "4.2" && IUSE="${IUSE} openmp"
+			tc_version_is_at_least "4.3" && IUSE="${IUSE} fixed-point"
 		fi
 	fi
 
@@ -188,8 +184,6 @@ gcc_get_s_dir() {
 	local GCC_S
 	if [[ -n ${PRERELEASE} ]] ; then
 		GCC_S=${WORKDIR}/gcc-${PRERELEASE}
-	elif [[ -n ${RCRELEASE} ]] ; then
-		GCC_S=${WORKDIR}/gcc-${RCRELEASE}
 	elif [[ -n ${SNAPSHOT} ]] ; then
 		GCC_S=${WORKDIR}/gcc-${SNAPSHOT}
 	else
@@ -294,8 +288,6 @@ get_gcc_src_uri() {
 	# prerelease, snapshot, or release tarball.
 	if [[ -n ${PRERELEASE} ]] ; then
 		GCC_SRC_URI="ftp://gcc.gnu.org/pub/gcc/prerelease-${PRERELEASE}/gcc-${PRERELEASE}.tar.bz2"
-	elif [[ -n ${RCRELEASE} ]] ; then
-		GCC_SRC_URI="ftp://gcc.gnu.org/pub/gcc/snaposhots/${RCRELEASE}/gcc-${RCRELEASE}.tar.bz2"
 	elif [[ -n ${SNAPSHOT} ]] ; then
 		GCC_SRC_URI="ftp://sources.redhat.com/pub/gcc/snapshots/${SNAPSHOT}/gcc-${SNAPSHOT}.tar.bz2"
 	else
@@ -348,6 +340,14 @@ get_gcc_src_uri() {
 	# support for the D language
 	[[ -n ${D_VER} ]] && \
 		GCC_SRC_URI="${GCC_SRC_URI} d? ( mirror://sourceforge/dgcc/gdc-${D_VER}-src.tar.bz2 )"
+
+	# >= gcc-4.3 uses ecj.jar and we only add gcj as a use flag under certain
+	# conditions
+	if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
+		tc_version_is_at_least "4.3" && \
+			GCC_SRC_URI="${GCC_SRC_URI}
+			gcj? ( ftp://sourceware.org/pub/java/ecj-${GCC_BRANCH_VER}.jar )"
+	fi
 
 	echo "${GCC_SRC_URI}"
 }
@@ -1075,6 +1075,12 @@ gcc_src_unpack() {
 		cp -pPR "${S}"/libstdc++-v3/config/cpu/i{4,3}86/atomicity.h
 	fi
 
+	# >= gcc-4.3 doesn't bundle ecj.jar, so copy it
+	if [[ ${GCCMAJOR}.${GCCMINOR} > 4.2 ]] &&
+		use gcj ; then
+		cp -pPR "${DISTDIR}/ecj-${GCC_BRANCH_VER}.jar" "${S}/ecj.jar" || die
+	fi
+
 	# disable --as-needed from being compiled into gcc specs
 	# natively when using a gcc version < 3.4.4
 	# http://gcc.gnu.org/bugzilla/show_bug.cgi?id=14992
@@ -1151,14 +1157,18 @@ gcc-compiler-configure() {
 			confgcc="${confgcc} --disable-libssp"
 		fi
 
+		if tc_version_is_at_least "4.2" ; then
+			confgcc="${confgcc} $(use_enable openmp libgomp)"
+		fi
+
 		# enable the cld workaround until we move things to stable.
 		# by that point, the rest of the software out there should
 		# have caught up.
-		#if tc_version_is_at_least "4.3" ; then
-		#	if ! has ${ARCH} ${KEYWORDS} ; then
-		#		confgcc="${confgcc} --enable-cld"
-		#	fi
-		#fi
+		if tc_version_is_at_least "4.3" ; then
+			if ! has ${ARCH} ${KEYWORDS} ; then
+				confgcc="${confgcc} --enable-cld"
+			fi
+		fi
 	fi
 
 	# GTK+ is preferred over xlib in 3.4.x (xlib is unmaintained
@@ -1257,6 +1267,12 @@ gcc_do_configure() {
 	# ppc altivec support
 	confgcc="${confgcc} $(use_enable altivec)"
 
+	# gcc has fixed-point arithmetic support in 4.3 for mips targets that can
+	# significantly increase compile time by several hours.  This will allow
+	# users to control this feature in the event they need the support.
+	tc_version_is_at_least "4.3" && confgcc="${confgcc} $(use_enable fixed-point)"
+
+
 	[[ $(tc-is-softfloat) == "yes" ]] && confgcc="${confgcc} --with-float=soft"
 
 	# Native Language Support
@@ -1310,7 +1326,9 @@ gcc_do_configure() {
 		if [[ ${GCCMAJOR}.${GCCMINOR} > 4.1 ]] ; then
 			confgcc="${confgcc} --disable-bootstrap --disable-libgomp"
 		fi
-	elif [[ ${CHOST} != mingw* ]] && [[ ${CHOST} != *-mingw* ]] ; then
+	elif [[ ${CHOST} == mingw* ]] || [[ ${CHOST} == *-mingw* ]] ; then
+		confgcc="${confgcc} --enable-shared --enable-threads=win32"
+	else
 		confgcc="${confgcc} --enable-shared --enable-threads=posix"
 	fi
 	[[ ${CTARGET} == *-elf ]] && confgcc="${confgcc} --with-newlib"
@@ -1446,8 +1464,13 @@ gcc_do_make() {
 
 	if ! is_crosscompile && ! use nocxx && use doc ; then
 		if type -p doxygen > /dev/null ; then
-			cd "${CTARGET}"/libstdc++-v3
-			emake doxygen-man || ewarn "failed to make docs"
+			if tc_version_is_at_least 4.3 ; then
+				cd "${CTARGET}"/libstdc++-v3/doc
+				emake doc-man-doxygen || ewarn "failed to make docs"
+			elif tc_version_is_at_least 3.0 ; then
+				cd "${CTARGET}"/libstdc++-v3
+				emake doxygen-man || ewarn "failed to make docs"
+			fi
 		else
 			ewarn "Skipping libstdc++ manpage generation since you don't have doxygen installed"
 		fi
@@ -2393,7 +2416,7 @@ is_gcj() {
 }
 
 is_libffi() {
-	has libffi ${USE} || return 1
+	has libffi ${IUSE} || return 1
 	use libffi
 }
 
