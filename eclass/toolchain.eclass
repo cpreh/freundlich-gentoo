@@ -1164,11 +1164,11 @@ gcc-compiler-configure() {
 		# enable the cld workaround until we move things to stable.
 		# by that point, the rest of the software out there should
 		# have caught up.
-		if tc_version_is_at_least "4.3" ; then
-			if ! has ${ARCH} ${KEYWORDS} ; then
-				confgcc="${confgcc} --enable-cld"
-			fi
-		fi
+		#if tc_version_is_at_least "4.3" ; then
+		#	if ! has ${ARCH} ${KEYWORDS} ; then
+		#		confgcc="${confgcc} --enable-cld"
+		#	fi
+		#fi
 	fi
 
 	# GTK+ is preferred over xlib in 3.4.x (xlib is unmaintained
