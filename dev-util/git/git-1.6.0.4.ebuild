@@ -91,6 +91,7 @@ src_unpack() {
 	cd "${S}"
 
 	epatch "${FILESDIR}"/20080626-git-1.5.6.1-noperl.patch
+	epatch "${FILESDIR}"/git-1.6.0.4-install-cvsserver-fix.patch
 
 	sed -i \
 		-e "s:^\(CFLAGS =\).*$:\1 ${CFLAGS} -Wall:" \
