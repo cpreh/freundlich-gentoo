@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc2_p27725-r1.ebuild,v 1.1 2008/10/07 14:43:15 beandog Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc2_p28058.ebuild,v 1.1 2008/12/02 03:41:26 beandog Exp $
 
 EAPI="1"
 
@@ -9,15 +9,16 @@ inherit eutils flag-o-matic multilib subversion
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 
 # Ugly hack, feel free to fix
-MPLAYER_REVISION=27725
+MPLAYER_REVISION=99999
 
-IUSE="3dnow 3dnowext +a52 aac -aalib +alsa altivec amrnb amrwb -arts bidi bl
+IUSE="3dnow 3dnowext +a52 +aac -aalib +alsa altivec amrnb amrwb -arts +ass bidi bl
 bindist cddb cdio cdparanoia -cpudetection -custom-cflags -custom-cpuopts debug
-dga dirac doc dts dvb directfb +dvd dv dxr3 enca encode esd -fbcon ftp -gif ggi
+dga dirac doc dts dvb directfb +dvd dvdnav dv dxr3 enca +encode esd -fbcon ftp -gif ggi
 -gtk iconv ipv6 jack joystick -jpeg kernel_linux ladspa -libcaca lirc live lzo
-+mad -md5sum +mmx mmxext mp2 +mp3 musepack nas nemesi +vorbis opengl
-openal oss -png -pnm pulseaudio -pvr quicktime radio -rar real rtc -samba schroedinger sdl
-speex srt sse sse2 ssse3 svga teletext tga +theora +truetype unicode v4l v4l2 vidix win32codecs +X x264 xanim xinerama +xscreensaver +xv xvid xvmc zoran"
++mad -md5sum +mmx mmxext mng mp2 +mp3 musepack nas nemesi opengl
+openal oss -png -pnm pulseaudio -pvr +quicktime radio -rar real rtc -samba schroedinger sdl
+speex sse sse2 ssse3 svga teletext tga +theora +truetype unicode v4l v4l2
+vidix +vorbis win32codecs +X x264 xanim xinerama +xscreensaver +xv xvid xvmc zoran"
 
 VIDEO_CARDS="s3virge mga tdfx vesa"
 
@@ -55,6 +56,8 @@ RDEPEND="sys-libs/ncurses
 	amrnb? ( media-libs/amrnb )
 	amrwb? ( media-libs/amrwb )
 	arts? ( kde-base/arts )
+	ass? ( >=media-libs/freetype-2.1
+		media-libs/fontconfig )
 	openal? ( media-libs/openal )
 	bidi? ( dev-libs/fribidi )
 	cdio? ( dev-libs/libcdio )
@@ -63,6 +66,8 @@ RDEPEND="sys-libs/ncurses
 	directfb? ( dev-libs/DirectFB )
 	dga? ( x11-libs/libXxf86dga  )
 	dts? ( media-libs/libdca )
+	dvdnav? ( >=media-libs/libdvdnav-4.1.3
+		>=media-libs/libdvdread-4.1.3 )
 	dv? ( media-libs/libdv )
 	dvb? ( media-tv/linuxtv-dvb-headers )
 	encode? (
@@ -87,6 +92,7 @@ RDEPEND="sys-libs/ncurses
 	lirc? ( app-misc/lirc )
 	lzo? ( >=dev-libs/lzo-2 )
 	mad? ( media-libs/libmad )
+	mng? ( media-libs/libmng )
 	musepack? ( >=media-libs/libmpcdec-1.2.2 )
 	nas? ( media-libs/nas )
 	opengl? ( virtual/opengl )
@@ -97,8 +103,6 @@ RDEPEND="sys-libs/ncurses
 	schroedinger? ( media-libs/schroedinger )
 	sdl? ( media-libs/libsdl )
 	speex? ( >=media-libs/speex-1.1.7 )
-	srt? ( >=media-libs/freetype-2.1
-		media-libs/fontconfig )
 	svga? ( media-libs/svgalib )
 	theora? ( media-libs/libtheora )
 	live? ( >=media-plugins/live-2007.02.20 )
@@ -121,10 +125,7 @@ RDEPEND="sys-libs/ncurses
 	)"
 
 DEPEND="${RDEPEND}
-	doc? ( >=app-text/docbook-sgml-dtd-4.1.2
-		app-text/docbook-xml-dtd
-		>=app-text/docbook-xml-simple-dtd-1.50.0
-		dev-libs/libxslt )
+	doc? ( dev-libs/libxslt )
 	dga? ( x11-proto/xf86dgaproto )
 	dxr3? ( media-video/em8300-libraries )
 	xinerama? ( x11-proto/xineramaproto )
@@ -143,7 +144,7 @@ DEPEND="${DEPEND} amd64? ( >=sys-apps/portage-2.1.2 )
 
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~hppa ~ppc64 ~x86"
+KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
 
 pkg_setup() {
 
@@ -228,7 +229,7 @@ src_unpack() {
 	fi
 
 	# Fix polish spelling errors
-	[[ -n ${LINGUAS} ]] && sed -e 's:Zarządano:Zażądano:' -i help/help_mp-pl.h
+	[[ -n ${LINGUAS} ]] && sed -e 's:ZarzÄdano:ZaÅ¼Ädano:' -i help/help_mp-pl.h
 }
 
 src_compile() {
@@ -247,6 +248,7 @@ src_compile() {
 	################
 	#Optional features#
 	###############
+	use ass || myconf="${myconf} --disable-ass"
 	use bidi || myconf="${myconf} --disable-fribidi"
 	use bl && myconf="${myconf} --enable-bl"
 	use enca || myconf="${myconf} --disable-enca"
@@ -268,20 +270,21 @@ src_compile() {
 	# DVD support
 	# dvdread and libdvdcss are internal libs
 	# http://www.mplayerhq.hu/DOCS/HTML/en/dvd.html
-	# You can optionally use external dvdread support, but against
-	# upstream's suggestion.  We don't.
-	if ! use dvd; then
+	# You can optionally use external dvdread/dvdnav support.
+	if use dvdnav; then
+		myconf="${myconf} --with-dvdread-config=/usr/bin/dvdread-config \
+			--with-dvdnav-config=/usr/bin/dvdnav-config \
+			--disable-dvdread-internal"
+	elif ! use dvd && ! use dvdread; then
 		myconf="${myconf} --disable-dvdnav --disable-dvdread"
 		use a52 || myconf="${myconf} --disable-liba52 \
 			--disable-liba52-internal"
 	fi
 
-
 	# SRT (subtitles) requires freetype support
 	# freetype support requires iconv
 	# iconv optionally can use unicode
-	if ! use srt; then
-		myconf="${myconf} --disable-ass"
+	if ! use ass; then
 		if ! use truetype; then
 			myconf="${myconf} --disable-freetype"
 			if ! use iconv; then
@@ -458,6 +461,7 @@ src_compile() {
 		--enable-menu \
 		--enable-network \
 		${myconf}"
+
 	#echo "CFLAGS=\"${CFLAGS}\" ./configure ${myconf}"
 	CFLAGS="${CFLAGS}" ./configure ${myconf} || die "configure died"
 
@@ -501,7 +505,7 @@ src_install() {
 		dosym mplayer /usr/bin/gmplayer
 	fi
 
-	if ! use srt && ! use truetype; then
+	if ! use ass && ! use truetype; then
 		dodir /usr/share/mplayer/fonts
 		local x=
 		# Do this generic, as the mplayer people like to change the structure
@@ -518,7 +522,7 @@ src_install() {
 	insinto /etc/mplayer
 	newins "${S}/etc/example.conf" mplayer.conf
 
-	if use srt || use truetype;	then
+	if use ass || use truetype;	then
 		cat >> "${D}/etc/mplayer/mplayer.conf" << EOT
 fontconfig=1
 subfont-osd-scale=4
