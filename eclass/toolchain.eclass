@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.365 2008/10/27 05:06:41 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.367 2008/11/28 09:20:34 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -1016,6 +1016,15 @@ do_gcc_rename_java_bins() {
 			die "Failed to fixup file ${jfile} for rename to grmic"
 	done
 }
+unbreak_arm() {
+	[[ ${CTARGET} == *eabi* ]] || return
+	[[ ${CTARGET} == arm* ]] || return
+	[[ ${CTARGET} == armv5* ]] && return
+	[[ -e "${S}"/gcc/config/arm/linux-eabi.h ]] || return
+	#armv4tl can do ebai as well. http://www.nabble.com/Re:--crosstool-ng--ARM-EABI-problem-p17164547.html
+	#http://sourceware.org/ml/crossgcc/2008-05/msg00009.html
+	sed -i -e s/'define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm10tdmi'/'define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm9tdmi'/g "${S}"/gcc/config/arm/linux-eabi.h
+}
 gcc_src_unpack() {
 	export BRANDING_GCC_PKGVERSION="Gentoo ${GCC_PVR}"
 
@@ -1098,6 +1107,8 @@ gcc_src_unpack() {
 	then
 		do_gcc_rename_java_bins
 	fi
+
+	unbreak_arm
 
 	# Fixup libtool to correctly generate .la files with portage
 	cd "${S}"
@@ -1310,6 +1321,7 @@ gcc_do_configure() {
 			*-gnu*)			 needed_libc=glibc;;
 			*-klibc)		 needed_libc=klibc;;
 			*-uclibc*)		 needed_libc=uclibc;;
+			*-cygwin)        needed_libc=cygwin;;
 			mingw*|*-mingw*) needed_libc=mingw-runtime;;
 			avr)			 confgcc="${confgcc} --enable-shared --disable-threads";;
 		esac
@@ -1326,7 +1338,7 @@ gcc_do_configure() {
 		if [[ ${GCCMAJOR}.${GCCMINOR} > 4.1 ]] ; then
 			confgcc="${confgcc} --disable-bootstrap --disable-libgomp"
 		fi
-	elif [[ ${CHOST} == mingw* ]] || [[ ${CHOST} == *-mingw* ]] ; then
+	elif [[ ${CHOST} == mingw* ]] || [[ ${CHOST} == *-mingw* ]] || [[ ${CHOST} == *-cygwin ]] ; then
 		confgcc="${confgcc} --enable-shared --enable-threads=win32"
 	else
 		confgcc="${confgcc} --enable-shared --enable-threads=posix"
