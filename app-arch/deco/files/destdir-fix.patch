@@ -1,0 +1,11 @@
+diff -Nurp deco-1.5.4-old/config.mk deco-1.5.4/config.mk
+--- deco-1.5.4-old/config.mk	2008-09-01 23:24:54.000000000 +0200
++++ deco-1.5.4/config.mk	2008-09-02 14:39:14.000000000 +0200
+@@ -3,6 +3,6 @@ CFLAGS  = -O1
+ LDFLAGS = -s
+ 
+ DESTDIR =
+-PREFIX  = /usr/local
++PREFIX  = /usr
+ BIN     = $(PREFIX)/bin
+ SHARE   = $(PREFIX)/share/deco
