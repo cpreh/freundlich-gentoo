@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.367 2008/11/28 09:20:34 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.381 2009/01/12 22:51:38 maekke Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -236,6 +236,10 @@ gcc_get_s_dir() {
 #				old syntax (do not define PIE_CORE anymore):
 #					PIE_CORE="gcc-3.4.0-piepatches-v${PIE_VER}.tar.bz2"
 #
+#	SPECS_VER
+#	SPECS_GCC_VER
+#			This is for the minispecs files included in the hardened gcc-4.x
+#
 #	PP_VER
 #	PP_GCC_VER
 #	obsoleted: PP_FVER
@@ -280,6 +284,7 @@ get_gcc_src_uri() {
 	export PIE_GCC_VER=${PIE_GCC_VER:-${GCC_RELEASE_VER}}
 	export PP_GCC_VER=${PP_GCC_VER:-${GCC_RELEASE_VER}}
 	export HTB_GCC_VER=${HTB_GCC_VER:-${GCC_RELEASE_VER}}
+	export SPECS_GCC_VER=${SPECS_GCC_VER:-${GCC_RELEASE_VER}}
 
 	[[ -n ${PIE_VER} ]] && \
 		PIE_CORE=${PIE_CORE:-gcc-${PIE_GCC_VER}-piepatches-v${PIE_VER}.tar.bz2}
@@ -326,6 +331,10 @@ get_gcc_src_uri() {
 	# strawberry pie, Cappuccino and a Gauloises (it's a good thing)
 	[[ -n ${PIE_VER} ]] && \
 		GCC_SRC_URI="${GCC_SRC_URI} !nopie? ( $(gentoo_urls ${PIE_CORE}) )"
+
+	# gcc minispec for the hardened gcc 4 compiler
+	[[ -n ${SPECS_VER} ]] && \
+		GCC_SRC_URI="${GCC_SRC_URI} !nopie? ( $(gentoo_urls gcc-${SPECS_GCC_VER}-specs-${SPECS_VER}.tar.bz2) )"
 
 	# gcc bounds checking patch
 	if [[ -n ${HTB_VER} ]] ; then
@@ -483,7 +492,16 @@ want_ssp() { _want_stuff PP_VER !nossp ; }
 want_split_specs() {
 	[[ ${SPLIT_SPECS} == "true" ]] && want_pie
 }
-
+want_minispecs() {
+	if tc_version_is_at_least 4.3.2 && use hardened ; then
+		if [[ -n ${SPECS_VER} ]] ; then
+			return 0
+		else
+			die "For Hardend to work you need the minispecs files"
+		fi
+	fi
+	return 1
+}
 # This function checks whether or not glibc has the support required to build
 # Position Independant Executables with gcc.
 glibc_have_pie() {
@@ -685,7 +703,29 @@ create_gcc_env_entry() {
 	# Set which specs file to use
 	[[ -n ${gcc_specs_file} ]] && echo "GCC_SPECS=\"${gcc_specs_file}\"" >> ${gcc_envd_file}
 }
-
+setup_minispecs_gcc_build_specs() {
+	# Setup the "build.specs" file for gcc to use when building.
+	if want_minispecs ; then
+		if hardened_gcc_works pie ; then
+			cat "${WORKDIR}"/specs/pie.specs >> "${WORKDIR}"/build.specs
+		fi
+		for s in nostrict znow; do
+			cat "${WORKDIR}"/specs/${s}.specs >> "${WORKDIR}"/build.specs
+		done
+		export GCC_SPECS="${WORKDIR}"/build.specs
+	fi
+}
+copy_minispecs_gcc_specs() {
+	# Build system specs file which, if it exists, must be a complete set of
+	# specs as it completely and unconditionally overrides the builtin specs.
+	# For gcc 4
+	if use hardened && want_minispecs ; then
+		$(XGCC) -dumpspecs > "${WORKDIR}"/specs/specs
+		cat "${WORKDIR}"/build.specs >> "${WORKDIR}"/specs/specs
+		insinto ${LIBPATH}
+		doins "${WORKDIR}"/specs/* || die "failed to install specs"
+	fi
+}
 add_profile_eselect_conf() {
 	local compiler_config_file=$1
 	local abi=$2
@@ -961,7 +1001,7 @@ gcc-compiler_src_unpack() {
 	# the necessary support
 	want_pie && use hardened && glibc_have_pie
 
-	if use hardened ; then
+	if use hardened && ! want_minispecs ; then
 		einfo "updating configuration to build hardened GCC"
 		make_gcc_hard || die "failed to make gcc hard"
 	fi
@@ -1016,15 +1056,6 @@ do_gcc_rename_java_bins() {
 			die "Failed to fixup file ${jfile} for rename to grmic"
 	done
 }
-unbreak_arm() {
-	[[ ${CTARGET} == *eabi* ]] || return
-	[[ ${CTARGET} == arm* ]] || return
-	[[ ${CTARGET} == armv5* ]] && return
-	[[ -e "${S}"/gcc/config/arm/linux-eabi.h ]] || return
-	#armv4tl can do ebai as well. http://www.nabble.com/Re:--crosstool-ng--ARM-EABI-problem-p17164547.html
-	#http://sourceware.org/ml/crossgcc/2008-05/msg00009.html
-	sed -i -e s/'define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm10tdmi'/'define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm9tdmi'/g "${S}"/gcc/config/arm/linux-eabi.h
-}
 gcc_src_unpack() {
 	export BRANDING_GCC_PKGVERSION="Gentoo ${GCC_PVR}"
 
@@ -1051,6 +1082,7 @@ gcc_src_unpack() {
 	do_gcc_HTB_patches
 	do_gcc_SSP_patches
 	do_gcc_PIE_patches
+	do_gcc_USER_patches
 
 	${ETYPE}_src_unpack || die "failed to ${ETYPE}_src_unpack"
 
@@ -1079,11 +1111,6 @@ gcc_src_unpack() {
 		fi
 	fi
 
-	# Misdesign in libstdc++ (Redhat)
-	if [[ ${GCCMAJOR} -ge 3 ]] && [[ -e ${S}/libstdc++-v3/config/cpu/i486/atomicity.h ]] ; then
-		cp -pPR "${S}"/libstdc++-v3/config/cpu/i{4,3}86/atomicity.h
-	fi
-
 	# >= gcc-4.3 doesn't bundle ecj.jar, so copy it
 	if [[ ${GCCMAJOR}.${GCCMINOR} > 4.2 ]] &&
 		use gcj ; then
@@ -1107,8 +1134,6 @@ gcc_src_unpack() {
 	then
 		do_gcc_rename_java_bins
 	fi
-
-	unbreak_arm
 
 	# Fixup libtool to correctly generate .la files with portage
 	cd "${S}"
@@ -1428,10 +1453,6 @@ gcc_do_make() {
 		# 3 stage bootstrapping doesnt quite work when you cant run the
 		# resulting binaries natively ^^;
 		GCC_MAKE_TARGET=${GCC_MAKE_TARGET-all}
-	elif [[ $(tc-arch) == "x86" || $(tc-arch) == "amd64" ]] \
-		&& [[ ${GCCMAJOR}.${GCCMINOR} > 3.3 ]]
-	then
-		GCC_MAKE_TARGET=${GCC_MAKE_TARGET-profiledbootstrap}
 	else
 		GCC_MAKE_TARGET=${GCC_MAKE_TARGET-bootstrap-lean}
 	fi
@@ -1585,6 +1606,9 @@ gcc_src_compile() {
 	einfo "CFLAGS=\"${CFLAGS}\""
 	einfo "CXXFLAGS=\"${CXXFLAGS}\""
 
+	# For hardened gcc 4 for build the hardened specs file to use when building gcc
+	setup_minispecs_gcc_build_specs
+
 	# Build in a separate build tree
 	mkdir -p "${WORKDIR}"/build
 	pushd "${WORKDIR}"/build > /dev/null
@@ -1607,7 +1631,7 @@ gcc_src_compile() {
 
 	# Do not create multiple specs files for PIE+SSP if boundschecking is in
 	# USE, as we disable PIE+SSP when it is.
-	if [[ ${ETYPE} == "gcc-compiler" ]] && want_split_specs ; then
+	if [[ ${ETYPE} == "gcc-compiler" ]] && want_split_specs && ! want_minispecs; then
 		split_out_specs_files || die "failed to split out specs"
 	fi
 
@@ -1616,7 +1640,7 @@ gcc_src_compile() {
 
 gcc_src_test() {
 	cd "${WORKDIR}"/build
-	make -k check || ewarn "check failed and that sucks :("
+	emake -j1 -k check || ewarn "check failed and that sucks :("
 }
 
 gcc-library_src_install() {
@@ -1711,7 +1735,13 @@ gcc-compiler_src_install() {
 		insinto ${LIBPATH}
 		doins "${WORKDIR}"/build/*.specs || die "failed to install specs"
 	fi
-
+	# Setup the gcc_env_entry for hardened gcc 4 with minispecs
+	if want_minispecs ; then
+		if hardened_gcc_works pie ; then
+		    create_gcc_env_entry hardenednopie
+		fi
+		create_gcc_env_entry vanilla
+	fi
 	# Make sure we dont have stuff lying around that
 	# can nuke multiple versions of gcc
 	cd "${D}"${LIBPATH}
@@ -1839,6 +1869,9 @@ gcc-compiler_src_install() {
 
 	# Create config files for eselect-compiler
 	create_eselect_conf
+
+	# Cpoy the needed minispec for hardened gcc 4
+	copy_minispecs_gcc_specs
 }
 
 # Move around the libs to the right location.  For some reason,
@@ -1909,6 +1942,7 @@ gcc_quick_unpack() {
 	export PIE_GCC_VER=${PIE_GCC_VER:-${GCC_RELEASE_VER}}
 	export PP_GCC_VER=${PP_GCC_VER:-${GCC_RELEASE_VER}}
 	export HTB_GCC_VER=${HTB_GCC_VER:-${GCC_RELEASE_VER}}
+	export SPECS_GCC_VER=${SPECS_GCC_VER:-${GCC_RELEASE_VER}}
 
 	if [[ -n ${GCC_A_FAKEIT} ]] ; then
 		unpack ${GCC_A_FAKEIT}
@@ -1964,6 +1998,8 @@ gcc_quick_unpack() {
 		else
 			unpack gcc-${PIE_GCC_VER}-piepatches-v${PIE_VER}.tar.bz2
 		fi
+		[[ -n ${SPECS_VER} ]] && \
+			unpack gcc-${SPECS_GCC_VER}-specs-${SPECS_VER}.tar.bz2
 	fi
 
 	want_boundschecking && \
@@ -2008,6 +2044,22 @@ do_gcc_stub() {
 			EPATCH_SINGLE_MSG="Applying stub patch for $1 ..." \
 			epatch "${stub_patch}"
 			return 0
+		fi
+	done
+}
+
+do_gcc_USER_patches() {
+	local check base=${PORTAGE_CONFIGROOT}/etc/portage/patches
+	for check in {${CATEGORY}/${PF},${CATEGORY}/${P},${CATEGORY}/${PN}}; do
+		EPATCH_SOURCE=${base}/${CTARGET}/${check}
+		[[ -r ${EPATCH_SOURCE} ]] || EPATCH_SOURCE=${base}/${CHOST}/${check}
+		[[ -r ${EPATCH_SOURCE} ]] || EPATCH_SOURCE=${base}/${check}
+		if [[ -d ${EPATCH_SOURCE} ]] ; then
+			EPATCH_SUFFIX="patch"
+			EPATCH_FORCE="yes" \
+			EPATCH_MULTI_MSG="Applying user patches from ${EPATCH_SOURCE} ..." \
+			epatch
+			break
 		fi
 	done
 }
@@ -2127,23 +2179,29 @@ do_gcc_PIE_patches() {
 
 	use vanilla && rm -f "${WORKDIR}"/piepatch/*/*uclibc*
 
-	guess_patch_type_in_dir "${WORKDIR}"/piepatch/upstream
+	if tc_version_is_at_least 4.3.2; then
+		guess_patch_type_in_dir "${WORKDIR}"/piepatch/
+		EPATCH_MULTI_MSG="Applying pie patches ..." \
+		epatch "${WORKDIR}"/piepatch/
+	else
+		guess_patch_type_in_dir "${WORKDIR}"/piepatch/upstream
 
-	# corrects startfile/endfile selection and shared/static/pie flag usage
-	EPATCH_MULTI_MSG="Applying upstream pie patches ..." \
-	epatch "${WORKDIR}"/piepatch/upstream
-	# adds non-default pie support (rs6000)
-	EPATCH_MULTI_MSG="Applying non-default pie patches ..." \
-	epatch "${WORKDIR}"/piepatch/nondef
-	# adds default pie support (rs6000 too) if DEFAULT_PIE[_SSP] is defined
-	EPATCH_MULTI_MSG="Applying default pie patches ..." \
-	epatch "${WORKDIR}"/piepatch/def
+		# corrects startfile/endfile selection and shared/static/pie flag usage
+		EPATCH_MULTI_MSG="Applying upstream pie patches ..." \
+		epatch "${WORKDIR}"/piepatch/upstream
+		# adds non-default pie support (rs6000)
+		EPATCH_MULTI_MSG="Applying non-default pie patches ..." \
+		epatch "${WORKDIR}"/piepatch/nondef
+		# adds default pie support (rs6000 too) if DEFAULT_PIE[_SSP] is defined
+		EPATCH_MULTI_MSG="Applying default pie patches ..." \
+		epatch "${WORKDIR}"/piepatch/def
 
-	# we want to be able to control the pie patch logic via something other
-	# than ALL_CFLAGS...
-	sed -e '/^ALL_CFLAGS/iHARD_CFLAGS = ' \
-		-e 's|^ALL_CFLAGS = |ALL_CFLAGS = $(HARD_CFLAGS) |' \
-		-i "${S}"/gcc/Makefile.in
+		# we want to be able to control the pie patch logic via something other
+		# than ALL_CFLAGS...
+		sed -e '/^ALL_CFLAGS/iHARD_CFLAGS = ' \
+			-e 's|^ALL_CFLAGS = |ALL_CFLAGS = $(HARD_CFLAGS) |' \
+			-i "${S}"/gcc/Makefile.in
+	fi
 
 	BRANDING_GCC_PKGVERSION="${BRANDING_GCC_PKGVERSION}, pie-${PIE_VER}"
 }
