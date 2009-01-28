@@ -1,41 +1,72 @@
-# Copyright 1999-2007 Gentoo Foundation
+# Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.3.0_alpha20070112.ebuild,v 1.1 2007/01/18 05:13:42 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.3.3.ebuild,v 1.1 2009/01/27 21:32:01 vapier Exp $
+
+PATCH_VER="1.0"
+UCLIBC_VER="1.0"
 
 ETYPE="gcc-compiler"
-GCC_FILESDIR=${PORTDIR}/sys-devel/gcc/files
+
+# Hardened gcc 4 stuff
+PIE_VER="10.1.5"
+SPECS_VER="0.9.4"
+
+# arch/libc configurations known to be stable or untested with {PIE,SSP,FORTIFY}-by-default
+PIE_GLIBC_STABLE="x86 amd64 ~ppc ~ppc64 ~arm ~sparc"
+PIE_UCLIBC_STABLE="x86 arm"
+#SSP_STABLE="amd64 x86 ppc ppc64 ~arm ~sparc"
+#SSP_UCLIBC_STABLE=""
+
+# whether we should split out specs files for multiple {PIE,SSP}-by-default
+# and vanilla configurations.
+SPLIT_SPECS=no #${SPLIT_SPECS-true} hard disable until #106690 is fixed
 
 inherit toolchain
 
 DESCRIPTION="The GNU Compiler Collection.  Includes C/C++, java compilers, pie+ssp extensions, Haj Ten Brugge runtime bounds checking"
 
 LICENSE="GPL-2 LGPL-2.1"
-KEYWORDS="~amd64"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 
 RDEPEND=">=sys-libs/zlib-1.1.4
-	|| ( >=sys-devel/gcc-config-1.3.12-r4 app-admin/eselect-compiler )
+	>=sys-devel/gcc-config-1.4
 	virtual/libiconv
 	>=dev-libs/gmp-4.2.1
 	>=dev-libs/mpfr-2.3
 	!build? (
 		gcj? (
 			gtk? (
-				|| ( ( x11-libs/libXt x11-libs/libX11 x11-libs/libXtst x11-proto/xproto x11-proto/xextproto ) virtual/x11 )
+				x11-libs/libXt
+				x11-libs/libX11
+				x11-libs/libXtst
+				x11-proto/xproto
+				x11-proto/xextproto
 				>=x11-libs/gtk+-2.2
 				x11-libs/pango
 			)
 			>=media-libs/libart_lgpl-2.1
+			app-arch/zip
+			app-arch/unzip
 		)
 		>=sys-libs/ncurses-5.2-r2
 		nls? ( sys-devel/gettext )
 	)"
 DEPEND="${RDEPEND}
+	test? ( sys-devel/autogen dev-util/dejagnu )
 	>=sys-apps/texinfo-4.2-r4
 	>=sys-devel/bison-1.875
-	>=${CATEGORY}/binutils-2.16.1"
-PDEPEND="|| ( sys-devel/gcc-config app-admin/eselect-compiler )"
+	amd64? (
+		>=sys-libs/glibc-2.7-r2
+		multilib? (
+			gcj? ( app-emulation/emul-linux-x86-xlibs )
+		)
+	)
+	ppc? ( >=${CATEGORY}/binutils-2.17 )
+	ppc64? ( >=${CATEGORY}/binutils-2.17 )
+	>=${CATEGORY}/binutils-2.15.94"
+PDEPEND=">=sys-devel/gcc-config-1.4"
 if [[ ${CATEGORY} != cross-* ]] ; then
-	PDEPEND="${PDEPEND} elibc_glibc? ( >=sys-libs/glibc-2.3.6 )"
+	PDEPEND="${PDEPEND} elibc_glibc? ( >=sys-libs/glibc-2.6 )"
 fi
 
 src_unpack() {
@@ -43,15 +74,7 @@ src_unpack() {
 
 	use vanilla && return 0
 
-	# Fix cross-compiling
-	epatch "${GCC_FILESDIR}"/4.1.0/gcc-4.1.0-cross-compile.patch
-}
+	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env.patch
 
-pkg_postinst() {
-	toolchain_pkg_postinst
-
-	einfo "This gcc-4 ebuild is provided for your convenience, and the use"
-	einfo "of this compiler is not supported by the Gentoo Developers."
-	einfo "Please file bugs related to gcc-4 with upstream developers."
-	einfo "Compiler bugs should be filed at http://gcc.gnu.org/bugzilla/"
+	[[ ${CTARGET} == *-softfloat-* ]] && epatch "${FILESDIR}"/4.3.2/gcc-4.3.2-softfloat.patch
 }

@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.381 2009/01/12 22:51:38 maekke Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.384 2009/01/28 05:22:05 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -296,8 +296,7 @@ get_gcc_src_uri() {
 	elif [[ -n ${SNAPSHOT} ]] ; then
 		GCC_SRC_URI="ftp://sources.redhat.com/pub/gcc/snapshots/${SNAPSHOT}/gcc-${SNAPSHOT}.tar.bz2"
 	else
-		GCC_SRC_URI="mirror://gnu/gcc/gcc-${GCC_PV}/gcc-${GCC_RELEASE_VER}.tar.bz2 
-		ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-${GCC_PV}/gcc-${GCC_RELEASE_VER}.tar.bz2"
+		GCC_SRC_URI="mirror://gnu/gcc/gcc-${GCC_PV}/gcc-${GCC_RELEASE_VER}.tar.bz2"
 		# we want all branch updates to be against the main release
 		[[ -n ${BRANCH_UPDATE} ]] && \
 			GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${GCC_RELEASE_VER}-branch-update-${BRANCH_UPDATE}.patch.bz2)"
@@ -1703,7 +1702,7 @@ gcc-compiler_src_install() {
 	S=${WORKDIR}/build \
 	make DESTDIR="${D}" install || die
 	# Punt some tools which are really only useful while building gcc
-	find "${D}" -name install-tools -type d -exec rm -rf "{}" \;
+	find "${D}" -name install-tools -prune -type d -exec rm -rf "{}" \;
 	# This one comes with binutils
 	find "${D}" -name libiberty.a -exec rm -f "{}" \;
 
@@ -1745,34 +1744,8 @@ gcc-compiler_src_install() {
 	fi
 	# Make sure we dont have stuff lying around that
 	# can nuke multiple versions of gcc
-	cd "${D}"${LIBPATH}
 
-	# Move Java headers to compiler-specific dir
-	for x in "${D}"${PREFIX}/include/gc*.h "${D}"${PREFIX}/include/j*.h ; do
-		[[ -f ${x} ]] && mv -f "${x}" "${D}"${LIBPATH}/include/
-	done
-	for x in gcj gnu java javax org ; do
-		if [[ -d ${D}${PREFIX}/include/${x} ]] ; then
-			dodir /${LIBPATH}/include/${x}
-			mv -f "${D}"${PREFIX}/include/${x}/* "${D}"${LIBPATH}/include/${x}/
-			rm -rf "${D}"${PREFIX}/include/${x}
-		fi
-	done
-
-	if [[ -d ${D}${PREFIX}/lib/security ]] ; then
-		dodir /${LIBPATH}/security
-		mv -f "${D}"${PREFIX}/lib/security/* "${D}"${LIBPATH}/security
-		rm -rf "${D}"${PREFIX}/lib/security
-	fi
-
-	# Move libgcj.spec to compiler-specific directories
-	[[ -f ${D}${PREFIX}/lib/libgcj.spec ]] && \
-		mv -f "${D}"${PREFIX}/lib/libgcj.spec "${D}"${LIBPATH}/libgcj.spec
-
-	# Rename jar because it could clash with Kaffe's jar if this gcc is
-	# primary compiler (aka don't have the -<version> extension)
-	cd "${D}"${BINPATH}
-	[[ -f jar ]] && mv -f jar gcj-jar
+	gcc_slot_java
 
 	# Move <cxxabi.h> to compiler-specific directories
 	[[ -f ${D}${STDCXX_INCDIR}/cxxabi.h ]] && \
@@ -1875,6 +1848,44 @@ gcc-compiler_src_install() {
 	copy_minispecs_gcc_specs
 }
 
+gcc_slot_java() {
+	local x
+
+	# Move Java headers to compiler-specific dir
+	for x in "${D}"${PREFIX}/include/gc*.h "${D}"${PREFIX}/include/j*.h ; do
+		[[ -f ${x} ]] && mv -f "${x}" "${D}"${LIBPATH}/include/
+	done
+	for x in gcj gnu java javax org ; do
+		if [[ -d ${D}${PREFIX}/include/${x} ]] ; then
+			dodir /${LIBPATH}/include/${x}
+			mv -f "${D}"${PREFIX}/include/${x}/* "${D}"${LIBPATH}/include/${x}/
+			rm -rf "${D}"${PREFIX}/include/${x}
+		fi
+	done
+
+	if [[ -d ${D}${PREFIX}/lib/security ]] || [[ -d ${D}${PREFIX}/$(get_libdir)/security ]] ; then
+		dodir /${LIBPATH}/security
+		mv -f "${D}"${PREFIX}/lib*/security/* "${D}"${LIBPATH}/security
+		rm -rf "${D}"${PREFIX}/lib*/security
+	fi
+
+	# Move libgcj.spec to compiler-specific directories
+	[[ -f ${D}${PREFIX}/lib/libgcj.spec ]] && \
+		mv -f "${D}"${PREFIX}/lib/libgcj.spec "${D}"${LIBPATH}/libgcj.spec
+
+	# SLOT up libgcj.pc (and let gcc-config worry about links)
+	local libgcj=$(find "${D}"${PREFIX}/lib/pkgconfig/ -name 'libgcj*.pc')
+	if [[ -n ${libgcj} ]] ; then
+		sed -i "/^libdir=/s:=.*:=${LIBPATH}:" "${libgcj}"
+		mv "${libgcj}" "${D}"/usr/lib/pkgconfig/libgcj-${GCC_PV}.pc || die
+	fi
+
+	# Rename jar because it could clash with Kaffe's jar if this gcc is
+	# primary compiler (aka don't have the -<version> extension)
+	cd "${D}"${BINPATH}
+	[[ -f jar ]] && mv -f jar gcj-jar
+}
+
 # Move around the libs to the right location.  For some reason,
 # when installing gcc, it dumps internal libraries into /usr/lib
 # instead of the private gcc lib path
@@ -1921,8 +1932,6 @@ gcc_movelibs() {
 	done
 	find "${D}" -type d | xargs rmdir >& /dev/null
 
-	# make sure the libtool archives have libdir set to where they actually
-	# -are-, and not where they -used- to be.
 	fix_libtool_libdir_paths $(find "${D}"${LIBPATH} -name *.la)
 }
 
@@ -2439,11 +2448,19 @@ disable_multilib_libjava() {
 	fi
 }
 
+# make sure the libtool archives have libdir set to where they actually
+# -are-, and not where they -used- to be.  also, any dependencies we have
+# on our own .la files need to be updated.
 fix_libtool_libdir_paths() {
-	local dirpath
-	for archive in $* ; do
-		dirpath=$(dirname ${archive} | sed -e "s:^${D}::")
-		sed -i ${archive} -e "s:^libdir.*:libdir=\'${dirpath}\':"
+	local dirpath allarchives="${@##*/}"
+	allarchives="\(${allarchives// /\\|}\)"
+	for archive in "$@" ; do
+		dirpath=${archive%/*}
+		dirpath=${dirpath#${D}}
+		sed -i \
+			-e "/^libdir=/s:=.*:'${dirpath}':" \
+			-e "/^dependency_libs=/s:/[^ ]*/${allarchives}:${dirpath}/\1:g" \
+			"${archive}"
 	done
 }
 
