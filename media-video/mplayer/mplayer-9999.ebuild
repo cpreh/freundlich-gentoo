@@ -1,6 +1,6 @@
-# Copyright 1999-2008 Gentoo Foundation
+# Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc2_p28058.ebuild,v 1.1 2008/12/02 03:41:26 beandog Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc2_p28450.ebuild,v 1.1 2009/02/03 06:13:05 beandog Exp $
 
 EAPI="1"
 
@@ -47,7 +47,7 @@ RDEPEND="sys-libs/ncurses
 		x86? (
 			win32codecs? ( media-libs/win32codecs )
 			real? ( media-libs/win32codecs
-				media-video/realplayer )
+				media-libs/realcodecs )
 			)
 		amd64? ( real? ( media-libs/amd64codecs ) )
 	)
@@ -144,7 +144,7 @@ DEPEND="${DEPEND} amd64? ( >=sys-apps/portage-2.1.2 )
 
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
 
 pkg_setup() {
 
@@ -275,7 +275,7 @@ src_compile() {
 		myconf="${myconf} --with-dvdread-config=/usr/bin/dvdread-config \
 			--with-dvdnav-config=/usr/bin/dvdnav-config \
 			--disable-dvdread-internal"
-	elif ! use dvd && ! use dvdread; then
+	elif ! use dvd; then
 		myconf="${myconf} --disable-dvdnav --disable-dvdread"
 		use a52 || myconf="${myconf} --disable-liba52 \
 			--disable-liba52-internal"
