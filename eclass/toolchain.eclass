@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.384 2009/01/28 05:22:05 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.389 2009/01/29 06:06:45 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -1485,7 +1485,6 @@ gcc_do_make() {
 	fi
 
 	pushd "${WORKDIR}"/build
-	einfo "Running make LDFLAGS=\"${LDFLAGS}\" STAGE1_CFLAGS=\"${STAGE1_CFLAGS}\" LIBPATH=\"${LIBPATH}\" BOOT_CFLAGS=\"${BOOT_CFLAGS}\" ${GCC_MAKE_TARGET}"
 
 	emake \
 		LDFLAGS="${LDFLAGS}" \
@@ -1644,11 +1643,11 @@ gcc_src_test() {
 }
 
 gcc-library_src_install() {
-	einfo "Installing ${PN} ..."
 	# Do the 'make install' from the build directory
 	cd "${WORKDIR}"/build
 	S=${WORKDIR}/build \
-	make DESTDIR="${D}" \
+	emake -j1 \
+		DESTDIR="${D}" \
 		prefix=${PREFIX} \
 		bindir=${BINPATH} \
 		includedir=${LIBPATH}/include \
@@ -1685,22 +1684,18 @@ gcc-library_src_install() {
 gcc-compiler_src_install() {
 	local x=
 
-	# Do allow symlinks in ${PREFIX}/lib/gcc-lib/${CHOST}/${GCC_CONFIG_VER}/include as
-	# this can break the build.
-	for x in "${WORKDIR}"/build/gcc/include*/* ; do
-		[[ -L ${x} ]] && rm -f "${x}"
-	done
+	cd "${WORKDIR}"/build
+	# Do allow symlinks in private gcc include dir as this can break the build
+	find gcc/include*/ -type l -print0 | xargs rm -f
 	# Remove generated headers, as they can cause things to break
 	# (ncurses, openssl, etc).
-	for x in $(find "${WORKDIR}"/build/gcc/include*/ -name '*.h') ; do
+	for x in $(find gcc/include*/ -name '*.h') ; do
 		grep -q 'It has been auto-edited by fixincludes from' "${x}" \
 			&& rm -f "${x}"
 	done
-	einfo "Installing GCC..."
 	# Do the 'make install' from the build directory
-	cd "${WORKDIR}"/build
 	S=${WORKDIR}/build \
-	make DESTDIR="${D}" install || die
+	emake -j1 DESTDIR="${D}" install || die
 	# Punt some tools which are really only useful while building gcc
 	find "${D}" -name install-tools -prune -type d -exec rm -rf "{}" \;
 	# This one comes with binutils
@@ -1812,7 +1807,9 @@ gcc-compiler_src_install() {
 			|| prepman "${DATAPATH}"
 	fi
 	# prune empty dirs left behind
-	find "${D}" -type d | xargs rmdir >& /dev/null
+	for x in 1 2 3 4 ; do
+		find "${D}" -type d -exec rmdir "{}" \; >& /dev/null
+	done
 
 	# install testsuite results
 	if use test; then
@@ -1932,7 +1929,7 @@ gcc_movelibs() {
 	done
 	find "${D}" -type d | xargs rmdir >& /dev/null
 
-	fix_libtool_libdir_paths $(find "${D}"${LIBPATH} -name *.la)
+	fix_libtool_libdir_paths
 }
 
 #----<< src_* >>----
@@ -2452,16 +2449,21 @@ disable_multilib_libjava() {
 # -are-, and not where they -used- to be.  also, any dependencies we have
 # on our own .la files need to be updated.
 fix_libtool_libdir_paths() {
-	local dirpath allarchives="${@##*/}"
+	pushd "${D}" >/dev/null
+
+	local dir=${LIBPATH}
+	local allarchives=$(cd ./${dir}; echo *.la)
 	allarchives="\(${allarchives// /\\|}\)"
-	for archive in "$@" ; do
-		dirpath=${archive%/*}
-		dirpath=${dirpath#${D}}
-		sed -i \
-			-e "/^libdir=/s:=.*:'${dirpath}':" \
-			-e "/^dependency_libs=/s:/[^ ]*/${allarchives}:${dirpath}/\1:g" \
-			"${archive}"
-	done
+
+	sed -i \
+		-e "/^libdir=/s:=.*:='${dir}':" \
+		./${dir}/*.la
+	sed -i \
+		-e "/^dependency_libs=/s:/[^ ]*/${allarchives}:${LIBPATH}/\1:g" \
+		$(find ./${PREFIX}/lib* -maxdepth 3 -name '*.la') \
+		./${dir}/*.la
+
+	popd >/dev/null
 }
 
 is_multilib() {
