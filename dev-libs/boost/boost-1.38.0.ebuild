@@ -9,13 +9,10 @@ inherit python flag-o-matic multilib toolchain-funcs versionator check-reqs
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
 
 MY_P=${PN}_$(replace_all_version_separators _)
-PATCHSET_VERSION="${PV}"
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
-SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2
-	mirror://gentoo/boost-patches-${PATCHSET_VERSION}.tbz2
-	http://www.gentoo.org/~dev-zero/distfiles/boost-patches-${PATCHSET_VERSION}.tbz2"
+SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
 LICENSE="freedist Boost-1.0"
 SLOT="1.38"
 IUSE="debug doc expat icu mpi tools"
@@ -57,10 +54,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	EPATCH_SOURCE="${WORKDIR}/patches"
-	EPATCH_SUFFIX="patch"
-	epatch
-
+	epatch "${FILESDIR}/02_all_1.37.0-function-templates-compile-fix.patch"
+	epatch "${FILESDIR}/07_all_1.35.0-fix_mpi_installation.patch"
 	epatch "${FILESDIR}/remove_toolset_from_targetname.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
