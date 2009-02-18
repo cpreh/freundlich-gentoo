@@ -6,7 +6,7 @@ inherit git
 
 DESCRIPTION="minimalistic irc bot to post commit messages to irc"
 HOMEPAGE="none"
-EGIT_REPO_URI="git://localhost/gitbot.git"
+EGIT_REPO_URI="git://freundlich.mine.nu/gitbot.git"
 
 LICENSE="GPL-2"
 SLOT="0"
