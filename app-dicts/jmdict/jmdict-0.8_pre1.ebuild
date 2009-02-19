@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-DESCRIPTION="japenese dictionary by Florian Blümel"
+DESCRIPTION="Japanese dictionary by Florian Blümel"
 HOMEPAGE="http://jmdict.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 LICENSE="GPL-2"
