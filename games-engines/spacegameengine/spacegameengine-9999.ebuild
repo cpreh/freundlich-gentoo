@@ -7,7 +7,7 @@ inherit games git
 DESCRIPTION="A portable, easy to use engine written in C++"
 HOMEPAGE="http://spacegameengine.sourceforge.net/"
 
-EGIT_REPO_URI="git://freundlich.mine.nu/spacegameengine.git"
+EGIT_REPO_URI="git://timeoutd.org/spacegameengine.git"
 
 LICENSE="LGPL-2"
 SLOT="0"
