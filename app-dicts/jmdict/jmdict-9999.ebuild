@@ -4,7 +4,7 @@
 
 inherit git
 
-EGIT_REPO_URI="git://timeoutd.org/spacegameengine.git"
+EGIT_REPO_URI="git://timeoutd.org/jmdict.git"
 
 DESCRIPTION="Japanese dictionary by Florian Blümel"
 HOMEPAGE="http://jmdict.sourceforge.net/"
