@@ -32,11 +32,6 @@ RDEPEND=">=dev-libs/boost-1.36
          x11input? ( dga? ( x11-libs/libXxf86dga ) )
          vorbis? ( media-libs/libvorbis )"
 
-src_unpack() {
-	git_src_unpack
-	cd ${S}
-}
-
 src_compile() {
 	local myconf=""
 
