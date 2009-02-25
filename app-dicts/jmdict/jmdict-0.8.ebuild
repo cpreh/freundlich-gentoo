@@ -2,17 +2,15 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-inherit git
-
-EGIT_REPO_URI="git://timeoutd.org/jmdict.git"
-
 DESCRIPTION="Japanese dictionary by Florian Blümel"
 HOMEPAGE="http://jmdict.sourceforge.net/"
-SRC_URI=""
+SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 IUSE=""
+
+RESTRICT="mirror"
 
 RDEPEND=">=dev-db/sqlite-3 
         dev-libs/expat"
