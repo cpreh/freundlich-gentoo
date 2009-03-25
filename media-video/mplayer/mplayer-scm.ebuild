@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-20090226.28734-r1.ebuild,v 1.1 2009/03/14 09:57:42 yngwin Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc2_p20090322.ebuild,v 1.4 2009/03/24 21:32:35 yngwin Exp $
 
 EAPI="1"
 
@@ -10,16 +10,16 @@ ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 
 MPLAYER_REVISION=scm
 
-IUSE="3dnow 3dnowext +a52 +aac -aalib +alsa altivec +amrnb +amrwb -arts +ass
+IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +amrnb +amrwb arts +ass
 bidi bindist bl +cddb +cdio cdparanoia -cpudetection -custom-cflags
 -custom-cpuopts debug dga +dirac directfb doc +dts +dv dvb +dvd +dvdnav dxr3
-+enca +encode esd +faac +faad +fbcon +ftp -gif ggi -gtk +iconv ipv6 jack
-joystick +jpeg kernel_linux ladspa -libcaca lirc +live lzo +mad +md5sum +mmx
-mmxext mng +mp2 +mp3 musepack nas +nemesi +network openal +opengl oss +png +pnm
-pulseaudio -pvr +quicktime radio +rar +real -realcodecs +rtc -samba
-+schroedinger +sdl +speex sse sse2 ssse3 svga teletext tga +theora +tremor
++enca +encode esd +faac +faad fbcon ftp gif ggi -gtk +iconv ipv6 jack
+joystick jpeg kernel_linux ladspa libcaca lirc +live lzo mad md5sum +mmx
+mmxext mng +mp2 +mp3 musepack nas +nemesi +network openal +opengl oss png pnm
+pulseaudio pvr +quicktime radio +rar +real +rtc -samba
++schroedinger sdl +speex sse sse2 ssse3 svga teletext tga +theora +tremor
 +truetype +unicode v4l v4l2 vdpau vidix +vorbis -win32codecs +X +x264 xanim
-xinerama +xscreensaver +xv +xvid +xvmc zoran"
+xinerama +xscreensaver +xv +xvid xvmc zoran"
 
 VIDEO_CARDS="s3virge mga tdfx nvidia vesa"
 
@@ -47,10 +47,7 @@ RDEPEND="sys-libs/ncurses
 	!bindist? (
 		x86? (
 			win32codecs? ( media-libs/win32codecs )
-			realcodecs? ( media-libs/win32codecs
-				media-libs/realcodecs )
 			)
-		amd64? ( realcodecs? ( media-libs/amd64codecs ) )
 	)
 	aalib? ( media-libs/aalib )
 	alsa? ( media-libs/alsa-lib )
@@ -108,10 +105,12 @@ RDEPEND="sys-libs/ncurses
 	speex? ( media-libs/speex )
 	svga? ( media-libs/svgalib )
 	theora? ( media-libs/libtheora )
-	live? ( >=media-plugins/live-2007.02.20 )
+	live? ( media-plugins/live )
 	truetype? ( media-libs/freetype:2
 		media-libs/fontconfig )
-	vdpau? ( >=x11-drivers/nvidia-drivers-180.22 )
+	video_cards_nvidia? (
+		vdpau? ( >=x11-drivers/nvidia-drivers-180.22 )
+	)
 	vidix? ( x11-libs/libXxf86vm
 			 x11-libs/libXext )
 	vorbis? ( media-libs/libvorbis )
@@ -174,6 +173,14 @@ pkg_setup() {
 		ewarn "You won't need this turned on if you are only building"
 		ewarn "mplayer for this system.  Also, if your compile fails, try"
 		ewarn "disabling this use flag."
+	fi
+
+	if use custom-cflags; then
+		ewarn ""
+		ewarn "You've enabled the custom-cflags USE flag, which overrides"
+		ewarn "mplayer's recommended behavior, making this build unsupported."
+		ewarn ""
+		ewarn "Re-emerge mplayer without this flag before filing bugs."
 	fi
 
 	if use custom-cpuopts; then
@@ -401,7 +408,7 @@ src_compile() {
 	use real || myconf="${myconf} --disable-real"
 
 	# Real binary codec support only available on x86, amd64
-	if use realcodecs; then
+	if use real; then
 		use x86 && myconf="${myconf} \
 			--realcodecsdir=/opt/RealPlayer/codecs"
 		use amd64 && myconf="${myconf} \
@@ -490,8 +497,12 @@ src_compile() {
 	myconf="${myconf} $(use_enable altivec)"
 
 	if use custom-cflags; then
+
+		# Can't remember why this was in here, commented out, please
+		# document if you are going to re-enable it, bug 260064
 		# let's play the filtration game!  MPlayer hates on all!
-		strip-flags
+		# strip-flags
+
 		# ugly optimizations cause MPlayer to cry on x86 systems!
 			if use x86 || use x86-fbsd ; then
 				replace-flags -O* -O2
