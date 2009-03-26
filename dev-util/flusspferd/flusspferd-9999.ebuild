@@ -8,7 +8,8 @@ DESCRIPTION="Flusspferd (German for Hippopotamus) is a C++ library providing
 Javascript bindings."
 HOMEPAGE="http://flusspferd.org/"
 
-EGIT_REPO_URI="git://github.com/ruediger/flusspferd.git"
+#EGIT_REPO_URI="git://github.com/ruediger/flusspferd.git"
+EGIT_REPO_URI="git://flusspferd.git.sourceforge.net/gitroot/flusspferd"
 
 LICENSE="MIT"
 SLOT="0"
