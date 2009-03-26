@@ -14,7 +14,7 @@ EGIT_REPO_URI="git://flusspferd.git.sourceforge.net/gitroot/flusspferd"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="curl io sandbox sqlite tests xml"
+IUSE="curl io sqlite tests xml"
 
 RDEPEND="
 	>=dev-lang/spidermonkey-1.7
@@ -30,7 +30,6 @@ src_compile() {
 
 	use curl && options="${options} --enable-curl"
 	use io && options="${options} --enable-io"
-	use sandbox && options="${options} --enable-sandbox"
 	use sqlite && options="${options} --enable-sqlite"
 	use tests && options="${options} --enable-tests"
 	use xml && options="${options} --enable-xml"
