@@ -1,14 +1,12 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc2_p20090322.ebuild,v 1.4 2009/03/24 21:32:35 yngwin Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.2 2009/03/24 21:32:35 yngwin Exp $
 
 EAPI="1"
 
-inherit eutils flag-o-matic multilib subversion
-
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 
-MPLAYER_REVISION=scm
+inherit eutils flag-o-matic multilib subversion
 
 IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +amrnb +amrwb arts +ass
 bidi bindist bl +cddb +cdio cdparanoia -cpudetection -custom-cflags
@@ -30,8 +28,7 @@ done
 BLUV="1.7"
 SVGV="1.9.17"
 AMR_URI="http://www.3gpp.org/ftp/Specs/archive"
-SRC_URI="
-	!truetype? ( mirror://mplayer/releases/fonts/font-arial-iso-8859-1.tar.bz2
+SRC_URI="!truetype? ( mirror://mplayer/releases/fonts/font-arial-iso-8859-1.tar.bz2
 				 mirror://mplayer/releases/fonts/font-arial-iso-8859-2.tar.bz2
 				 mirror://mplayer/releases/fonts/font-arial-cp1250.tar.bz2 )
 	!iconv? ( mirror://mplayer/releases/fonts/font-arial-iso-8859-1.tar.bz2
@@ -109,7 +106,7 @@ RDEPEND="sys-libs/ncurses
 	truetype? ( media-libs/freetype:2
 		media-libs/fontconfig )
 	video_cards_nvidia? (
-		vdpau? ( >=x11-drivers/nvidia-drivers-180.22 )
+		vdpau? ( >=x11-drivers/nvidia-drivers-180.37 )
 	)
 	vidix? ( x11-libs/libXxf86vm
 			 x11-libs/libXext )
@@ -215,9 +212,6 @@ src_unpack() {
 	use svga && unpack "svgalib_helper-${SVGV}-mplayer.tar.bz2"
 
 	cd "${S}"
-
-	# Set version #
-	sed -i s/UNKNOWN/${MPLAYER_REVISION}/ "${S}/version.sh"
 
 	# Fix hppa compilation
 	use hppa && sed -i -e "s/-O4/-O1/" "${S}/configure"
