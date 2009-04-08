@@ -1,6 +1,6 @@
-# Copyright 1999-2008 Gentoo Foundation
+# Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.38.0.ebuild,v 1.1 2008/12/16 16:37:27 dev-zero Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.37.0-r1.ebuild,v 1.1 2009/04/07 09:43:13 dev-zero Exp $
 
 EAPI="2"
 
@@ -15,17 +15,17 @@ HOMEPAGE="http://www.boost.org/"
 SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
 LICENSE="freedist Boost-1.0"
 SLOT="1.38"
-IUSE="debug doc expat icu mpi tools"
+IUSE="debug doc eselect expat icu mpi python tools"
 
 RDEPEND="icu? ( >=dev-libs/icu-3.3 )
 	expat? ( dev-libs/expat )
 	mpi? ( || ( sys-cluster/openmpi sys-cluster/mpich2 ) )
 	sys-libs/zlib
-	virtual/python
-	!<=dev-libs/boost-1.35.0-r2"
+	python? ( virtual/python )
+	!<=dev-libs/boost-1.35.0-r2
+	>=app-admin/eselect-boost-0.3"
 DEPEND="${RDEPEND}
 	dev-util/boost-build:${SLOT}"
-PDEPEND="app-admin/eselect-boost"
 
 S=${WORKDIR}/${MY_P}
 
@@ -35,6 +35,22 @@ S=${WORKDIR}/${MY_P}
 
 MAJOR_PV=$(replace_all_version_separators _ ${SLOT})
 BJAM="bjam-${MAJOR_PV}"
+
+# Usage:
+# _add_line <line-to-add> <profile>
+# ... to add to specific profile
+# or
+# _add_line <line-to-add>
+# ... to add to all profiles for which the use flag set
+
+_add_line() {
+	if [ -z "$2" ] ; then
+		echo "${1}" >> "${D}/usr/share/boost-eselect/profiles/${SLOT}/default"
+		use debug && echo "${1}" >> "${D}/usr/share/boost-eselect/profiles/${SLOT}/debug"
+	else
+		echo "${1}" >> "${D}/usr/share/boost-eselect/profiles/${SLOT}/${2}"
+	fi
+}
 
 pkg_setup() {
 	if has test ${FEATURES} ; then
@@ -51,12 +67,22 @@ pkg_setup() {
 		ebeep 5
 
 	fi
+
+	if use debug ; then
+		ewarn "The debug USE-flag means that a second set of the boost libraries"
+		ewarn "will be built containing debug-symbols. You'll be able to select them"
+		ewarn "using the boost-eselect module. But even though the optimization flags"
+		ewarn "you might have set are not stripped, there will be a performance"
+		ewarn "penalty and linking other packages against the debug version"
+		ewarn "of boost is _not_ recommended."
+	fi
 }
 
 src_prepare() {
 	epatch "${FILESDIR}/02_all_1.37.0-function-templates-compile-fix.patch"
 	epatch "${FILESDIR}/07_all_1.35.0-fix_mpi_installation.patch"
 	epatch "${FILESDIR}/remove_toolset_from_targetname.patch"
+	epatch "${FILESDIR}/buildid-fix.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if ! use userland_Darwin ; then
@@ -65,37 +91,8 @@ src_prepare() {
 	fi
 }
 
-generate_options() {
-	# Maintainer information:
-	# The debug-symbols=none and optimization=none
-	# are not official upstream flags but a Gentoo
-	# specific patch to make sure that all our
-	# CXXFLAGS/LDFLAGS are being respected.
-	# Using optimization=off would for example add
-	# "-O0" and override "-O2" set by the user.
-	# Please take a look at the boost-build ebuild
-	# for more infomration.
-
-	BUILDNAME="gentoorelease"
-	use debug && BUILDNAME="gentoodebug"
-
-	OPTIONS="${BUILDNAME}"
-
-	use icu && OPTIONS="${OPTIONS} -sICU_PATH=/usr"
-	if use expat ; then
-		OPTIONS="${OPTIONS} -sEXPAT_INCLUDE=/usr/include -sEXPAT_LIBPATH=/usr/$(get_libdir)"
-	fi
-
-	if ! use mpi ; then
-		OPTIONS="${OPTIONS} --without-mpi"
-	fi
-
-	OPTIONS="${OPTIONS} --user-config=${S}/user-config.jam --boost-build=/usr/share/boost-build-${MAJOR_PV}"
-}
-
 src_configure() {
 	einfo "Writing new user-config.jam"
-	python_version
 
 	local compiler compilerVersion compilerExecutable mpi
 	if [[ ${CHOST} == *-darwin* ]] ; then
@@ -111,17 +108,40 @@ src_configure() {
 
 	use mpi && mpi="using mpi ;"
 
+	if use python ; then
+		python_version
+		pystring="using python : ${PYVER} : /usr :	/usr/include/python${PYVER} : /usr/lib/python${PYVER} ;"
+	fi
+
 	cat > "${S}/user-config.jam" << __EOF__
 
 variant gentoorelease : release : <optimization>none <debug-symbols>none ;
-variant gentoodebug : debug : <optimization>none <debug-symbols>none ;
+variant gentoodebug : debug : <optimization>none ;
 
 using ${compiler} : ${compilerVersion} : ${compilerExecutable} : <cxxflags>"${CXXFLAGS}" <linkflags>"${LDFLAGS}" ;
-using python : ${PYVER} : /usr : /usr/include/python${PYVER} : /usr/lib/python${PYVER} ;
+
+${pystring}
 
 ${mpi}
 
 __EOF__
+
+	# Maintainer information:
+	# The debug-symbols=none and optimization=none
+	# are not official upstream flags but a Gentoo
+	# specific patch to make sure that all our
+	# CXXFLAGS/LDFLAGS are being respected.
+	# Using optimization=off would for example add
+	# "-O0" and override "-O2" set by the user.
+	# Please take a look at the boost-build ebuild
+	# for more infomration.
+
+	use icu && OPTIONS="-sICU_PATH=/usr"
+	use expat && OPTIONS="${OPTIONS} -sEXPAT_INCLUDE=/usr/include -sEXPAT_LIBPATH=/usr/$(get_libdir)"
+	use mpi || OPTIONS="${OPTIONS} --without-mpi"
+	use python || OPTIONS="${OPTIONS} --without-python"
+
+	OPTIONS="${OPTIONS} --user-config=\"${S}/user-config.jam\" --boost-build=/usr/share/boost-build-${MAJOR_PV} --prefix=\"${D}/usr\" --layout=versioned"
 
 }
 
@@ -129,59 +149,85 @@ src_compile() {
 
 	NUMJOBS=$(sed -e 's/.*\(\-j[ 0-9]\+\) .*/\1/; s/--jobs=\?/-j/' <<< ${MAKEOPTS})
 
-	generate_options
-
 	elog "Using the following options to build: "
 	elog "  ${OPTIONS}"
 
 	export BOOST_ROOT="${S}"
 
 	${BJAM} ${NUMJOBS} -q \
+		gentoorelease \
 		${OPTIONS} \
 		threading=single,multi link=shared,static runtime-link=shared,static \
-		--prefix="${D}/usr" \
-		--layout=versioned \
 		|| die "building boost failed"
+
+	# ... and do the whole thing one more time to get the debug libs
+	if use debug ; then
+		${BJAM} ${NUMJOBS} -q \
+			gentoodebug \
+			${OPTIONS} \
+			threading=single,multi link=shared,static runtime-link=shared,static \
+			--buildid=debug \
+			|| die "building boost failed"
+	fi
 
 	if use tools; then
 		cd "${S}/tools/"
 		${BJAM} ${NUMJOBS} -q \
+			gentoorelease \
 			${OPTIONS} \
-			--prefix="${D}/usr" \
-			--layout=versioned \
 			|| die "building tools failed"
 	fi
 
 }
 
 src_install () {
-
-	generate_options
+	elog "Using the following options to install: "
+	elog "  ${OPTIONS}"
 
 	export BOOST_ROOT="${S}"
 
 	${BJAM} -q \
+		gentoorelease \
 		${OPTIONS} \
 		threading=single,multi link=shared,static runtime-link=shared,static \
-		--prefix="${D}/usr" \
 		--includedir="${D}/usr/include" \
 		--libdir="${D}/usr/$(get_libdir)" \
-		--layout=versioned \
 		install || die "install failed for options '${OPTIONS}'"
 
+	if use debug ; then
+		${BJAM} -q \
+			gentoodebug \
+			${OPTIONS} \
+			threading=single,multi link=shared,static runtime-link=shared,static \
+			--includedir="${D}/usr/include" \
+			--libdir="${D}/usr/$(get_libdir)" \
+			--buildid=debug \
+			install || die "install failed for options '${OPTIONS}'"
+	fi
+
+	use python || rm -rf "${D}/usr/include/boost-${MAJOR_PV}/boost"/python*
+
+	dodir /usr/share/boost-eselect/profiles/${SLOT}
+	touch "${D}/usr/share/boost-eselect/profiles/${SLOT}/default"
+	use debug && touch "${D}/usr/share/boost-eselect/profiles/${SLOT}/debug"
+
 	# Move the mpi.so to the right place and make sure it's slotted
-	if use mpi; then
-		mkdir -p "${D}/usr/$(get_libdir)/python${PYVER}/site-packages/mpi_${MAJOR_PV}"
-		mv "${D}/usr/$(get_libdir)/mpi.so" "${D}/usr/$(get_libdir)/python${PYVER}/site-packages/mpi_${MAJOR_PV}/"
-		touch "${D}/usr/$(get_libdir)/python${PYVER}/site-packages/mpi_${MAJOR_PV}/__init__.py"
+	if use mpi && use python; then
+		mkdir -p "${D}/usr/$(get_libdir)/python${PYVER}/site-packages/boost_${MAJOR_PV}"
+		mv "${D}/usr/$(get_libdir)/mpi.so" "${D}/usr/$(get_libdir)/python${PYVER}/site-packages/boost_${MAJOR_PV}/"
+		touch "${D}/usr/$(get_libdir)/python${PYVER}/site-packages/boost_${MAJOR_PV}/__init__.py"
+		_add_line "python=\"/usr/$(get_libdir)/python${PYVER}/site-packages/boost_${MAJOR_PV}/mpi.so\""
 	fi
 
 	if use doc ; then
-		find libs -iname "test" -or -iname "src" | xargs rm -rf
+		find libs/*/* -iname "test" -or -iname "src" | xargs rm -rf
 		dohtml \
-			-A pdf,txt,cpp \
+			-A pdf,txt,cpp,hpp \
 			*.{htm,html,png,css} \
 			-r doc more people wiki
+		dohtml \
+			-A pdf,txt \
+			-r tools
 		insinto /usr/share/doc/${PF}/html
 		doins -r libs
 
@@ -196,38 +242,70 @@ src_install () {
 
 	# Remove (unversioned) symlinks
 	# And check for what we remove to catch bugs
-	for f in libboost_*[!$(get_version_component_range 2)].{a,so} ; do
+	# got a better idea how to do it? tell me!
+	for f in $(ls -1 *.{a,so} | grep -v "${MAJOR_PV}") ; do
 		if [ ! -h "${f}" ] ; then
-			eerror "Ups, tried to remove a real file instead of a symlink"
+			eerror "Ups, tried to remove '${f}' which is a a real file instead of a symlink"
 			die "slotting/naming of the libs broken!"
 		fi
 		rm "${f}"
 	done
 
-	# If built with debug enabled, all libraries get a 'd' postfix,
-	# this breaks linking other apps against boost (bug #181972)
-	if use debug ; then
-		for lib in libboost_* ; do
-			dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-d\././' -e 's/d\././' <<< ${lib})"
+	# The threading libs obviously always gets the "-mt" (multithreading) tag
+	# some packages seem to have a problem with it. Creating symlinks...
+	for lib in libboost_thread-mt-${MAJOR_PV}{,-debug}{.a,.so} ; do
+		dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
+	done
+
+	# The same goes for the mpi libs
+	if use mpi ; then
+		for lib in libboost_mpi-mt-${MAJOR_PV}{,-debug}{.a,.so} ; do
+			dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
 		done
 	fi
 
-	for lib in libboost_thread-mt-{s-${MAJOR_PV}.a,${MAJOR_PV}.a,${MAJOR_PV}.so} ; do
-		dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
+	# Create a subdirectory with completely unversioned symlinks
+	# and store the names in the profiles-file for eselect
+	dodir /usr/$(get_libdir)/boost-${MAJOR_PV}
+
+	_add_line "libs=\"" default
+	for f in $(ls -1 *.{a,so} | grep -v debug) ; do
+		dosym ../${f} /usr/$(get_libdir)/boost-${MAJOR_PV}/${f/-${MAJOR_PV}}
+		_add_line "/usr/$(get_libdir)/${f}" default
 	done
+	_add_line "\"" default
+
+	if use debug ; then
+		_add_line "libs=\"" debug
+		dodir /usr/$(get_libdir)/boost-${MAJOR_PV}-debug
+		for f in $(ls -1 *.{a,so} | grep debug) ; do
+			dosym ../${f} /usr/$(get_libdir)/boost-${MAJOR_PV}-debug/${f/-${MAJOR_PV}-debug}
+			_add_line "/usr/$(get_libdir)/${f}" debug
+		done
+		_add_line "\"" debug
+
+		_add_line "includes=\"/usr/include/boost-${MAJOR_PV}/boost\"" debug
+		_add_line "suffix=\"-debug\"" debug
+	fi
+
+	_add_line "includes=\"/usr/include/boost-${MAJOR_PV}/boost\"" default
 
 	if use tools; then
 		cd "${S}/dist/bin"
 		# Append version postfix to binaries for slotting
+		_add_line "bins=\""
 		for b in * ; do
 			newbin "${b}" "${b}-${MAJOR_PV}"
+			_add_line "/usr/bin/${b}-${MAJOR_PV}"
 		done
+		_add_line "\""
 
 		cd "${S}/dist"
 		insinto /usr/share
 		doins -r share/boostbook
 		# Append version postfix for slotting
 		mv "${D}/usr/share/boostbook" "${D}/usr/share/boostbook-${MAJOR_PV}"
+		_add_line "dirs=\"/usr/share/boostbook-${MAJOR_PV}\""
 	fi
 
 	cd "${S}/status"
@@ -237,19 +315,16 @@ src_install () {
 		dodoc regress.log
 	fi
 
-	python_need_rebuild
+	use python && python_need_rebuild
 }
 
 src_test() {
-	generate_options
-
 	export BOOST_ROOT=${S}
 
 	cd "${S}/tools/regression/build"
 	${BJAM} -q \
+		gentoorelease \
 		${OPTIONS} \
-		--prefix="${D}/usr" \
-		--layout=versioned \
 		process_jam_log compiler_status \
 		|| die "building regression test helpers failed"
 
@@ -267,7 +342,7 @@ src_test() {
 		--dump-tests 2>&1 | tee regress.log
 
 	# Postprocessing
-	cat regress.log | "${S}/tools/regression/build/bin/gcc-$(gcc-version)/${BUILDNAME}/process_jam_log" --v2
+	cat regress.log | "${S}/tools/regression/build/bin/gcc-$(gcc-version)/gentoorelease/process_jam_log" --v2
 	if test $? != 0 ; then
 		die "Postprocessing the build log failed"
 	fi
@@ -277,7 +352,7 @@ src_test() {
 __EOF__
 
 	# Generate the build log html summary page
-	"${S}/tools/regression/build/bin/gcc-$(gcc-version)/${BUILDNAME}/compiler_status" --v2 \
+	"${S}/tools/regression/build/bin/gcc-$(gcc-version)/gentoorelease/compiler_status" --v2 \
 		--comment "${S}/status/comment.html" "${S}" \
 		cs-$(uname).html cs-$(uname)-links.html
 	if test $? != 0 ; then
@@ -286,4 +361,12 @@ __EOF__
 
 	# And do some cosmetic fixes :)
 	sed -i -e 's|http://www.boost.org/boost.png|boost.png|' *.html
+}
+
+pkg_postinst() {
+	use eselect && eselect boost update
+	if [ ! -h "${ROOT}/etc/eselect/boost/active" ] ; then
+		elog "No active boost version found. Calling eselect to select one..."
+		eselect boost update
+	fi
 }
