@@ -5,7 +5,7 @@
 inherit games git
 
 DESCRIPTION="A portable, easy to use engine written in C++"
-HOMEPAGE="http://spacegameengine.sourceforge.net/"
+HOMEPAGE="http://timeoutd.org/sgedoc"
 
 EGIT_REPO_URI="git://timeoutd.org/spacegameengine.git"
 
@@ -26,7 +26,6 @@ RDEPEND=">=dev-libs/boost-1.36
          openal? ( media-libs/openal )
          opengl? (
              media-libs/glew
-             virutal/opengl
              x11-libs/libXrandr
              x11-libs/libXxf86vm )
          truetype? ( media-libs/freetype )
