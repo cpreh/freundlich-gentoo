@@ -12,12 +12,14 @@ EGIT_REPO_URI="git://repo.or.cz/openal-soft.git"
 LICENSE="LGPL"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa examples oss"
+IUSE="alsa examples oss portaudio pulseaudio"
 
 DEPEND="${RDEPEND}
         >=dev-util/cmake-2.4
 		dev-util/git"
-RDEPEND="alsa? ( media-libs/alsa-lib )"
+RDEPEND="alsa? ( media-libs/alsa-lib )
+         portaudio? ( media-libs/portaudio )
+         pulseaudio? ( media-sound/puselaudio )"
 
 src_unpack() {
 	git_src_unpack
@@ -30,10 +32,11 @@ src_compile() {
 	use alsa || myconf="${myconf} -DALSA:=off"
 	use examples || myconf="${myconf} -DEXAMPLES:=off"
 	use oss || myconf="${myconf} -DOSS:=off"
+	use portaudio || myconf="${myconf} -DPORTAUDIO:=off"
+	use pulseaudio || myconf="${myconf} -DPULSEAUDIO:=off"
 
 	cd CMakeConf
 	cmake ${myconf} \
-		-DOSS:=off \
 		-DSOLARIS:=off \
 		-DDSOUND:=off \
 		-DWINMM:=off \
