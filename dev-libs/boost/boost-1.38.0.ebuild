@@ -83,6 +83,7 @@ src_prepare() {
 	epatch "${FILESDIR}/07_all_1.35.0-fix_mpi_installation.patch"
 	epatch "${FILESDIR}/remove_toolset_from_targetname.patch"
 	epatch "${FILESDIR}/buildid-fix.patch"
+	epatch "${FILESDIR}/boost-gcc-4.4-partial.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if ! use userland_Darwin ; then
