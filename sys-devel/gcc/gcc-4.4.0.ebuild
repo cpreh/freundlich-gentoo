@@ -7,6 +7,9 @@ GCC_FILESDIR=${PORTDIR}/sys-devel/gcc/files
 
 inherit toolchain
 
+RESTRICT="mirror"
+SRC_URI="ftp://ftp.gnu.org/gnu/gcc/${P}/${P}.tar.bz2 ${SRC_URI}"
+
 DESCRIPTION="The GNU Compiler Collection.  Includes C/C++, java compilers, pie+ssp extensions, Haj Ten Brugge runtime bounds checking"
 
 LICENSE="GPL-2 LGPL-2.1"
