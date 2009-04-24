@@ -28,11 +28,11 @@ DEPEND="${RDEPEND}
 src_compile() {
 	local options=""
 
-	use curl && options="${options} --enable-curl"
-	use io && options="${options} --enable-io"
-	use sqlite && options="${options} --enable-sqlite"
+	use curl || options="${options} --disable-curl"
+	use io || options="${options} --disable-io"
+	use sqlite || options="${options} --disable-sqlite"
 	use tests && options="${options} --enable-tests"
-	use xml && options="${options} --enable-xml"
+	use xml || options="${options} --disable-xml"
 
 	./waf --with-cxxflags="${CXXFLAGS}" --prefix=/usr ${options} configure || die "waf configure failed"
 	./waf build "${MAKEOPTS}" -v || die "waf build failed"
