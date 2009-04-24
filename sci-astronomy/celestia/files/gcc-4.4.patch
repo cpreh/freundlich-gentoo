@@ -1,0 +1,20 @@
+--- src/celengine/overlay.h	2009-04-24 15:38:02.000000000 +0200
++++ src/celengine/overlay.h	2009-04-24 15:38:47.000000000 +0200
+@@ -12,6 +12,7 @@
+ 
+ #include <string>
+ #include <iostream>
++#include <cstdio>
+ #include <celtxf/texturefont.h>
+ 
+ 
+--- src/celengine/star.cpp	2009-04-24 15:44:45.000000000 +0200
++++ src/celengine/star.cpp	2009-04-24 15:44:50.000000000 +0200
+@@ -10,6 +10,7 @@
+ #include <celmath/mathlib.h>
+ #include <cstring>
+ #include <cassert>
++#include <cstdio>
+ #include "celestia.h"
+ #include "astro.h"
+ #include "orbit.h"
