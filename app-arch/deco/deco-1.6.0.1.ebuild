@@ -6,9 +6,9 @@ inherit eutils
 
 RESTRICT="mirror"
 
-DESCRIPTION="extractor wrappers for the deco program"
-HOMEPAGE="http://hartlich.com/deco/archive/"
-SRC_URI="http://hartlich.com/deco/archive/download/${P}.tar.gz"
+DESCRIPTION="deco is a program able to extract various archive file formats"
+HOMEPAGE="http://hartlich.com/deco/"
+SRC_URI="http://hartlich.com/deco/download/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -16,13 +16,13 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 DEPEND=""
-RDEPEND="app-arch/deco"
+RDEPEND=""
 
 src_unpack()
 {
 	unpack ${A}
 	cd "${S}"
-	epatch "$FILESDIR/destdir-fix.patch"
+	epatch "$FILESDIR/destdir-fix.patch" || die "Patch failed"
 }
 
 src_install()
