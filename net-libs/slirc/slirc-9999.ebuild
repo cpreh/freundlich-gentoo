@@ -24,7 +24,6 @@ RDEPEND="dev-libs/boost
 
 src_unpack() {
 	subversion_src_unpack
-	epatch "${FILESDIR}/slirc.patch"
 }
 
 src_compile() {
