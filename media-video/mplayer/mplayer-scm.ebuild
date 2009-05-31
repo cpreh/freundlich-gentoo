@@ -5,11 +5,11 @@
 EAPI="2"
 
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
-[[ ${PV} = *9999* ]] && SVN_ECLASS="subversion" || SVN_ECLASS=""
+SVN_ECLASS="subversion" || SVN_ECLASS=""
 
 inherit eutils flag-o-matic multilib ${SVN_ECLASS}
 
-[[ ${PV} != *9999* ]] && MPLAYER_REVISION=29330
+MPLAYER_REVISION=29330
 
 IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +amrnb +amrwb +ass
 bidi bindist bl +cddb +cdio cdparanoia cpudetection custom-cflags
@@ -36,11 +36,7 @@ FONT_URI="
 	mirror://mplayer/releases/fonts/font-arial-iso-8859-2.tar.bz2
 	mirror://mplayer/releases/fonts/font-arial-cp1250.tar.bz2
 "
-if [[ ${PV} = *9999* ]]; then
-	RELEASE_URI=""
-else
-	RELEASE_URI="mirror://gentoo/${P}.tar.bz2"
-fi
+RELEASE_URI=""
 SRC_URI="${RELEASE_URI}
 	!truetype? ( ${FONT_URI} )
 	gmplayer? ( mirror://mplayer/Skin/Blue-${BLUV}.tar.bz2 )
@@ -230,7 +226,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-	[[ ${PV} = *9999* ]] && subversion_src_unpack || unpack ${A}
+	subversion_src_unpack
 
 	if ! use truetype; then
 		unpack font-arial-iso-8859-1.tar.bz2 \
@@ -243,14 +239,9 @@ src_unpack() {
 }
 
 src_prepare() {
-	if [[ ${PV} = *9999* ]]; then
-		# Set SVN version manually
-		subversion_wc_info
-		sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
-	else
-		# Set version #
-		sed -i s/UNKNOWN/${MPLAYER_REVISION}/ "${S}/version.sh"
-	fi
+	# Set SVN version manually
+	subversion_wc_info
+	sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
 
 	if use svga; then
 		echo
