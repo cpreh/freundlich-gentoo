@@ -1,0 +1,24 @@
+diff -Nurp src_old/command.C src/command.C
+--- src_old/command.C	2009-06-03 12:33:38.325126253 +0200
++++ src/command.C	2009-06-03 12:34:56.304011213 +0200
+@@ -3336,7 +3336,7 @@ rxvt_term::process_xterm_seq (int op, co
+           }
+         else
+           {
+-            char *eq = strchr (str, '='); // constness lost, but verified to be ok
++            char *eq = (char *)strchr (str, '='); // constness lost, but verified to be ok
+ 
+             if (eq)
+               {
+diff -Nurp src_old/misc.C src/misc.C
+--- src_old/misc.C	2009-06-03 12:33:38.324126311 +0200
++++ src/misc.C	2009-06-03 12:44:22.603011174 +0200
+@@ -170,7 +170,7 @@ rxvt_utf8towcs (const char *str, int len
+ char *
+ rxvt_basename (const char *str) NOTHROW
+ {
+-  char *base = strrchr (str, '/');
++  char *base = (char *)strrchr (str, '/');
+ 
+   return (char *) (base ? base + 1 : str);
+ }
