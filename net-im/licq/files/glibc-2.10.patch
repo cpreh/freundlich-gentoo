@@ -1,0 +1,112 @@
+diff --git a/src/file.cpp b/src/file.cpp
+index 99bbead..44b0926 100644
+--- src/file.cpp
++++ src/file.cpp
+@@ -552,7 +552,7 @@ char *CIniFile::GetDataFromLine(char *_szBuffer, const char *_szLine,
+                                 bool bTrim, int _nMax)
+ {
+   //static char s_szData[MAX_LINE_LEN];
+-  char *szPostEquals;
++  char const *szPostEquals;
+   char szData[MAX_LINE_LEN];
+   int nMax = (_nMax > 0 ? _nMax : MAX_LINE_LEN);
+ 
+diff --git a/src/icqd-filetransfer.cpp b/src/icqd-filetransfer.cpp
+index 42c6c82..2bbe18d 100644
+--- src/icqd-filetransfer.cpp
++++ src/icqd-filetransfer.cpp
+@@ -102,7 +102,7 @@ CPFile_Info::CPFile_Info(const char *_szFileName)
+   m_bValid = true;
+   m_nError = 0;
+ 
+-  char *pcNoPath = NULL;
++  char const *pcNoPath = NULL;
+   struct stat buf;
+ 
+   // Remove any path from the filename
+diff --git a/src/icqpacket.cpp b/src/icqpacket.cpp
+index 5b0394e..448eee7 100644
+--- src/icqpacket.cpp
++++ src/icqpacket.cpp
+@@ -5874,7 +5874,7 @@ CPX_FileTransfer::CPX_FileTransfer(ConstFileList &lFileList, const char *_szFile
+   }
+ 
+   // Remove path from filename (if it exists)
+-  char *pcEndOfPath = strrchr(_szFilename, '/');
++  char const *pcEndOfPath = strrchr(_szFilename, '/');
+   if (pcEndOfPath != NULL)
+      m_szFilename = strdup(pcEndOfPath + 1);
+   else
+diff --git a/src/licq.cpp b/src/licq.cpp
+index 696b085..b1a66a6 100644
+--- src/licq.cpp
++++ src/licq.cpp
+@@ -183,14 +183,14 @@ extern "C" void DisplayFatalError(const char* error, int useLicqLog)
+ /*-----Helper functions for CLicq::UpgradeLicq-----------------------------*/
+ int SelectUserUtility(const struct dirent *d)
+ {
+-  char *pcDot = strrchr(d->d_name, '.');
++  char const *pcDot = strrchr(d->d_name, '.');
+   if (pcDot == NULL) return (0);
+   return (strcmp(pcDot, ".uin") == 0);
+ }
+ 
+ int SelectHistoryUtility(const struct dirent *d)
+ {
+-  char *pcDot = strchr(d->d_name, '.');
++  char const *pcDot = strchr(d->d_name, '.');
+   if (pcDot == NULL) return (0);
+   return (strcmp(pcDot, ".history") == 0 ||
+           strcmp(pcDot, ".history.removed") == 0);
+diff --git a/src/rtf.cc b/src/rtf.cc
+index 0dd3145..373c495 100644
+--- src/rtf.cc
++++ src/rtf.cc
+@@ -2141,7 +2141,7 @@ void Level::setText(const char *str)
+         return;
+     }
+     if (m_bFontName){
+-        char *pp = strchr(str, ';');
++        char const *pp = strchr(str, ';');
+         unsigned size = strlen(pp);
+         if (pp){
+             size = (pp - str);
+diff --git a/src/rtf.ll b/src/rtf.ll
+index 43f5b5c..ab2043a 100644
+--- src/rtf.ll
++++ src/rtf.ll
+@@ -541,7 +541,7 @@ void Level::setText(const char *str)
+         return;
+     }
+     if (m_bFontName){
+-        char *pp = strchr(str, ';');
++        char const *pp = strchr(str, ';');
+         unsigned size = strlen(pp);
+         if (pp){
+             size = (pp - str);
+diff --git a/src/translate.cpp b/src/translate.cpp
+index 0184cf0..26d1040 100644
+--- src/translate.cpp
++++ src/translate.cpp
+@@ -76,7 +76,7 @@ void CTranslator::setDefaultTranslationMap()
+ bool CTranslator::setTranslationMap(const char* mapFileName)
+ {
+   // Map name is the file name with no path
+-  char* sep = strrchr(mapFileName, '/');
++  char const * sep = strrchr(mapFileName, '/');
+   const char* mapName = (sep == NULL ? mapFileName : sep + 1);
+ 
+   if (strcmp(mapName, "LATIN_1") == 0)
+diff --git a/src/utility.cpp b/src/utility.cpp
+index 15d8792..ce4b31d 100644
+--- src/utility.cpp
++++ src/utility.cpp
+@@ -46,7 +46,7 @@ using namespace std;
+ //=====CUtilityManager==========================================================
+ int SelectUtility(const struct dirent *d)
+ {
+-  char *pcDot = strrchr(d->d_name, '.');
++  char const *pcDot = strrchr(d->d_name, '.');
+   if (pcDot == NULL) return (0);
+   return (strcmp(pcDot, ".utility") == 0);
+ }
