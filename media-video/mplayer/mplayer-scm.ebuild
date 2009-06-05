@@ -1,15 +1,15 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.5 2009/05/30 23:07:31 scarabeus Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-scm.ebuild,v 1.7 2009/06/04 16:34:46 beandog Exp $
 
 EAPI="2"
 
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
-SVN_ECLASS="subversion" || SVN_ECLASS=""
+[[ ${PV} = *scm* ]] && SVN_ECLASS="subversion" || SVN_ECLASS=""
 
 inherit eutils flag-o-matic multilib ${SVN_ECLASS}
 
-MPLAYER_REVISION=29330
+[[ ${PV} != *scm* ]] && MPLAYER_REVISION=29330
 
 IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +amrnb +amrwb +ass
 bidi bindist bl +cddb +cdio cdparanoia cpudetection custom-cflags
@@ -36,10 +36,14 @@ FONT_URI="
 	mirror://mplayer/releases/fonts/font-arial-iso-8859-2.tar.bz2
 	mirror://mplayer/releases/fonts/font-arial-cp1250.tar.bz2
 "
-RELEASE_URI=""
+if [[ ${PV} = *scm* ]]; then
+	RELEASE_URI=""
+else
+	RELEASE_URI="mirror://gentoo/${P}.tar.bz2"
+fi
 SRC_URI="${RELEASE_URI}
 	!truetype? ( ${FONT_URI} )
-	gmplayer? ( mirror://mplayer/Skin/Blue-${BLUV}.tar.bz2 )
+	gmplayer? ( mirror://mplayer/skins/Blue-${BLUV}.tar.bz2 )
 	svga? ( http://mplayerhq.hu/~alex/svgalib_helper-${SVGV}-mplayer.tar.bz2 )
 "
 
@@ -172,6 +176,14 @@ LICENSE="GPL-2"
 KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
 
 pkg_setup() {
+	if [[ ${PV} = *scm* ]]; then
+		elog ""
+		elog "This is a live ebuild which installs the latest from upstream's"
+		elog "subversion repository, and is unsupported by Gentoo."
+		elog "Everything but bugs in the ebuild itself will be ignored."
+		elog ""
+	fi
+
 	if [[ -n ${LINGUAS} ]]; then
 		elog ""
 		elog "MPlayer's build system uses the LINGUAS variable for both"
@@ -226,7 +238,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-	subversion_src_unpack
+	[[ ${PV} = *scm* ]] && subversion_src_unpack || unpack ${A}
 
 	if ! use truetype; then
 		unpack font-arial-iso-8859-1.tar.bz2 \
@@ -239,9 +251,14 @@ src_unpack() {
 }
 
 src_prepare() {
-	# Set SVN version manually
-	subversion_wc_info
-	sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
+	if [[ ${PV} = *scm* ]]; then
+		# Set SVN version manually
+		subversion_wc_info
+		sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
+	else
+		# Set version #
+		sed -i s/UNKNOWN/${MPLAYER_REVISION}/ "${S}/version.sh"
+	fi
 
 	if use svga; then
 		echo
@@ -598,6 +615,8 @@ src_install() {
 
 	insinto /etc/mplayer
 	newins "${S}/etc/example.conf" mplayer.conf
+	doins "${S}/etc/input.conf"
+	use osdmenu && doins "${S}/etc/menu.conf"
 
 	if use ass || use truetype;	then
 		cat >> "${D}/etc/mplayer/mplayer.conf" << EOT
@@ -618,9 +637,6 @@ EOT
 
 	newbin "${S}/TOOLS/midentify.sh" midentify
 
-	insinto /usr/share/mplayer
-	doins "${S}/etc/input.conf"
-	use osdmenu && doins "${S}/etc/menu.conf"
 }
 
 pkg_preinst() {
