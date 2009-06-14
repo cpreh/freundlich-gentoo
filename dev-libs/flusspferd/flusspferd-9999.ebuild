@@ -20,7 +20,7 @@ RDEPEND="
 	>=dev-lang/spidermonkey-1.7[unicode]
 	>=dev-libs/boost-1.36
 	curl? ( net-misc/curl )
-	gmp? ( dev-libs/gmp )
+	gmp? ( dev-libs/gmp[-nocxx] )
 	sqlite? ( >=dev-db/sqlite-3 )
 	xml? ( dev-libs/libxml2 )"
 DEPEND="${RDEPEND}
