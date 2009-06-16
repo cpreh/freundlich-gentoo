@@ -253,12 +253,12 @@ src_install() {
 		fi
 
 		# Add the aliases
-		[ -f "${FILESDIR}/nvidia" ] || die "nvidia missing in FILESDIR"
+		[ -f "${FILESDIR}/nvidia.conf" ] || die "nvidia missing in FILESDIR"
 		sed -e 's:PACKAGE:'${PF}':g' \
 			-e 's:VIDEOGID:'${VIDEOGROUP}':' "${FILESDIR}"/nvidia-169.07 > \
-			"${WORKDIR}"/nvidia
+			"${WORKDIR}"/nvidia.conf
 		insinto /etc/modprobe.d
-		doins "${WORKDIR}"/nvidia || die
+		doins "${WORKDIR}"/nvidia.conf || die
 	elif use x86-fbsd; then
 		insinto /boot/modules
 		doins "${WORKDIR}/${NV_PACKAGE}/src/nvidia.kld" || die
@@ -475,7 +475,7 @@ pkg_postinst() {
 
 	elog "This ebuild installs a kernel module and X driver. Both must"
 	elog "match explicitly in their version. This means, if you restart"
-	elog "X, you most modprobe -r nvidia before starting it back up"
+	elog "X, you must modprobe -r nvidia before starting it back up"
 	elog
 
 	elog "To use the NVIDIA GLX, run \"eselect opengl set nvidia\""
