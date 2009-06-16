@@ -43,7 +43,8 @@ QA_TEXTRELS_x86="usr/lib/libXvMCNVIDIA.so.${PV}
 	usr/lib/opengl/nvidia/lib/libGLcore.so.${PV}
 	usr/lib/opengl/nvidia/extensions/libglx.so
 	usr/lib/xorg/modules/drivers/nvidia_drv.so
-	usr/lib/libcuda.so.${PV}"
+	usr/lib/libcuda.so.${PV}
+	usr/lib/libvdpau_nvidia.so.${PV}"
 
 QA_TEXTRELS_x86_fbsd="boot/modules/nvidia.ko
 	usr/lib/opengl/nvidia/lib/libGL.so.1
@@ -58,7 +59,8 @@ QA_TEXTRELS_amd64="usr/lib32/opengl/nvidia/tls/libnvidia-tls.so.${PV}
 	usr/lib32/opengl/nvidia/lib/libGLcore.so.${PV}
 	usr/lib32/opengl/nvidia/lib/libGL.so.${PV}
 	usr/lib32/opengl/nvidia/lib/libnvidia-cfg.so.${PV}
-	usr/lib32/libcuda.so.${PV}"
+	usr/lib32/libcuda.so.${PV}
+	usr/lib32/libvdpau_nvidia.so.${PV}"
 
 QA_EXECSTACK_x86="usr/lib/opengl/nvidia/lib/libGL.so.${PV}
 	usr/lib/opengl/nvidia/lib/libGLcore.so.${PV}
@@ -74,17 +76,59 @@ QA_EXECSTACK_amd64="usr/lib32/opengl/nvidia/lib/libGLcore.so.${PV}
 	usr/lib64/opengl/nvidia/lib/libGL.so.${PV}
 	usr/lib64/opengl/nvidia/lib/libnvidia-cfg.so.${PV}
 	usr/lib64/opengl/nvidia/extensions/libglx.so
-	usr/bin/nvidia-xconfig"
+	usr/bin/nvidia-xconfig
+	usr/lib64/libXvMCNVIDIA.a:NVXVMC.o"
 
 QA_WX_LOAD_x86="usr/lib/opengl/nvidia/lib/libGLcore.so.${PV}
 	usr/lib/opengl/nvidia/lib/libGL.so.${PV}
-	usr/lib/opengl/nvidia/extensions/libglx.so"
+	usr/lib/opengl/nvidia/extensions/libglx.so
+	usr/lib/libXvMCNVIDIA.a"
 
 QA_WX_LOAD_amd64="usr/lib32/opengl/nvidia/lib/libGLcore.so.${PV}
 	usr/lib32/opengl/nvidia/lib/libGL.so.${PV}
 	usr/lib64/opengl/nvidia/lib/libGLcore.so.${PV}
 	usr/lib64/opengl/nvidia/lib/libGL.so.${PV}
 	usr/lib64/opengl/nvidia/extensions/libglx.so"
+
+# we really should have QA_DT_HASH_x86 and QA_DT_HASH_amd64 but Portage
+# does not support it. bug #271416
+
+QA_DT_HASH="usr/lib32/libvdpau_trace.so.${PV}
+	usr/lib32/libvdpau.so.${PV}
+	usr/lib32/libcuda.so.${PV}
+	usr/lib32/opengl/nvidia/no-tls/libnvidia-tls.so.${PV}
+	usr/lib32/opengl/nvidia/lib/libGLcore.so.${PV}
+	usr/lib32/opengl/nvidia/lib/libGL.so.${PV}
+	usr/lib32/opengl/nvidia/tls/libnvidia-tls.so.${PV}
+	usr/lib32/libvdpau_nvidia.so.${PV}
+	usr/bin/nvidia-xconfig
+	usr/lib64/libvdpau_trace.so.${PV}
+	usr/lib64/libvdpau.so.${PV}
+	usr/lib64/libcuda.so.${PV}
+	usr/lib64/opengl/nvidia/no-tls/libnvidia-tls.so.${PV}
+	usr/lib64/opengl/nvidia/lib/libnvidia-cfg.so.${PV}
+	usr/lib64/opengl/nvidia/lib/libGLcore.so.${PV}
+	usr/lib64/opengl/nvidia/lib/libGL.so.${PV}
+	usr/lib64/opengl/nvidia/tls/libnvidia-tls.so.${PV}
+	usr/lib64/opengl/nvidia/extensions/libwfb.so
+	usr/lib64/opengl/nvidia/extensions/libglx.so
+	usr/lib64/xorg/modules/drivers/nvidia_drv.so
+	usr/lib64/libXvMCNVIDIA.so.${PV}
+	usr/lib64/libvdpau_nvidia.so.${PV}
+
+	usr/lib/libvdpau_trace.so.${PV}
+	usr/lib/libvdpau.so.${PV}
+	usr/lib/libcuda.so.${PV}
+	usr/lib/opengl/nvidia/no-tls/libnvidia-tls.so.${PV}
+	usr/lib/opengl/nvidia/lib/libnvidia-cfg.so.${PV}
+	usr/lib/opengl/nvidia/lib/libGLcore.so.${PV}
+	usr/lib/opengl/nvidia/lib/libGL.so.${PV}
+	usr/lib/opengl/nvidia/tls/libnvidia-tls.so.${PV}
+	usr/lib/opengl/nvidia/extensions/libwfb.so
+	usr/lib/opengl/nvidia/extensions/libglx.so
+	usr/lib/xorg/modules/drivers/nvidia_drv.so
+	usr/lib/libXvMCNVIDIA.so.${PV}
+	usr/lib/libvdpau_nvidia.so.${PV}"
 
 if use x86; then
 	PKG_V="-pkg0"
@@ -117,10 +161,10 @@ mtrr_check() {
 
 paravirt_check() {
 	ebegin "Checking for Paravirtualized guest support"
-	linux_chkconfig_present PARAVIRT
+	linux_chkconfig_present PARAVIRT_GUEST
 
 	if [[ $? -eq 0 ]]; then
-		eerror "Please disable PARAVIRT in your kernel config, found at:"
+		eerror "Please disable PARAVIRT_GUEST in your kernel config, found at:"
 		eerror
 		eerror "  Processor type and features"
 		eerror "    [*] Paravirtualized guest support"
@@ -128,7 +172,7 @@ paravirt_check() {
 		eerror "or XEN support"
 		eerror
 		eerror "and recompile your kernel .."
-		die "PARAVIRT support detected!"
+		die "PARAVIRT_GUEST support detected!"
 	fi
 }
 
