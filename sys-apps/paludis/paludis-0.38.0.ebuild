@@ -17,7 +17,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 COMMON_DEPEND="
 	>=app-admin/eselect-1.0.2
 	>=app-admin/eselect-news-20071201
-	>=app-shells/bash-3
+	>=app-shells/bash-3.2
 	inquisitio? ( dev-libs/libpcre[cxx] )
 	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1 )
 	qa? ( dev-libs/libpcre[cxx] >=dev-libs/libxml2-2.6 app-crypt/gnupg )
@@ -79,7 +79,7 @@ src_compile() {
 
 src_install() {
 	emake DESTDIR="${D}" install || die "install failed"
-	dodoc AUTHORS README ChangeLog NEWS
+	dodoc AUTHORS README NEWS
 
 	BASH_COMPLETION_NAME="adjutrix" dobashcompletion bash-completion/adjutrix
 	BASH_COMPLETION_NAME="paludis" dobashcompletion bash-completion/paludis
