@@ -78,12 +78,16 @@ GCC_CONFIG_VER=${GCC_CONFIG_VER:-$(replace_version_separator 3 '-' ${GCC_PV})}
 if [[ ${GCC_PV} != ${GCC_PV/_pre/-} ]] ; then
 	PRERELEASE=${GCC_PV/_pre/-}
 fi
+
 # make _alpha and _beta ebuilds automatically use a snapshot
 if [[ ${GCC_PV} != ${GCC_PV/_alpha/} ]] ; then
 	SNAPSHOT=${GCC_BRANCH_VER}-${GCC_PV##*_alpha}
 elif [[ ${GCC_PV} != ${GCC_PV/_beta/} ]] ; then
 	SNAPSHOT=${GCC_BRANCH_VER}-${GCC_PV##*_beta}
+elif [[ ${GCC_PV} != ${GCC_PV/_rc/-} ]] ; then
+	SNAPSHOT=${GCC_PV/_rc/-RC-}
 fi
+
 export GCC_FILESDIR=${GCC_FILESDIR:-${FILESDIR}}
 
 if [[ ${ETYPE} == "gcc-library" ]] ; then
