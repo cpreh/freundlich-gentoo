@@ -1,10 +1,8 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.37.0-r1.ebuild,v 1.2 2009/04/14 11:44:10 dev-zero Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.39.0.ebuild,v 1.2 2009/07/16 09:36:51 dev-zero Exp $
 
 EAPI="2"
-
-RESTRICT="mirror"
 
 inherit python flag-o-matic multilib toolchain-funcs versionator check-reqs
 
@@ -16,24 +14,20 @@ DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
 SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
 LICENSE="freedist Boost-1.0"
-SLOT="1.39"
-IUSE="debug doc eselect expat icu mpi python tools"
+SLOT="$(get_version_component_range 1-2)"
+IUSE="debug doc +eselect expat icu mpi python tools"
 
 RDEPEND="icu? ( >=dev-libs/icu-3.3 )
 	expat? ( dev-libs/expat )
-	mpi? ( || ( sys-cluster/openmpi sys-cluster/mpich2 ) )
+	mpi? ( || ( >=sys-cluster/openmpi-1.3[cxx] =sys-cluster/openmpi-1.2*[-nocxx] ) )
 	sys-libs/zlib
 	python? ( virtual/python )
-	!<=dev-libs/boost-1.35.0-r2
-	>=app-admin/eselect-boost-0.3-r1"
+	!!<=dev-libs/boost-1.35.0-r2
+	>=app-admin/eselect-boost-0.3"
 DEPEND="${RDEPEND}
 	dev-util/boost-build:${SLOT}"
 
 S=${WORKDIR}/${MY_P}
-
-# Maintainer Information
-# ToDo:
-# - write a patch to support /dev/urandom on FreeBSD and OSX (see below)
 
 MAJOR_PV=$(replace_all_version_separators _ ${SLOT})
 BJAM="bjam-${MAJOR_PV}"
@@ -81,15 +75,18 @@ pkg_setup() {
 }
 
 src_prepare() {
+	epatch "${FILESDIR}/01_all_1.39.0-tools_wave_cpp.patch"
 	epatch "${FILESDIR}/02_all_1.37.0-function-templates-compile-fix.patch"
 	epatch "${FILESDIR}/07_all_1.35.0-fix_mpi_installation.patch"
 	epatch "${FILESDIR}/remove_toolset_from_targetname.patch"
 	epatch "${FILESDIR}/boost-gcc-4.4-partial.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
-	if ! use userland_Darwin ; then
+	if [[ -e /dev/urandom ]] ; then
 		mkdir -p libs/random/build
 		cp "${FILESDIR}/random-Jamfile" libs/random/build/Jamfile.v2
+		# yeah, we WANT it to work on non-Linux too
+		sed -i -e 's/#ifdef __linux__/#if 1/' libs/random/random_device.cpp || die
 	fi
 }
 
@@ -99,9 +96,11 @@ src_configure() {
 	local compiler compilerVersion compilerExecutable mpi
 	if [[ ${CHOST} == *-darwin* ]] ; then
 		compiler=darwin
-		compilerVersion=$(gcc-version)
+		compilerVersion=$(gcc-fullversion)
 		compilerExecutable=$(tc-getCXX)
-		append-ldflags -ldl
+		# we need to add the prefix, and in two cases this exceeds, so prepare
+		# for the largest possible space allocation
+		append-ldflags -Wl,-headerpad_max_install_names
 	else
 		compiler=gcc
 		compilerVersion=$(gcc-version)
@@ -151,15 +150,15 @@ src_compile() {
 
 	NUMJOBS=$(sed -e 's/.*\(\-j[ 0-9]\+\) .*/\1/; s/--jobs=\?/-j/' <<< ${MAKEOPTS})
 
-	elog "Using the following options to build: "
-	elog "  ${OPTIONS}"
+	einfo "Using the following options to build: "
+	einfo "  ${OPTIONS}"
 
 	export BOOST_ROOT="${S}"
 
 	${BJAM} ${NUMJOBS} -q \
 		gentoorelease \
 		${OPTIONS} \
-		threading=single,multi link=shared runtime-link=shared \
+		threading=single,multi link=shared,static runtime-link=shared \
 		|| die "building boost failed"
 
 	# ... and do the whole thing one more time to get the debug libs
@@ -167,7 +166,7 @@ src_compile() {
 		${BJAM} ${NUMJOBS} -q \
 			gentoodebug \
 			${OPTIONS} \
-			threading=single,multi link=shared runtime-link=shared \
+			threading=single,multi link=shared,static runtime-link=shared \
 			--buildid=debug \
 			|| die "building boost failed"
 	fi
@@ -183,15 +182,15 @@ src_compile() {
 }
 
 src_install () {
-	elog "Using the following options to install: "
-	elog "  ${OPTIONS}"
+	einfo "Using the following options to install: "
+	einfo "  ${OPTIONS}"
 
 	export BOOST_ROOT="${S}"
 
 	${BJAM} -q \
 		gentoorelease \
 		${OPTIONS} \
-		threading=single,multi link=shared runtime-link=shared \
+		threading=single,multi link=shared,static runtime-link=shared \
 		--includedir="${D}/usr/include" \
 		--libdir="${D}/usr/$(get_libdir)" \
 		install || die "install failed for options '${OPTIONS}'"
@@ -200,7 +199,7 @@ src_install () {
 		${BJAM} -q \
 			gentoodebug \
 			${OPTIONS} \
-			threading=single,multi link=shared runtime-link=shared \
+			threading=single,multi link=shared,static runtime-link=shared \
 			--includedir="${D}/usr/include" \
 			--libdir="${D}/usr/$(get_libdir)" \
 			--buildid=debug \
@@ -245,7 +244,7 @@ src_install () {
 	# Remove (unversioned) symlinks
 	# And check for what we remove to catch bugs
 	# got a better idea how to do it? tell me!
-	for f in $(ls -1 *.{a,so} | grep -v "${MAJOR_PV}") ; do
+	for f in $(ls -1 *{.a,$(get_libname)} | grep -v "${MAJOR_PV}") ; do
 		if [ ! -h "${f}" ] ; then
 			eerror "Ups, tried to remove '${f}' which is a a real file instead of a symlink"
 			die "slotting/naming of the libs broken!"
@@ -255,24 +254,24 @@ src_install () {
 
 	# The threading libs obviously always gets the "-mt" (multithreading) tag
 	# some packages seem to have a problem with it. Creating symlinks...
-	for lib in libboost_thread-mt-${MAJOR_PV}{.a,.so} ; do
+	for lib in libboost_thread-mt-${MAJOR_PV}{.a,$(get_libname)} ; do
 		dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
 	done
 
 	# The same goes for the mpi libs
 	if use mpi ; then
-		for lib in libboost_mpi-mt-${MAJOR_PV}{.a,.so} ; do
+		for lib in libboost_mpi-mt-${MAJOR_PV}{.a,$(get_libname)} ; do
 			dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
 		done
 	fi
 
 	if use debug ; then
-		for lib in libboost_thread-mt-${MAJOR_PV}-debug{.a,.so} ; do
+		for lib in libboost_thread-mt-${MAJOR_PV}-debug{.a,$(get_libname)} ; do
 			dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
 		done
 
 		if use mpi ; then
-			for lib in libboost_mpi-mt-${MAJOR_PV}-debug{.a,.so} ; do
+			for lib in libboost_mpi-mt-${MAJOR_PV}-debug{.a,$(get_libname)} ; do
 				dosym ${lib} "/usr/$(get_libdir)/$(sed -e 's/-mt//' <<< ${lib})"
 			done
 		fi
@@ -283,7 +282,7 @@ src_install () {
 	dodir /usr/$(get_libdir)/boost-${MAJOR_PV}
 
 	_add_line "libs=\"" default
-	for f in $(ls -1 *.{a,so} | grep -v debug) ; do
+	for f in $(ls -1 *{.a,$(get_libname)} | grep -v debug) ; do
 		dosym ../${f} /usr/$(get_libdir)/boost-${MAJOR_PV}/${f/-${MAJOR_PV}}
 		_add_line "/usr/$(get_libdir)/${f}" default
 	done
@@ -292,7 +291,7 @@ src_install () {
 	if use debug ; then
 		_add_line "libs=\"" debug
 		dodir /usr/$(get_libdir)/boost-${MAJOR_PV}-debug
-		for f in $(ls -1 *.{a,so} | grep debug) ; do
+		for f in $(ls -1 *{.a,$(get_libname)} | grep debug) ; do
 			dosym ../${f} /usr/$(get_libdir)/boost-${MAJOR_PV}-debug/${f/-${MAJOR_PV}-debug}
 			_add_line "/usr/$(get_libdir)/${f}" debug
 		done
@@ -330,6 +329,37 @@ src_install () {
 	fi
 
 	use python && python_need_rebuild
+
+	# boost's build system truely sucks for not having a destdir.  Because for
+	# this reason we are forced to build with a prefix that includes the
+	# DESTROOT, dynamic libraries on Darwin end messed up, referencing the
+	# DESTROOT instread of the actual EPREFIX.  There is no way out of here
+	# but to do it the dirty way of manually setting the right install_names.
+	[[ -z ${ED+set} ]] && local ED=${D%/}${EPREFIX}/
+	if [[ ${CHOST} == *-darwin* ]] ; then
+		einfo "Working around completely broken build-system(tm)"
+		for d in "${ED}"usr/lib/*.dylib ; do
+			if [[ -f ${d} ]] ; then
+				# fix the "soname"
+				ebegin "  correcting install_name of ${d#${ED}}"
+				install_name_tool -id "/${d#${D}}" "${d}"
+				eend $?
+				# fix references to other libs
+				refs=$(otool -XL "${d}" | \
+					sed -e '1d' -e 's/^\t//' | \
+					grep "^libboost_" | \
+					cut -f1 -d' ')
+				for r in ${refs} ; do
+					ebegin "    correcting reference to ${r}"
+					install_name_tool -change \
+						"${r}" \
+						"${EPREFIX}/usr/lib/${r}" \
+						"${d}"
+					eend $?
+				done
+			fi
+		done
+	fi
 }
 
 src_test() {
