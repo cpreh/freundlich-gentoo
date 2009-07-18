@@ -68,8 +68,8 @@ RDEPEND="sys-libs/ncurses
 	X? ( ${X_RDEPS} )
 	aalib? ( media-libs/aalib )
 	alsa? ( media-libs/alsa-lib )
-	amrnb? ( media-libs/amrnb )
-	amrwb? ( media-libs/amrwb )
+	amrnb? ( media-libs/opencore-amr )
+	amrwb? ( media-libs/opencore-amr )
 	ass? ( ${FONT_RDEPS} )
 	bidi? ( dev-libs/fribidi )
 	cdio? ( dev-libs/libcdio )
@@ -389,8 +389,8 @@ src_configure() {
 	myconf="${myconf} --disable-liba52"
 
 	use aac || myconf="${myconf} --disable-faad-internal"
-	use amrnb || myconf="${myconf} --disable-libamr_nb"
-	use amrwb || myconf="${myconf} --disable-libamr_wb"
+	use amrnb || myconf="${myconf} --disable-libopencore_amrnb"
+	use amrwb || myconf="${myconf} --disable-libopencore_amrwb"
 	use dirac || myconf="${myconf} --disable-libdirac-lavc"
 	use dts || myconf="${myconf} --disable-libdca"
 	use dv || myconf="${myconf} --disable-libdv"
