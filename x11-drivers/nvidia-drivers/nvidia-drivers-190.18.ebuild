@@ -248,11 +248,6 @@ src_unpack() {
 	# Use some more sensible gl headers and make way for new glext.h
 	epatch "${FILESDIR}"/NVIDIA_glx-glheader.patch
 
-	# allow on board sensors to work with lm_sensors
-	if use kernel_linux; then
-		epatch "${FILESDIR}"/NVIDIA_i2c-hwmon.patch
-	fi
-
 	if use kernel_linux; then
 		# Quiet down warnings the user does not need to see
 		sed -i \
@@ -297,12 +292,12 @@ src_install() {
 		fi
 
 		# Add the aliases
-		[ -f "${FILESDIR}/nvidia.conf" ] || die "nvidia missing in FILESDIR"
+		[ -f "${FILESDIR}/nvidia" ] || die "nvidia missing in FILESDIR"
 		sed -e 's:PACKAGE:'${PF}':g' \
 			-e 's:VIDEOGID:'${VIDEOGROUP}':' "${FILESDIR}"/nvidia-169.07 > \
-			"${WORKDIR}"/nvidia.conf
+			"${WORKDIR}"/nvidia
 		insinto /etc/modprobe.d
-		doins "${WORKDIR}"/nvidia.conf || die
+		newins "${WORKDIR}"/nvidia nvidia.conf || die
 	elif use x86-fbsd; then
 		insinto /boot/modules
 		doins "${WORKDIR}/${NV_PACKAGE}/src/nvidia.kld" || die
@@ -318,12 +313,6 @@ src_install() {
 		done
 		ABI=${OABI}
 		unset OABI
-	elif use amd64 ; then
-		src_install-libs lib32 $(get_multilibdir)
-		src_install-libs lib $(get_libdir)
-
-		rm -rf "${D}"/usr/$(get_multilibdir)/opengl/nvidia/include
-		rm -rf "${D}"/usr/$(get_multilibdir)/opengl/nvidia/extensions
 	else
 		src_install-libs
 	fi
