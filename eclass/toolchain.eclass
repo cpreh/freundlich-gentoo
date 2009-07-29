@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.402 2009/07/05 19:56:42 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.403 2009/07/26 20:09:59 halcy0n Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -78,7 +78,6 @@ GCC_CONFIG_VER=${GCC_CONFIG_VER:-$(replace_version_separator 3 '-' ${GCC_PV})}
 if [[ ${GCC_PV} != ${GCC_PV/_pre/-} ]] ; then
 	PRERELEASE=${GCC_PV/_pre/-}
 fi
-
 # make _alpha and _beta ebuilds automatically use a snapshot
 if [[ ${GCC_PV} != ${GCC_PV/_alpha/} ]] ; then
 	SNAPSHOT=${GCC_BRANCH_VER}-${GCC_PV##*_alpha}
@@ -87,7 +86,6 @@ elif [[ ${GCC_PV} != ${GCC_PV/_beta/} ]] ; then
 elif [[ ${GCC_PV} != ${GCC_PV/_rc/-} ]] ; then
 	SNAPSHOT=${GCC_PV/_rc/-RC-}
 fi
-
 export GCC_FILESDIR=${GCC_FILESDIR:-${FILESDIR}}
 
 if [[ ${ETYPE} == "gcc-library" ]] ; then
@@ -503,7 +501,7 @@ want_minispecs() {
 		if [[ -n ${SPECS_VER} ]] ; then
 			return 0
 		else
-			die "For Hardend to work you need the minispecs files"
+			die "For Hardened to work you need the minispecs files"
 		fi
 	fi
 	return 1
@@ -2231,7 +2229,7 @@ do_gcc_PIE_patches() {
 		&& rm -f "${WORKDIR}"/piepatch/*/*-boundschecking-no.patch* \
 		|| rm -f "${WORKDIR}"/piepatch/*/*-boundschecking-yes.patch*
 
-	use vanilla && rm -f "${WORKDIR}"/piepatch/*/*uclibc*
+	use vanilla && return 0
 
 	if tc_version_is_at_least 4.3.2; then
 		guess_patch_type_in_dir "${WORKDIR}"/piepatch/
