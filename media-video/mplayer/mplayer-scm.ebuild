@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.11 2009/07/27 06:56:35 aballier Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.12 2009/07/31 20:43:25 beandog Exp $
 
 EAPI="2"
 
@@ -277,7 +277,13 @@ src_configure() {
 	# MPlayer reads in the LINGUAS variable from make.conf, and sets
 	# the languages accordingly.  Some will have to be altered to match
 	# upstream's naming scheme.
-	[[ -n $LINGUAS ]] && LINGUAS="${LINGUAS/da/dk}"
+	if [[ -n $LINGUAS ]]; then
+		LINGUAS="${LINGUAS/da/dk}"
+		available_linguas=$(echo $LINGUAS | awk '{ print $1 }')
+		myconf_linguas=$(echo $LINGUAS | sed s/\ /,/)
+		myconf="${myconf} --language=${available_linguas} \
+			--language-doc=${myconf_linguas} --language-man=${myconf_linguas}"
+	fi
 
 	# mplayer ebuild uses "use foo || --disable-foo" to forcibly disable
 	# compilation in almost every situation.  The reason for this is
@@ -560,7 +566,7 @@ src_configure() {
 		--libdir=/usr/$(get_libdir) \
 		${myconf}"
 
-	#echo "CFLAGS=\"${CFLAGS}\" ./configure ${myconf}"
+	echo "CFLAGS=\"${CFLAGS}\" ./configure ${myconf}"
 	CFLAGS="${CFLAGS}" ./configure ${myconf} || die "configure died"
 }
 
