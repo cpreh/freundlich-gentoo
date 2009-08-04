@@ -44,8 +44,8 @@ fi
 SRC_URI="${RELEASE_URI}
 	!truetype? ( ${FONT_URI} )
 	gmplayer? ( mirror://mplayer/skins/Blue-${BLUV}.tar.bz2 )
-	svga? ( http://mplayerhq.hu/~alex/svgalib_helper-${SVGV}-mplayer.tar.bz2 )
-"
+	svga? (	http://dev.gentoo.org/~ssuominen/svgalib_helper-${SVGV}-mplayer.tar.gz )"
+#	svga? ( http://mplayerhq.hu/~alex/svgalib_helper-${SVGV}-mplayer.tar.bz2 )
 
 DESCRIPTION="Media Player for Linux"
 HOMEPAGE="http://www.mplayerhq.hu/"
@@ -247,7 +247,7 @@ src_unpack() {
 	fi
 
 	use gmplayer && unpack "Blue-${BLUV}.tar.bz2"
-	use svga && unpack "svgalib_helper-${SVGV}-mplayer.tar.bz2"
+	use svga && unpack "svgalib_helper-${SVGV}-mplayer.tar.gz"
 }
 
 src_prepare() {
@@ -280,7 +280,7 @@ src_configure() {
 	if [[ -n $LINGUAS ]]; then
 		LINGUAS="${LINGUAS/da/dk}"
 		available_linguas=$(echo $LINGUAS | awk '{ print $1 }')
-		myconf_linguas=$(echo $LINGUAS | sed s/\ /,/)
+		myconf_linguas=$(echo $LINGUAS | tr ' ' ',')
 		myconf="${myconf} --language=${available_linguas} \
 			--language-doc=${myconf_linguas} --language-man=${myconf_linguas}"
 	fi
