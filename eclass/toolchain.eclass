@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.403 2009/07/26 20:09:59 halcy0n Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.405 2009/08/16 00:16:12 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -393,7 +393,7 @@ hardened_gcc_works() {
 
 		want_pie || return 1
 		hardened_gcc_is_stable pie && return 0
-		if has ~$(tc-arch) ${ACCEPT_KEYWORDS} ; then
+		if has "~$(tc-arch)" ${ACCEPT_KEYWORDS} ; then
 			hardened_gcc_check_unsupported pie && return 1
 			ewarn "Allowing pie-by-default for an unstable arch ($(tc-arch))"
 			return 0
@@ -402,7 +402,7 @@ hardened_gcc_works() {
 	elif [[ $1 == "ssp" ]] ; then
 		[[ -z ${PP_VER} ]] && return 1
 		hardened_gcc_is_stable ssp && return 0
-		if has ~$(tc-arch) ${ACCEPT_KEYWORDS} ; then
+		if has "~$(tc-arch)" ${ACCEPT_KEYWORDS} ; then
 			hardened_gcc_check_unsupported ssp && return 1
 			ewarn "Allowing ssp-by-default for an unstable arch ($(tc-arch))"
 			return 0
