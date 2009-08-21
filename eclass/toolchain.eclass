@@ -1211,6 +1211,12 @@ gcc-compiler-configure() {
 		#		confgcc="${confgcc} --enable-cld"
 		#	fi
 		#fi
+
+		# Stick the python scripts in their own slotted directory
+		# bug #279252
+		if tc_version_is_at_least "4.4" ; then
+			confgcc="${confgcc} --with-python-dir=${DATAPATH/$PREFIX/}/python"
+		fi
 	fi
 
 	# GTK+ is preferred over xlib in 3.4.x (xlib is unmaintained
