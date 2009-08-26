@@ -4,7 +4,7 @@
 
 inherit git
 
-EGIT_REPO_URI="git://jmdict.git.sourceforge.net/gitroot/jmdict"
+EGIT_REPO_URI="git://jmdict.git.sourceforge.net/gitroot/jmdict/jmdict"
 
 DESCRIPTION="Japanese dictionary by Florian Blümel"
 HOMEPAGE="http://jmdict.sourceforge.net/"
