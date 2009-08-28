@@ -1,0 +1,10 @@
+--- libs/mpi/build/Jamfile.v2	2009-08-28 13:50:38.000000000 +0200
++++ libs/mpi/build/Jamfile.v2	2009-08-28 13:50:12.000000000 +0200
+@@ -98,6 +98,7 @@
+         <link>shared:<define>BOOST_MPI_PYTHON_DYN_LINK=1        
+         <link>shared:<define>BOOST_PYTHON_DYN_LINK=1    
+         <link>shared 
++	<variant>release
+       ;
+   }
+ }
