@@ -204,8 +204,6 @@ src_install () {
 			install || die "install failed for options '${OPTIONS}'"
 	fi
 
-	use python || rm -rf "${D}/usr/include/boost-${MAJOR_PV}/boost"/python*
-
 	dodir /usr/share/boost-eselect/profiles/${SLOT}
 	touch "${D}/usr/share/boost-eselect/profiles/${SLOT}/default"
 	use debug && touch "${D}/usr/share/boost-eselect/profiles/${SLOT}/debug"
