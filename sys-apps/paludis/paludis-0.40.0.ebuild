@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.38.2.ebuild,v 1.2 2009/08/19 19:42:02 ulm Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.40.0.ebuild,v 1.1 2009/09/08 23:28:03 tanderson Exp $
 
 inherit bash-completion eutils flag-o-matic
 
@@ -15,8 +15,7 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 
 COMMON_DEPEND="
-	>=app-admin/eselect-1.0.2
-	|| ( >=app-admin/eselect-1.2_rc1 >=app-admin/eselect-news-20071201 )
+	>=app-admin/eselect-1.2_rc1
 	>=app-shells/bash-3.2
 	inquisitio? ( dev-libs/libpcre[cxx] )
 	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1 )
@@ -84,7 +83,6 @@ src_compile() {
 		$(use_enable vim-syntax vim ) \
 		$(use_enable visibility ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
-		--enable-sandbox \
 		--with-repositories=${repositories} \
 		--with-clients=${clients} \
 		--with-environments=${environments}
