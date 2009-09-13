@@ -9,6 +9,7 @@ HOMEPAGE="http://kcat.strangesoft.net/openal.html"
 
 EGIT_REPO_URI="git://repo.or.cz/openal-soft.git"
 
+EAPI="2"
 LICENSE="LGPL"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
@@ -21,12 +22,7 @@ RDEPEND="alsa? ( media-libs/alsa-lib )
          portaudio? ( media-libs/portaudio )
          pulseaudio? ( media-sound/puselaudio )"
 
-src_unpack() {
-	git_src_unpack
-	cd ${S}
-}
-
-src_compile() {
+src_configure() {
 	local myconf=""
 
 	use alsa || myconf="${myconf} -DALSA:=off"
@@ -36,6 +32,7 @@ src_compile() {
 	use portaudio || myconf="${myconf} -DPORTAUDIO:=off"
 	use pulseaudio || myconf="${myconf} -DPULSEAUDIO:=off"
 
+	mkdir -p CMakeConf
 	cd CMakeConf
 	cmake ${myconf} \
 		-DSOLARIS:=off \
@@ -45,6 +42,10 @@ src_compile() {
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		.. || die "cmake failed"
+}
+
+src_compile() {
+	cd CMakeConf
 	emake || die "emake failed"
 }
 
