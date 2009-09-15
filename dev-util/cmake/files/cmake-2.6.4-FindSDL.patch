@@ -1,0 +1,26 @@
+--- Modules/FindSDL.cmake	2009-09-05 11:00:53.629986537 +0200
++++ Modules/FindSDL.cmake	2009-09-05 11:04:39.735987729 +0200
+@@ -133,7 +133,6 @@
+   SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
+ ENDIF(MINGW)
+ 
+-SET(SDL_FOUND "NO")
+ IF(SDL_LIBRARY_TEMP)
+   # For SDLmain
+   IF(NOT SDL_BUILDING_LIBRARY)
+@@ -169,8 +168,14 @@
+   # Set the temp variable to INTERNAL so it is not seen in the CMake GUI
+   SET(SDL_LIBRARY_TEMP "${SDL_LIBRARY_TEMP}" CACHE INTERNAL "")
+ 
+-  SET(SDL_FOUND "YES")
+ ENDIF(SDL_LIBRARY_TEMP)
+ 
++# handle the QUIETLY and REQUIRED arguments and set SDL_FOUND to TRUE if
++# all listed variables are TRUE
++INCLUDE(FindPackageHandleStandardArgs)
++FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL DEFAULT_MSG SDL_LIBRARY)
++
++MARK_AS_ADVANCED(SDL_LIBRARY)
++
+ #MESSAGE("SDL_LIBRARY is ${SDL_LIBRARY}")
+ 

@@ -1,0 +1,83 @@
+#!/bin/sh
+
+# stop the wrapper if the local blender path is a symlink 
+if [ -L ${HOME}/.blender ]; then
+	echo "Detected a symbolic link for ${HOME}/.blender"
+	echo "Sorry, to avoid dangerous situations, the Blender binary can"
+	echo "not be started until you have removed the symbolic link:"
+	echo "  # rm -i ${HOME}/.blender"
+	exit 1
+fi
+
+
+# stupid hack for blender 2.5 not showing menus
+if [ ! -d ${HOME}/.blender/release ]; then
+	echo -n "Creating missing .blender/release in home directory ... "
+	mkdir -p ${HOME}/.blender/release
+	echo "[OK]"
+fi
+if [ ! -a ${HOME}/.blender/release/ui ] && [ ! -L ${HOME}/.blender/release/ui ]; then
+	echo -n "Creating missing .blender/release/ui in home directory ... "
+	ln -sf /usr/share/blender/ui ${HOME}/.blender/release/ui
+	echo "[OK]"
+fi
+if [ ! -a ${HOME}/.blender/release/io ] && [ ! -L ${HOME}/.blender/release/io ]; then
+        echo -n "Creating missing .blender/release/io in home directory ... "
+        ln -sf /usr/share/blender/io ${HOME}/.blender/release/io
+        echo "[OK]"
+fi
+
+# checking for the local blender configuration path
+if [ ! -d ${HOME}/.blender ]; then
+	echo -n "Creating missing .blender/ in home directory ... "
+	mkdir -p ${HOME}/.blender
+	echo "[OK]"
+fi
+
+# checking for the sequencer plugins location path
+if [ ! -d ${HOME}/.blender/plugins/sequence ]; then
+	echo -n "Creating missing sequence/ dir for plugins ... "
+	mkdir -p ${HOME}/.blender/plugins/sequence
+	echo "[OK]"
+fi
+
+# checking for the texture plugins location path
+if [ ! -d ${HOME}/.blender/plugins/texture ]; then
+	echo -n "Creating missing texture/ dir for plugins ... "
+	mkdir -p ${HOME}/.blender/plugins/texture
+	echo "[OK]"
+fi
+
+# checking for the python scripts location path
+if [ ! -d ${HOME}/.blender/scripts ]; then
+	echo -n "Creating missing scripts/ dir ... "
+	mkdir -p ${HOME}/.blender/scripts
+	echo "[OK]"
+fi
+
+# checking for the fonts location path
+if [ ! -d ${HOME}/.blender/fonts ]; then
+	echo -n "Creating missing fonts/ dir ... "
+	mkdir -p ${HOME}/.blender/fonts
+	echo "[OK]"
+fi
+
+# checking for the textures location path
+if [ ! -d ${HOME}/.blender/textures ]; then
+	echo -n "Creating missing textures/ dir ... "
+	mkdir -p ${HOME}/.blender/textures
+	echo "[OK]"
+fi
+
+# checking for the sound files location path
+if [ ! -d ${HOME}/.blender/sounds ]; then
+	echo -n "Creating missing sounds/ dir ... "
+	mkdir -p ${HOME}/.blender/sounds
+	echo "[OK]"
+fi
+
+# stupid hack for blender2.5
+cd ${HOME}/.blender
+
+# now it's safe to start the binary
+exec /usr/bin/blender-bin "$@"
