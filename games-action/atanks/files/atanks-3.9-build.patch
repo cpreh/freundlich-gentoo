@@ -1,0 +1,177 @@
+diff -ru atanks-3.9.orig/Makefile atanks-3.9/Makefile
+--- atanks-3.9.orig/Makefile	2009-09-04 20:30:53.613476220 +0200
++++ atanks-3.9/Makefile	2009-09-04 20:31:13.326806126 +0200
+@@ -13,32 +13,31 @@
+ FILENAME=atanks-${VERSION}
+ INSTALL=$(PREFIX)bin/install -c
+ DISTCOMMON=atanks/*.dat atanks/COPYING atanks/README atanks/TODO atanks/Changelog atanks/BUGS atanks/*.txt
+-INCOMMON=COPYING README TODO Changelog *.txt
++INCOMMON=*.txt
+ 
+ all:
+ 	FLAGS=-DLINUX $(MAKE) -C src
+ 
+ install: all
+-	mkdir -p ${BINDIR}
+-	$(INSTALL) -g 0 -m 755 -o 0 atanks ${BINDIR}
+-	mkdir -p ${INSTALLDIR}
+-	mkdir -p ${INSTALLDIR}/button
+-	mkdir -p ${INSTALLDIR}/misc
+-	mkdir -p ${INSTALLDIR}/missile
+-	mkdir -p ${INSTALLDIR}/sound
+-	mkdir -p ${INSTALLDIR}/stock
+-	mkdir -p ${INSTALLDIR}/tank
+-	mkdir -p ${INSTALLDIR}/tankgun
+-	mkdir -p ${INSTALLDIR}/title
+-	$(INSTALL) -g 0 -m 644 -o 0 $(INCOMMON) ${INSTALLDIR}
+-	$(INSTALL) -g 0 -m 644 -o 0 button/* ${INSTALLDIR}/button
+-	$(INSTALL) -g 0 -m 644 -o 0 misc/* ${INSTALLDIR}/misc
+-	$(INSTALL) -g 0 -m 644 -o 0 missile/* ${INSTALLDIR}/missile
+-	$(INSTALL) -g 0 -m 644 -o 0 sound/* ${INSTALLDIR}/sound
+-	$(INSTALL) -g 0 -m 644 -o 0 stock/* ${INSTALLDIR}/stock
+-	$(INSTALL) -g 0 -m 644 -o 0 tank/* ${INSTALLDIR}/tank
+-	$(INSTALL) -g 0 -m 644 -o 0 tankgun/* ${INSTALLDIR}/tankgun
+-	$(INSTALL) -g 0 -m 644 -o 0 title/* ${INSTALLDIR}/title
++	$(INSTALL) -d ${DESTDIR}${BINDIR} \
++		${DESTDIR}${INSTALLDIR}/button \
++		${DESTDIR}${INSTALLDIR}/misc \
++		${DESTDIR}${INSTALLDIR}/missile \
++		${DESTDIR}${INSTALLDIR}/sound \
++		${DESTDIR}${INSTALLDIR}/stock \
++		${DESTDIR}${INSTALLDIR}/tank \
++		${DESTDIR}${INSTALLDIR}/tankgun \
++		${DESTDIR}${INSTALLDIR}/title
++	$(INSTALL) -g 0 -m 755 -o 0 atanks ${DESTDIR}${BINDIR}
++	$(INSTALL) -g 0 -m 644 -o 0 $(INCOMMON) ${DESTDIR}${INSTALLDIR}
++	$(INSTALL) -g 0 -m 644 -o 0 button/* ${DESTDIR}${INSTALLDIR}/button
++	$(INSTALL) -g 0 -m 644 -o 0 misc/* ${DESTDIR}${INSTALLDIR}/misc
++	$(INSTALL) -g 0 -m 644 -o 0 missile/* ${DESTDIR}${INSTALLDIR}/missile
++	$(INSTALL) -g 0 -m 644 -o 0 sound/* ${DESTDIR}${INSTALLDIR}/sound
++	$(INSTALL) -g 0 -m 644 -o 0 stock/* ${DESTDIR}${INSTALLDIR}/stock
++	$(INSTALL) -g 0 -m 644 -o 0 tank/* ${DESTDIR}${INSTALLDIR}/tank
++	$(INSTALL) -g 0 -m 644 -o 0 tankgun/* ${DESTDIR}${INSTALLDIR}/tankgun
++	$(INSTALL) -g 0 -m 644 -o 0 title/* ${DESTDIR}${INSTALLDIR}/title
+         
+ 
+ user:
+diff -ru atanks-3.9.orig/src/Makefile atanks-3.9/src/Makefile
+--- atanks-3.9.orig/src/Makefile	2009-09-04 20:30:53.616810413 +0200
++++ atanks-3.9/src/Makefile	2009-09-04 20:32:01.746801320 +0200
+@@ -3,20 +3,16 @@
+ MODULES = atanks.o beam.o button.o environment.o explosion.o fade.o files.o globaldata.o \
+           missile.o perlin.o physobj.o player.o satellite.o sky.o tank.o team.o teleport.o virtobj.o update.o network.o
+ 
+-CPP=g++
+-CC=gcc
+-LD=g++
+ LIB=ar
+ WINDRES=
+-FLAGS += -DDATA_DIR=\".\" -Wno-write-strings
+-#FLAGS += -DDATA_DIR=\"${INSTALLDIR}\"  -Wno-write-strings
++FLAGS += -DDATA_DIR=\"${INSTALLDIR}\"  -Wno-write-strings
+ OUTPUT = ../atanks
+ WFLAGS = 
+ OFLAGS = 
+ LFLAGS +=
+-LDFLAGS =  `allegro-config --libs`
++LDFLAGS +=  `allegro-config --libs`
+ 
+-CFLAGS += -g -Wall -Iinclude # -fprofile-arcs -ftest-coverage 
++CXXFLAGS += -g -Wall -Iinclude # -fprofile-arcs -ftest-coverage 
+ 
+ SRCS  = $(MODULES:.o=.cpp)
+ GLOBALS	= main.h imagedefs.h externs.h
+@@ -32,71 +28,71 @@
+ $(MODULES): Makefile
+ 
+ atanks.o: atanks.cpp globals.h main.h menucontent.h
+-	$(CPP) -c atanks.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c atanks.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ button.o: button.cpp button.h
+-	$(CPP) -c button.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c button.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ environment.o: environment.cpp environment.h
+-	$(CPP) -c environment.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c environment.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ explosion.o: explosion.cpp explosion.h
+-	$(CPP) -c explosion.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c explosion.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ files.o: files.cpp files.h
+-	$(CPP) -c files.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c files.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ # No longer needed, as floattext is fully inline now!
+ # floattext.o:
+-# 	$(CPP) -c floattext.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++# 	$(CXX) -c floattext.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ globaldata.o: globaldata.cpp globaldata.h
+-	$(CPP) -c globaldata.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c globaldata.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ missile.o: missile.cpp missile.h
+-	$(CPP) -c missile.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c missile.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ teleport.o: teleport.cpp teleport.h
+-	$(CPP) -c teleport.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c teleport.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ physobj.o: physobj.cpp physobj.h
+-	$(CPP) -c physobj.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c physobj.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ player.o: player.cpp player.h
+-	$(CPP) -c player.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c player.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ tank.o: tank.cpp tank.h
+-	$(CPP) -c tank.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c tank.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ team.o: team.cpp team.h
+-	$(CPP) -c team.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c team.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ virtobj.o: virtobj.cpp virtobj.h
+-	$(CPP) -c virtobj.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c virtobj.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ fade.o: fade.cpp
+-	$(CPP) -c fade.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c fade.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ perlin.o: perlin.cpp
+-	$(CPP) -c perlin.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c perlin.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ sky.o: sky.cpp sky.h
+-	$(CPP) -c sky.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c sky.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ satellite.o: satellite.cpp satellite.h
+-	$(CPP) -c satellite.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c satellite.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ update.o: update.cpp update.h
+-	$(CPP) -c update.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c update.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ network.o: network.cpp network.h
+-	$(CPP) -c network.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c network.cpp -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ %.o: %.cpp %.h
+-	$(CPP) -c $< -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CFLAGS)
++	$(CXX) -c $< -o $@ $(FLAGS) $(LFLAGS) $(OFLAGS) $(CXXFLAGS)
+ 
+ $(OUTPUT): $(OBJECTS) $(MODULES)
+-	$(CPP) $(MODULES) -o $(OUTPUT) $(FLAGS) $(LFLAGS) $(LDFLAGS) $(SFLAGS) $(CFLAGS)
++	$(CXX) $(MODULES) -o $(OUTPUT) $(FLAGS) $(LFLAGS) $(LDFLAGS) $(SFLAGS) $(CXXFLAGS)
+ 	# strip $(OUTPUT)
+ 
+ # dependencies:
