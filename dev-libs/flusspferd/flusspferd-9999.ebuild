@@ -38,7 +38,7 @@ src_configure() {
 	use gmp || options="${options} -D PLUGIN_GMP:=OFF"
 	use libedit && options="${options} -D LINE_EDITOR:=libedit"
 	use readline && options="${options} -D LINE_EDITOR:=readline"
-	use sqlite3 && options="${options} -D PLUGIN_SQLITE3:=OFF"
+	use sqlite3 || options="${options} -D PLUGIN_SQLITE3:=OFF"
 	use tests || options="${options} -D ENABLE_TESTS:=OFF"
 
 	mkdir build || die
