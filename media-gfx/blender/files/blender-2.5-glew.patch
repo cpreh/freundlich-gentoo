@@ -1,0 +1,22 @@
+--- config/linux2-config.py	2009-09-19 10:05:03.544746970 +0200
++++ config/linux2-config.py	2009-09-19 10:14:21.519746084 +0200
+@@ -147,7 +147,7 @@
+ WITH_BF_STATICOPENGL = False
+ BF_OPENGL = '/usr'
+ BF_OPENGL_INC = '${BF_OPENGL}/include'
+-BF_OPENGL_LIB = 'GL GLU X11 Xi'
++BF_OPENGL_LIB = 'GL GLU X11 Xi GLEW'
+ BF_OPENGL_LIBPATH = '/usr/X11R6/lib'
+ BF_OPENGL_LIB_STATIC = '${BF_OPENGL_LIBPATH}/libGL.a ${BF_OPENGL_LIBPATH}/libGLU.a ${BF_OPENGL_LIBPATH}/libXxf86vm.a ${BF_OPENGL_LIBPATH}/libX11.a ${BF_OPENGL_LIBPATH}/libXi.a ${BF_OPENGL_LIBPATH}/libXext.a ${BF_OPENGL_LIBPATH}/libXxf86vm.a'
+ 
+--- extern/SConscript.orig	2009-09-19 11:25:42.204746360 +0200
++++ extern/SConscript	2009-09-19 15:57:06.439745805 +0200
+@@ -2,8 +2,6 @@
+ 
+ Import('env')
+ 
+-SConscript(['glew/SConscript'])
+-
+ if env['WITH_BF_BULLET']:
+     SConscript(['bullet2/src/SConscript'])
+ 

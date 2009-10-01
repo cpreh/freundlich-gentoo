@@ -4,10 +4,10 @@
 
 EAPI="2"
 NEED_PYTHON="3.1"
-inherit flag-o-matic subversion eutils python cmake-utils
+inherit subversion eutils python versionator
 
-IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k +openal web openmp verse \
-	+dds debug doc fftw jack guardedalloc apidoc sndfile"
+IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp verse \
+	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl"
 
 LANGS="en ar bg ca cs de el es fi fr hr it ja ko nl pl pt_BR ro ru sr sv uk zh_CN"
 for X in ${LANGS} ; do
@@ -18,15 +18,13 @@ DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="http://www.blender.org/"
 ESVN_REPO_URI="https://svn.blender.org/svnroot/bf-blender/trunk/blender"
 
-SLOT="0"
+#SLOT="$(get_version_component_range 1-2)"
+SLOT="2.5"
 LICENSE="|| ( GPL-2 BL )"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 
-# NOTES:
-# - cmake 2.6.4-r2 is required to correctly detect python 3.1;
 RDEPEND="media-libs/jpeg
 	media-libs/libpng
-	>=media-libs/libsdl-1.2
 	x11-libs/libXi
 	x11-libs/libX11
 	sys-libs/zlib
@@ -36,7 +34,9 @@ RDEPEND="media-libs/jpeg
 	>=media-libs/freetype-2.0
 	virtual/libintl
 	virtual/libiconv
-	game-engine? ( >=media-libs/libsdl-1.2[audio,joystick] )
+	media-libs/glew
+	dev-cpp/eigen:2
+	sdl? ( media-libs/libsdl[audio,joystick] )
 	openexr? ( media-libs/openexr )
 	ffmpeg? (
 		>=media-video/ffmpeg-0.5[x264,xvid,mp3,encode,theora]
@@ -46,10 +46,10 @@ RDEPEND="media-libs/jpeg
 	web? ( >=net-libs/xulrunner-1.9.0.10:1.9 )
 	fftw? ( sci-libs/fftw:3.0 )
 	jack? ( media-sound/jack-audio-connection-kit )
-	sndfile? ( media-libs/libsndfile )"
+	sndfile? ( media-libs/libsndfile )
+	lcms? ( media-libs/lcms )"
 
 DEPEND=">=sys-devel/gcc-4.3.2[openmp?]
-	>=dev-util/cmake-2.6.4-r3[python3]
 	apidoc? (
 		dev-python/epydoc
 		>=app-doc/doxygen-1.5.7[-nodot]
@@ -59,26 +59,26 @@ DEPEND=">=sys-devel/gcc-4.3.2[openmp?]
 
 S="${WORKDIR}/${PN}"
 
-src_unpack() {
-	subversion_src_unpack
+blend_with() {
+	local UWORD="$2"
+	[ -z "${UWORD}" ] && UWORD="$1"
+	if useq $1; then
+		echo "WITH_BF_${UWORD}=1" | tr '[:lower:]' '[:upper:]' \
+			>> "${S}"/user-config.py
+	else
+		echo "WITH_BF_${UWORD}=0" | tr '[:lower:]' '[:upper:]' \
+			>> "${S}"/user-config.py
+	fi
 }
 
 src_prepare() {
-	#epatch "${FILESDIR}"/${PN}-2.5-CVE-2008-1103.patch
-	epatch "${FILESDIR}"/${PN}-2.5-CVE-2008-4863.patch
+	#epatch "${FILESDIR}"/${PN}-${SLOT}-CVE-2008-1103.patch
+	#epatch "${FILESDIR}"/${PN}-${SLOT}-CVE-2008-4863.patch
 	#epatch "${FILESDIR}"/${PN}-2.49a-sys-openjpeg.patch
 	epatch "${FILESDIR}"/${PN}-desktop.patch
-	epatch "${FILESDIR}"/${PN}-2.5-doxygen.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-optimizations.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-optimizations2.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-optimizations3.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-editparticle.patch
-	epatch "${FILESDIR}"/${PN}-2.5-cmake.patch
-	epatch "${FILESDIR}"/${PN}-2.5-cmake-without-extern.patch
+	epatch "${FILESDIR}"/${PN}-${SLOT}-doxygen.patch
 
 	# OpenJPEG
-	#epatch "${FILESDIR}"/${PN}-2.5-FindOpenJPEG.cmake.patch
-	epatch "${FILESDIR}"/${PN}-2.5-cmake-imbuf-openjpeg.patch
 	einfo "Removing bundled OpenJPEG ..."
 	rm -r extern/libopenjpeg
 
@@ -86,19 +86,9 @@ src_prepare() {
 	einfo "Removing bundled FFmpeg ..."
 	rm -r extern/ffmpeg
 
-	# Bullet Phisyc SDK
-	#epatch "${FILESDIR}"/${PN}-2.5-FindBullet.cmake.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-cmake-blenkernel.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-cmake-gameengine-converter.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-cmake-gameengine-blenderroutines.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-cmake-gameengine-ketsji.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-cmake-gameengine-physics.patch
-	#epatch "${FILESDIR}"/${PN}-2.5-cmake-smoke.patch
-	#einfo "Removing bundled Bullet2 ..."
-	#rm -r extern/bullet2
-
-	#einfo "Removing bundled Glew ..."
-	#rm -r extern/glew
+	einfo "Removing bundled Glew ..."
+	rm -r extern/glew
+	epatch "${FILESDIR}"/${PN}-${SLOT}-glew.patch
 
 	einfo "Removing bundled LAME ..."
 	rm -r extern/libmp3lame
@@ -112,111 +102,177 @@ src_prepare() {
 	#einfo "Removing bundled LZMA ..."
 	#rm -r extern/lzma
 
-	#einfo "Removing bundled LZO ..."
-	#rm -r extern/lzo
-
-	#einfo "Removing binreloc ..."
+	#einfo "Removing bundled binreloc ..."
 	#rm -r extern/binreloc
+
+	einfo "Removing bundled Eigen2 ..."
+	rm -r extern/Eigen2
+	epatch "${FILESDIR}"/${PN}-${SLOT}-eigen.patch
 }
 
 src_configure() {
-	use debug && mycmakeargs="${mycmakeargs} -DCMAKE_VERBOSE_MAKEFILE=ON"
+	# add ffmpeg info to the Scons build options
+	# and configure ogg vorbis/theora support for ffmpeg
+	if use ffmpeg; then
+		cat <<- EOF >> "${S}"/user-config.py
+			BF_FFMPEG="/usr"
+			BF_FFMPEG_LIB="avformat avcodec swscale avutil avdevice"
+			WITH_BF_OGG=1
+		EOF
+	fi
 
-	# FIX: internationalization support is enabled
-	# only is there are other linguas than 'en'
-	if [[ "${LINGUAS}" == "en" ]]; then
-		mycmakeargs="${mycmakeargs} -DWITH_INTERNATIONAL=OFF"
-	else
-		mycmakeargs="${mycmakeargs} -DWITH_INTERNATIONAL=ON"
+	# add system openjpeg into Scons build options.
+	cat <<- EOF >> "${S}"/user-config.py
+		BF_OPENJPEG="/usr"
+		BF_OPENJPEG_INC="/usr/include"
+		BF_OPENJPEG_LIB="openjpeg"
+	EOF
+
+	# configure internationalization only if LINGUAS have more
+	# languages than 'en', otherwise must be disabled
+	if [[ -z ${LINGUAS} ]] || [[ ${LINGUAS} == "en" ]]; then
+		cat <<- EOF >> "${S}"/user-config.py
+			WITH_BF_INTERNATIONAL=0
+		EOF
+	fi
+
+	# configure Elbeem fluid system
+	if ! use elbeem; then
+		cat <<- EOF >> "${S}"/user-config.py
+			BF_NO_ELBEEM=1
+		EOF
+	fi
+
+	# configure Tweak Mode
+	if use tweak-mode; then
+		cat <<- EOF >> "${S}"/user-config.py
+			BF_TWEAK_MODE=1
+		EOF
 	fi
 
 	# FIX: Game Engine module needs to be active to build the Blender Player
 	if ! use game-engine && use player; then
 		elog "Forcing Game Engine [+game-engine] as required by Blender Player [+player]"
-		mycmakeargs="${mycmakeargs} -DWITH_GAMEENGINE=ON"
+		cat <<- EOF >> "${S}"/user-config.py
+			WITH_BF_GAMEENGINE=1
+		EOF
 	else
-		mycmakeargs="${mycmakeargs} \
-			$(cmake-utils_use_with game-engine GAMEENGINE)"
+		blend_with game-engine gameengine
 	fi
 
-	# FIX: Physic Engine module needs to be active to build Game Engine
-#	if ! use physic && use game-engine; then
-#		elog "Forcing Physic Engine [+physic] as required by Game Engine [+game-engine]"
-#		mycmakeargs="${mycmakeargs} -DWITH_BULLET=ON"
-#	else
-#		mycmakeargs="${mycmakeargs} \
-#			$(cmake-utils_use_with physic BULLET)"
-#	fi
+	# set CFLAGS used in /etc/make.conf correctly
+	echo "CFLAGS= [`for i in ${CFLAGS[@]}; do printf "%s \'$i"\',; done`] " \
+		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
 
-	PYVER=3.1
-	mycmakeargs="${mycmakeargs} \
-		-DWITH_BULLET=ON \
-		$(cmake-utils_use_with elbeem ELBEEM) \
-		-DWITH_QUICKTIME=OFF \
-		$(cmake-utils_use_with openexr OPENEXR) \
-		$(cmake-utils_use_with dds DDS) \
-		$(cmake-utils_use_with ffmpeg FFMPEG) \
-		-DWITH_PYTHON=ON \
-		-DWITH_SDL=ON \
-		$(cmake-utils_use_with jpeg2k OPENJPEG) \
-		$(cmake-utils_use_with openal OPENAL) \
-		$(cmake-utils_use_with openmp OPENMP) \
-		$(cmake-utils_use_with web WEBPLUGIN) \
-		$(cmake-utils_use_with fftw FFTW3) \
-		$(cmake-utils_use_with jack JACK) \
-		$(cmake-utils_use_with sndfile SNDFILE) \
-		$(cmake-utils_use_with guardedalloc CXX_GUARDEDALLOC) \
-		$(cmake-utils_use_with player PLAYER) \
-		-DWITH_INSTALL=ON \
-		-DWITH_BUILDINFO=ON"
+	# set CXXFLAGS used in /etc/make.conf correctly
+	echo "CXXFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
+		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
+	echo "CCFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
+		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
+	# FIX: linux2-config.py lacks a BGE_CXXFLAGS
+	echo "BGE_CXXFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
+		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
 
-	cmake-utils_src_configure
+	# set LDFLAGS used in /etc/make.conf correctly
+	echo "LINKFLAGS= [`for i in ${LDFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
+		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
+
+	# reset warning flags (useless for NON blender developers)
+	echo "C_WARN=['']"   >> "${S}"/user-config.py
+	echo "CC_WARN=['']"  >> "${S}"/user-config.py
+	echo "CXX_WARN=['']" >> "${S}"/user-config.py
+
+	# generic settings which differ from the defaults from linux2-config.py
+	local NUMJOBS="$( echo "${MAKEOPTS}" | sed -ne 's,.*-j\([[:digit:]]\+\).*,\1,p' )"
+	cat <<- EOF >> "${S}"/user-config.py
+		BF_INSTALLDIR="../install"
+		WITHOUT_BF_PYTHON_INSTALL=1
+		BF_BUILDINFO=1
+		BF_QUIET=1
+		BF_NUMJOBS=${NUMJOBS}
+		WITH_BF_FHS=1
+		WITH_BF_BINRELOC=0
+	EOF
+
+	# configure WITH_BF* Scons build options
+	for arg in \
+		'sdl' \
+		'apidoc docs' \
+		'lcms' \
+		'jack' \
+		'sndfile' \
+		'openexr' \
+		'dds' \
+		'fftw fftw3' \
+		'jpeg2k openjpeg' \
+		'openal'\
+		'ffmpeg' \
+		'player' \
+		'openmp' \
+		'verse' ; do
+		blend_with ${arg}
+	done
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	scons || die \
+		'!!! Please add "${S}/scons.config" when filing bugs reports \
+		to bugs.gentoo.org'
 
-	# FIX: plugins are not compiled by CMake
 	einfo "Building plugins ..."
-	cp -r release/plugins/ "${CMAKE_BUILD_DIR}"/bin || die
-	mkdir -p "${CMAKE_BUILD_DIR}"/bin/plugins/include || die
-	cp source/blender/blenpluginapi/*.h "${CMAKE_BUILD_DIR}"/bin/plugins/include || die
-	chmod 755 "${CMAKE_BUILD_DIR}"/bin/plugins/bmake || die
-	cd "${CMAKE_BUILD_DIR}"/bin/plugins || die
-	make > /dev/null || die "texture/sequence compilation failed."
+	cd "${WORKDIR}"/install/share/blender/${SLOT}/plugins/ \
+		|| die "dir ${WORKDIR}/install/share/blender/${SLOT}/plugins/ do not exists"
+	chmod 755 bmake
+	emake  > /dev/null || die
 }
 
-# NOTE: blender lacks a CMake install target
 src_install() {
+	# creating binary wrapper
+	cat <<- EOF >> "${WORKDIR}/install/bin/blender-${SLOT}"
+		#!/bin/sh
+
+		# stop this script if the local blender path is a symlink
+		if [ -L \${HOME}/.blender ]; then
+			echo "Detected a symbolic link for \${HOME}/.blender"
+			echo "Sorry, to avoid dangerous situations, the Blender binary can"
+			echo "not be started until you have removed the symbolic link:"
+			echo "  # rm -i \${HOME}/.blender"
+			exit 1
+		fi
+
+		BLENDERPATH="/usr/share/blender/${SLOT}" exec /usr/bin/blender-bin-${SLOT} "\$@"
+	EOF
+
 	# install binaries
 	exeinto /usr/bin/
-	mv "${CMAKE_BUILD_DIR}"/bin/blender "${CMAKE_BUILD_DIR}"/bin/blender-bin
-	doexe "${CMAKE_BUILD_DIR}"/bin/blender-bin
-	doexe "${FILESDIR}"/blender
-	use player && doexe "${CMAKE_BUILD_DIR}"/bin/blenderplayer
-	use verse && doexe "${CMAKE_BUILD_DIR}"/bin/verse_server
+	mv "${WORKDIR}/install/bin/blender" "${WORKDIR}/install/bin/blender-bin-${SLOT}"
+	doexe "${WORKDIR}/install/bin/blender-bin-${SLOT}"
+	doexe "${WORKDIR}/install/bin/blender-${SLOT}"
+	use player && doexe "${WORKDIR}"/install/bin/blenderplayer
+	use verse && doexe "${WORKDIR}"/install/bin/verse_server
 
 	# install plugins
-	exeinto /usr/$(get_libdir)/${PN}/textures
-	doexe "${CMAKE_BUILD_DIR}"/bin/plugins/texture/*.so
-	exeinto /usr/$(get_libdir)/${PN}/sequences
-	doexe "${CMAKE_BUILD_DIR}"/bin/plugins/sequence/*.so
-	insinto /usr/include/${PN}
-	doins "${CMAKE_BUILD_DIR}"/bin/plugins/include/*.h
+	exeinto /usr/share/${PN}/${SLOT}/textures
+	doexe "${WORKDIR}"/install/share/blender/${SLOT}/plugins/texture/*.so
+	exeinto /usr/share/${PN}/${SLOT}/sequences
+	doexe "${WORKDIR}"/install/share/blender/${SLOT}/plugins/sequence/*.so
+	insinto /usr/include/${PN}/${SLOT}
+	doins "${WORKDIR}"/install/share/blender/${SLOT}/plugins/include/*.h
+	rm -r "${WORKDIR}"/install/share/blender/${SLOT}/plugins
 
 	# install I18N
 	if [[ ${LINGUAS} != "en" && -n ${LINGUAS} ]]; then
 
-		rm "${CMAKE_BUILD_DIR}"/bin/.blender/.Blanguages \
+		rm "${WORKDIR}"/install/share/blender/${SLOT}/.Blanguages \
 			|| die "file .Blanguages do not exists"
-		echo "English:en_US" > "${CMAKE_BUILD_DIR}"/bin/.blender/.Blanguages
+		echo "English:en_US" > "${WORKDIR}"/install/share/blender/${SLOT}/.Blanguages
 
-		insinto /usr/share/locale
+		insinto /usr/share/${PN}/${SLOT}/locale
 		for LANG in ${LINGUAS}; do
 			[[ ${LANG} == "en" ]] && continue
 
 			# installing locale
-			doins -r "${CMAKE_BUILD_DIR}/bin/.blender/locale/${LANG}" || die "failed '${LANG}' locale installation"
+			doins -r "${WORKDIR}/install/share/blender/${SLOT}/locale/${LANG}" || die "failed '${LANG}' locale installation"
 
 			# populating file .Blanguages with only the locales choiced by the
 			# user through LINGUAS
@@ -255,7 +311,8 @@ src_install() {
 			pt_BR)
 				I18N="Brazilian Portuguese:pt_BR"
 				;;
-			zh_CN)I18N="Simplified Chinese:zh_CN"
+			zh_CN)
+				I18N="Simplified Chinese:zh_CN"
 				;;
 			ru)
 				I18N="Russian:ru_RU"
@@ -288,32 +345,9 @@ src_install() {
 				I18N="Korean:ko"
 				;;
 			esac
-			echo "${I18N}" >> "${CMAKE_BUILD_DIR}"/bin/.blender/.Blanguages
+			echo "${I18N}" >> "${WORKDIR}"/install/share/blender/${SLOT}/.Blanguages
 	    done
-
-		# install .Blanguages
-		insinto /usr/share/${PN}
-		doins "${CMAKE_BUILD_DIR}"/bin/.blender/.Blanguages
 	fi
-
-	# install fonts
-	doins "${CMAKE_BUILD_DIR}"/bin/.blender/.bfont.ttf
-	doins release/VERSION
-
-	# install scripts
-	insinto /usr/share/${PN}
-	doins -r release/scripts
-	doins -r "${CMAKE_BUILD_DIR}"/bin/.blender/io
-	doins -r "${CMAKE_BUILD_DIR}"/bin/.blender/ui
-
-	# FIX: making all python scripts readable only by group 'users'
-	#      (nobody can modify scripts apart root user)
-	chown root:users -R "${D}/usr/share/${PN}/scripts"
-	chmod -R 750 "${D}/usr/share/${PN}/scripts"
-	# FIX: bpydata/ and bpymodules/ dirs must have write perms for group 'users'
-	chmod 770 "${D}/usr/share/${PN}/scripts/bpydata"
-	chmod 770 "${D}/usr/share/${PN}/scripts/bpydata/config"
-	chmod 770 "${D}/usr/share/${PN}/scripts/bpymodules"
 
 	# install desktop file
 	insinto /usr/share/pixmaps
@@ -325,19 +359,25 @@ src_install() {
 	dodoc README
 	use doc && dodoc release/text/BlenderQuickStart.pdf
 	if use apidoc; then
-		einfo "Removing bundled python ..."
-		#rm -r "${CMAKE_BUILD_DIR}"/bin/.blender/python
-		#python -c \
-		#	source/blender/python/epy_doc_gen.py \
-		#	|| die "epy_doc_gen.py failed."
-		epydoc source/blender/python/doc/*.py -v \
-			-o doc/BPY_API \
-			--quiet --quiet --quiet \
-			--simple-term \
-			--inheritance=included \
-			--graph=all \
-			--dotpath /usr/bin/dot \
-			|| die "epydoc failed."
+
+		if use game-engine; then
+			einfo "Generating (BGE) Blender Game Engine API docs ..."
+			docinto "API/BGE_API"
+			dohtml -r "${WORKDIR}"/install/share/${PN}/${SLOT}/doc/*
+			rm -r "${WORKDIR}"/install/share/${PN}/${SLOT}/doc
+		fi
+
+#		einfo "Generating (BPY) Blender Python API docs ..."
+#		epydoc source/blender/python/doc/*.py -v \
+#			-o doc/BPY_API \
+#			--quiet --quiet --quiet \
+#			--simple-term \
+#			--inheritance=included \
+#			--graph=all \
+#			--dotpath /usr/bin/dot \
+#			|| die "epydoc failed."
+#		docinto "API/python"
+#		dohtml -r doc/BPY_API/*
 
 		einfo "Generating Blender C/C++ API docs ..."
 		pushd "${S}"/doc > /dev/null
@@ -347,6 +387,30 @@ src_install() {
 			dohtml -r html/*
 		popd > /dev/null
 	fi
+
+	# final cleanup
+	rm -r "${WORKDIR}"/install/share/blender/${SLOT}/{Python-license.txt,icons,GPL-license.txt,copyright.txt,BlenderQuickStart.pdf,blender.html,release_249.txt}
+
+	# installing blender
+	insinto /usr/share/${PN}/${SLOT}
+	doins -r "${WORKDIR}"/install/share/blender/${SLOT}/*
+	doins release/VERSION
+
+	# FIX: making all python scripts readable only by group 'users'
+	#      (nobody can modify scripts apart root user)
+	chown root:users -R \
+		"${D}/usr/share/${PN}/${SLOT}/scripts" \
+		"${D}/usr/share/${PN}/${SLOT}/io" \
+		"${D}/usr/share/${PN}/${SLOT}/ui"
+	chmod 750 -R \
+		"${D}/usr/share/${PN}/${SLOT}/scripts" \
+		"${D}/usr/share/${PN}/${SLOT}/io" \
+		"${D}/usr/share/${PN}/${SLOT}/ui"
+	# FIX: bpydata/ and bpymodules/ dirs must have write perms for group 'users'
+	chmod 770 "${D}/usr/share/${PN}/${SLOT}/scripts/bpydata"
+	chmod 770 "${D}/usr/share/${PN}/${SLOT}/scripts/bpydata/config"
+	chmod 770 "${D}/usr/share/${PN}/${SLOT}/scripts/bpymodules"
+
 }
 
 pkg_preinst() {
@@ -366,9 +430,13 @@ pkg_postinst() {
 	elog "have not addressed the CVE issue as the status is still"
 	elog "a CANDIDATE and not CONFIRMED."
 	elog
+	elog "CVE-2008-4863.patch has been remove as it interferes"
+	elog "with the load of bpy_ops.py and all the UI python"
+	elog "scripts."
+	elog
 	elog "It is recommended to change your blender temp directory"
-	elog "from /tmp to ~tmp or another tmp file under your home"
-	elog "directory. This can be done by starting blender, then"
+	elog "from /tmp to /home/user/tmp or another tmp file under your"
+	elog "home directory. This can be done by starting blender, then"
 	elog "dragging the main menu down do display all paths."
 	elog
 	elog "Blender has its own internal rendering engine but you"
