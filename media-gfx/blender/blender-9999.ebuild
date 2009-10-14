@@ -3,8 +3,8 @@
 # $Header: $
 
 EAPI="2"
-NEED_PYTHON="3.1"
-inherit subversion eutils python versionator
+NEEP_PYTHON="3.1"
+inherit eutils python subversion versionator
 
 IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp verse \
 	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl"
@@ -351,21 +351,23 @@ src_install() {
 
 	# install desktop file
 	insinto /usr/share/pixmaps
-	doins release/freedesktop/icons/scalable/blender.svg
+	cp release/freedesktop/icons/scalable/blender.svg \
+		release/freedesktop/icons/scalable/blender-${SLOT}.svg
+	doins release/freedesktop/icons/scalable/blender-${SLOT}.svg
 	insinto /usr/share/applications
-	doins release/freedesktop/blender.desktop
+	cp release/freedesktop/blender.desktop \
+		release/freedesktop/blender-${SLOT}.desktop
+	doins release/freedesktop/blender-${SLOT}.desktop
 
 	# install docs
 	dodoc README
 	use doc && dodoc release/text/BlenderQuickStart.pdf
 	if use apidoc; then
 
-		if use game-engine; then
-			einfo "Generating (BGE) Blender Game Engine API docs ..."
-			docinto "API/BGE_API"
-			dohtml -r "${WORKDIR}"/install/share/${PN}/${SLOT}/doc/*
-			rm -r "${WORKDIR}"/install/share/${PN}/${SLOT}/doc
-		fi
+		einfo "Generating (BGE) Blender Game Engine API docs ..."
+		docinto "API/BGE_API"
+		dohtml -r "${WORKDIR}"/install/share/${PN}/${SLOT}/doc/*
+		rm -r "${WORKDIR}"/install/share/${PN}/${SLOT}/doc
 
 #		einfo "Generating (BPY) Blender Python API docs ..."
 #		epydoc source/blender/python/doc/*.py -v \
@@ -396,20 +398,11 @@ src_install() {
 	doins -r "${WORKDIR}"/install/share/blender/${SLOT}/*
 	doins release/VERSION
 
-	# FIX: making all python scripts readable only by group 'users'
-	#      (nobody can modify scripts apart root user)
-	chown root:users -R \
-		"${D}/usr/share/${PN}/${SLOT}/scripts" \
-		"${D}/usr/share/${PN}/${SLOT}/io" \
-		"${D}/usr/share/${PN}/${SLOT}/ui"
-	chmod 750 -R \
-		"${D}/usr/share/${PN}/${SLOT}/scripts" \
-		"${D}/usr/share/${PN}/${SLOT}/io" \
-		"${D}/usr/share/${PN}/${SLOT}/ui"
-	# FIX: bpydata/ and bpymodules/ dirs must have write perms for group 'users'
-	chmod 770 "${D}/usr/share/${PN}/${SLOT}/scripts/bpydata"
-	chmod 770 "${D}/usr/share/${PN}/${SLOT}/scripts/bpydata/config"
-	chmod 770 "${D}/usr/share/${PN}/${SLOT}/scripts/bpymodules"
+	# FIX: making all python scripts readable only by group 'users',
+	#      so nobody can modify scripts apart root user, but users
+	#      can write their python cache (*.pyc).
+	chown root:users -R "${D}/usr/share/${PN}/${SLOT}/scripts"
+	chmod 750 -R "${D}/usr/share/${PN}/${SLOT}/scripts"
 
 }
 
