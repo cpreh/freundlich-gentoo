@@ -1,3 +1,2 @@
 =app-dicts/jmdict-scm
 =media-video/mplayer-scm
-=sys-devel/gcc-4.4.2*
