@@ -34,6 +34,7 @@ src_configure() {
 		-e 's|@exec_prefix@|${prefix}|' \
 		-e "s|@libdir@|\${exec_prefix}/$(get_libdir)|" \
 		-e "s|@PACKAGE_VERSION@|${PV}|" \
+		-e '/Cflags/d'\ 
 		-e 's|Libs:.*$|Libs:-L${libdir} -lBulletDynamics -lBulletCollision -lLinearMath -lBulletSoftBody|' \
 		bullet.pc.in > bullet.pc || die
 }
