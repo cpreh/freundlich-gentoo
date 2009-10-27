@@ -1,24 +1,24 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc4_p20090919-r2.ebuild,v 1.2 2009/09/26 21:57:17 volkmar Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc4_p20091026-r1.ebuild,v 1.2 2009/10/27 13:59:32 ssuominen Exp $
 
 EAPI=2
 inherit eutils flag-o-matic multilib subversion toolchain-funcs
 
-MPLAYER_REVISION=SVN-r29699
+MPLAYER_REVISION=SVN
 
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 
-IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +ass
-bidi bindist bl +cddb +cdio cdparanoia cpudetection
-custom-cpuopts debug dga +dirac directfb doc +dts +dv dvb +dvd +dvdnav dxr3
-+enca +encode esd +faac +faad fbcon ftp gif ggi -gmplayer +iconv ipv6 jack
-joystick jpeg kernel_linux ladspa libcaca lirc +live lzo mad md5sum +mmx
-mmxext mng +mp2 +mp3 nas +network nut openal +opengl opencore-amr +osdmenu
-oss png pnm pulseaudio pvr +quicktime radio +rar +real +rtc samba +shm
-+schroedinger sdl +speex sse sse2 ssse3 svga teletext tga +theora +tremor
-+truetype +unicode v4l v4l2 vdpau vidix +vorbis win32codecs +X +x264 xanim
-xinerama +xscreensaver +xv +xvid xvmc zoran"
+IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +ass bidi bindist bl bs2b
++cddb +cdio cdparanoia cpudetection custom-cpuopts debug dga +dirac directfb
+doc +dts +dv dvb +dvd +dvdnav dxr3 +enca +encode esd +faac +faad fbcon ftp gif
+ggi -gmplayer +iconv ipv6 jack joystick jpeg kernel_linux ladspa libcaca lirc
++live lzo mad md5sum +mmx mmxext mng +mp3 nas +network nut openal +opengl
+opencore-amr +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real
++rtc samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga teletext tga
++theora +toolame +tremor +truetype +twolame +unicode v4l v4l2 vdpau vidix +vorbis
+win32codecs +X +x264 xanim xinerama +xscreensaver +xv +xvid xvmc zoran"
+# nemesi
 
 VIDEO_CARDS="s3virge mga tdfx nvidia"
 
@@ -43,6 +43,7 @@ SRC_URI="
 DESCRIPTION="Media Player for Linux"
 HOMEPAGE="http://www.mplayerhq.hu/"
 
+# nemesi? ( net-libs/libnemesi )
 RDEPEND="sys-libs/ncurses
 	!bindist? (
 		x86? (
@@ -54,6 +55,7 @@ RDEPEND="sys-libs/ncurses
 	opencore-amr? ( media-libs/opencore-amr )
 	openal? ( media-libs/openal )
 	bidi? ( dev-libs/fribidi )
+	bs2b? ( media-libs/libbs2b )
 	cdio? ( dev-libs/libcdio )
 	cdparanoia? ( media-sound/cdparanoia )
 	dirac? ( media-video/dirac )
@@ -62,10 +64,11 @@ RDEPEND="sys-libs/ncurses
 	dv? ( media-libs/libdv )
 	dvb? ( media-tv/linuxtv-dvb-headers )
 	encode? (
-		mp2? ( media-sound/twolame )
+		!twolame? ( toolame? ( media-sound/toolame ) )
+		twolame? ( media-sound/twolame )
 		mp3? ( media-sound/lame )
 		faac? ( media-libs/faac )
-		x264? ( >=media-libs/x264-0.0.20090629 )
+		x264? ( >=media-libs/x264-0.0.20091021 )
 		xvid? ( media-libs/xvid )
 		)
 	esd? ( media-sound/esound )
@@ -146,7 +149,7 @@ DEPEND="${RDEPEND}
 
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~ppc64 ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 
 pkg_setup() {
 	if use gmplayer; then
@@ -230,7 +233,7 @@ src_configure() {
 	################
 	#Optional features#
 	###############
-	myconf="${myconf} $(use_enable network) --disable-arts --disable-nemesi"
+	myconf="${myconf} $(use_enable network) --disable-arts"
 	use ass || myconf="${myconf} --disable-ass"
 	use bidi || myconf="${myconf} --disable-fribidi"
 	use bl && myconf="${myconf} --enable-bl"
@@ -244,6 +247,7 @@ src_configure() {
 	use rar || myconf="${myconf} --disable-unrarexec"
 	use rtc || myconf="${myconf} --disable-rtc"
 	use samba || myconf="${myconf} --disable-smb"
+	# use nemesi && myconf="${myconf} --enable-nemesi"
 	myconf="${myconf} $(use_enable joystick)"
 
 	# libcdio support: prefer libcdio over cdparanoia
@@ -340,6 +344,7 @@ src_configure() {
 	use schroedinger || myconf="${myconf} --disable-libschroedinger-lavc"
 	use xanim && myconf="${myconf} --xanimcodecsdir=/usr/lib/xanim/mods"
 	! use png && ! use gmplayer && myconf="${myconf} --disable-png"
+	use bs2b || myconf="${myconf} --disable-libbs2b"
 	for x in gif jpeg live mad mng pnm speex tga theora xanim; do
 		use ${x} || myconf="${myconf} --disable-${x}"
 	done
@@ -356,7 +361,8 @@ src_configure() {
 		use faac || myconf="${myconf} --disable-faac"
 		use x264 || myconf="${myconf} --disable-x264"
 		use xvid || myconf="${myconf} --disable-xvid"
-		use mp2 || myconf="${myconf} --disable-twolame --disable-toolame"
+		use toolame || myconf="${myconf} --disable-toolame"
+		use twolame || myconf="${myconf} --disable-twolame"
 	else
 		myconf="${myconf} --disable-faac-lavc --disable-faac --disable-x264 \
 			--disable-xvid --disable-x264-lavc --disable-xvid-lavc \
@@ -480,18 +486,9 @@ src_configure() {
 
 	use debug && myconf="${myconf} --enable-debug=3"
 
-	# bug 269975, comment 20
-	# dropping custom-cflags
-	#unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS YASMFLAGS
-	strip-flags
-	# This version of MPlayer will segfault on Matroska playback
-	# w/gcc-4.4.1.  Remove in the future, prefer to keep upstream's
-	# optimizations.
-	if [ $(gcc-major-version) = 4 ] && [ $(gcc-minor-version) -gt 3 ]; then
-		replace-flags -O* -O2
-	fi
 	filter-flags -fPIC -fPIE
 	append-flags -D__STDC_LIMIT_MACROS
+	is-flag -O? || append-flags -O2
 	if use x86 || use x86-fbsd; then
 		use debug || append-flags -fomit-frame-pointer
 	fi
@@ -506,7 +503,6 @@ src_configure() {
 
 	#echo "CFLAGS=\"${CFLAGS}\" ./configure ${myconf}"
 	CFLAGS="${CFLAGS}" ./configure ${myconf} || die "configure died"
-
 }
 
 src_compile() {
@@ -515,15 +511,14 @@ src_compile() {
 }
 
 src_install() {
-
-	make prefix="${D}/usr" \
+	emake prefix="${D}/usr" \
 		BINDIR="${D}/usr/bin" \
 		LIBDIR="${D}/usr/$(get_libdir)" \
 		CONFDIR="${D}/etc/mplayer" \
 		DATADIR="${D}/usr/share/mplayer" \
 		MANDIR="${D}/usr/share/man" \
 		INSTALLSTRIP="" \
-		install || die "Failed to install MPlayer!"
+		install || die "emake install failed"
 
 	dodoc AUTHORS Changelog Copyright README etc/codecs.conf
 
@@ -590,11 +585,9 @@ EOT
 	dosym ../../../etc/mplayer/mplayer.conf /usr/share/mplayer/mplayer.conf
 
 	newbin "${S}/TOOLS/midentify.sh" midentify
-
 }
 
 pkg_preinst() {
-
 	if [[ -d ${ROOT}/usr/share/mplayer/Skin/default ]]
 	then
 		rm -rf "${ROOT}/usr/share/mplayer/Skin/default"
@@ -602,7 +595,6 @@ pkg_preinst() {
 }
 
 pkg_postrm() {
-
 	# Cleanup stale symlinks
 	if [ -L "${ROOT}/usr/share/mplayer/font" -a \
 		 ! -e "${ROOT}/usr/share/mplayer/font" ]
