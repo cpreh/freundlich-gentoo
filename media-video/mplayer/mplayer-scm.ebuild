@@ -15,7 +15,7 @@ doc +dts +dv dvb +dvd +dvdnav dxr3 +enca +encode esd +faac +faad fbcon ftp gif
 ggi -gmplayer +iconv ipv6 jack joystick jpeg kernel_linux ladspa libcaca lirc
 +live lzo mad md5sum +mmx mmxext mng +mp3 nas +network nut openal +opengl
 opencore-amr +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real
-+rtc samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga teletext tga
++rtc samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga tga
 +theora +toolame +tremor +truetype +twolame +unicode v4l v4l2 vdpau vidix +vorbis
 win32codecs +X +x264 xanim xinerama +xscreensaver +xv +xvid xvmc zoran"
 # nemesi
@@ -310,7 +310,6 @@ src_configure() {
 		use pvr || myconf="${myconf} --disable-pvr"
 		use v4l	|| myconf="${myconf} --disable-tv-v4l1"
 		use v4l2 || myconf="${myconf} --disable-tv-v4l2"
-		use teletext || myconf="${myconf} --disable-tv-teletext"
 		if use radio && { use dvb || use v4l || use v4l2; }; then
 			myconf="${myconf} --enable-radio $(use_enable encode radio-capture)"
 		else
@@ -319,7 +318,7 @@ src_configure() {
 	else
 		myconf="${myconf} --disable-tv --disable-tv-v4l1 --disable-tv-v4l2
 			--disable-radio --disable-radio-v4l2 --disable-radio-bsdbt848
-			--disable-dvb --disable-dvbhead --disable-tv-teletext
+			--disable-dvb --disable-dvbhead
 			--disable-v4l2 --disable-pvr"
 	fi
 
