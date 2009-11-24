@@ -78,6 +78,7 @@ src_prepare() {
 	epatch "${FILESDIR}/1.40.0-fix_mpi_installation.patch"
 	epatch "${FILESDIR}/1.40.0-remove_toolset_from_targetname.patch"
 	epatch "${FILESDIR}/1.40.0-gcc-4.4-partial.patch"
+	epatch "${FILESDIR}/1.41.0-spirit-token-what.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if [[ -e /dev/urandom ]] ; then
