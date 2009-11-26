@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc4_p20091026-r1.ebuild,v 1.2 2009/10/27 13:59:32 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc4_p20091124-r1.ebuild,v 1.1 2009/11/26 04:21:37 beandog Exp $
 
 EAPI=2
 inherit eutils flag-o-matic multilib subversion toolchain-funcs
@@ -18,7 +18,6 @@ opencore-amr +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real
 +rtc samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga tga
 +theora +toolame +tremor +truetype +twolame +unicode v4l v4l2 vdpau vidix +vorbis
 win32codecs +X +x264 xanim xinerama +xscreensaver +xv +xvid xvmc zoran"
-# nemesi
 
 VIDEO_CARDS="s3virge mga tdfx nvidia"
 
@@ -68,7 +67,7 @@ RDEPEND="sys-libs/ncurses
 		twolame? ( media-sound/twolame )
 		mp3? ( media-sound/lame )
 		faac? ( media-libs/faac )
-		x264? ( >=media-libs/x264-0.0.20091021 )
+		x264? ( >=media-libs/x264-0.0.20091124 )
 		xvid? ( media-libs/xvid )
 		)
 	esd? ( media-sound/esound )
@@ -149,7 +148,7 @@ DEPEND="${RDEPEND}
 
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~sparc ~x86 ~x86-fbsd"
 
 pkg_setup() {
 	if use gmplayer; then
