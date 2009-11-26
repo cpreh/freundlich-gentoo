@@ -15,7 +15,7 @@ doc +dts +dv dvb +dvd +dvdnav dxr3 +enca +encode esd +faac +faad fbcon ftp gif
 ggi -gmplayer +iconv ipv6 jack joystick jpeg kernel_linux ladspa libcaca lirc
 +live lzo mad md5sum +mmx mmxext mng +mp3 nas +network nut openal +opengl
 opencore-amr +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real
-+rtc samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga tga
++rtc samba +shm +schroedinger sdl +speex sse sse2 ssse3 strictaliasing svga tga
 +theora +toolame +tremor +truetype +twolame +unicode v4l v4l2 vdpau vidix +vorbis
 win32codecs +X +x264 xanim xinerama +xscreensaver +xv +xvid xvmc zoran"
 
@@ -500,7 +500,10 @@ src_configure() {
 		${myconf}"
 
 	#echo "CFLAGS=\"${CFLAGS}\" ./configure ${myconf}"
-	CFLAGS="${CFLAGS}" ./configure ${myconf} || die "configure died"
+	local MYCFLAGS="${CFLAGS}"
+	use strictaliasing || MYCFLAGS="${MYCFLAGS} -fno-strict-aliasing"
+	echo ${MYCFLAGS}
+	CFLAGS="${MYCFLAGS}" ./configure ${myconf} || die "configure died"
 }
 
 src_compile() {
