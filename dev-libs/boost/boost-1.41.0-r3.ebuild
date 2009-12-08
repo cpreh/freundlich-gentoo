@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.41.0.ebuild,v 1.1 2009/12/02 14:32:19 djc Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.41.0-r1.ebuild,v 1.1 2009/12/08 14:48:51 djc Exp $
 
 EAPI="2"
 
@@ -49,6 +49,17 @@ _add_line() {
 }
 
 pkg_setup() {
+	# It doesn't compile with USE="python mpi" and python-3 (bug 295705)
+	if use python && use mpi ; then
+		python_version
+		if [[ "${PYVER_MAJOR}" != "2" ]]; then
+			eerror "The Boost.MPI python bindings do not support any other python version"
+			eerror "than 2.x. Please either use eselect to select a python 2.x version or"
+			eerror "disable the python and/or mpi use flag for =${CATEGORY}/${PF}."
+			die "unsupported python version"
+		fi
+	fi
+
 	if use test ; then
 		CHECKREQS_DISK_BUILD="1024"
 		check_reqs
@@ -75,14 +86,18 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/1.40.0-fix_mpi_installation.patch"
 	epatch "${FILESDIR}/1.40.0-remove_toolset_from_targetname.patch"
 	epatch "${FILESDIR}/1.40.0-gcc-4.4-partial.patch"
 	epatch "${FILESDIR}/1.41.0-spirit-token-what.patch"
+
+	 # bug 291660
 	epatch "${FILESDIR}/boost-${PV}-parameter-needs-python.patch"
 
 	# http://thread.gmane.org/gmane.comp.lib.boost.devel/196471
 	epatch "${FILESDIR}/boost-${PV}-mpi_process_group-missing-include.patch"
+
+	# https://svn.boost.org/trac/boost/ticket/3010
+	epatch "${FILESDIR}/boost-${PV}-iostreams-missing-include-guard.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if [[ -e /dev/urandom ]] ; then
@@ -155,15 +170,19 @@ __EOF__
 }
 
 src_compile() {
-
-	NUMJOBS=$(sed -r -e 's/--jobs=?/-j/; s/.*(-j ?[0-9]+).*/\1/' <<< ${MAKEOPTS})
-
-	einfo "Using the following options to build: "
-	einfo "  ${OPTIONS}"
+	jobs=$( echo " ${MAKEOPTS} " | \
+		sed -e 's/ --jobs[= ]/ -j /g' \
+			-e 's/ -j \([1-9][0-9]*\)/ -j\1/g' \
+			-e 's/ -j\>/ -j1/g' | \
+        	( while read -d ' ' j ; do if [[ "${j#-j}" = "$j" ]]; then continue; fi; jobs="${j#-j}"; done; echo ${jobs} ) )
+	if [[ "${jobs}" != "" ]]; then NUMJOBS="-j"${jobs}; fi;
 
 	export BOOST_ROOT="${S}"
 
-	${BJAM} ${NUMJOBS} -q \
+	einfo "Using the following command to build: "
+	einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoorelease ${OPTIONS} threading=single,multi link=shared,static runtime-link=shared"
+
+	${BJAM} ${NUMJOBS} -q -d+2 \
 		gentoorelease \
 		${OPTIONS} \
 		threading=single,multi link=shared,static runtime-link=shared \
@@ -171,7 +190,10 @@ src_compile() {
 
 	# ... and do the whole thing one more time to get the debug libs
 	if use debug ; then
-		${BJAM} ${NUMJOBS} -q \
+		einfo "Using the following command to build: "
+		einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoodebug ${OPTIONS} threading=single,multi link=shared,static runtime-link=shared --buildid=debug"
+
+		${BJAM} ${NUMJOBS} -q -d+2 \
 			gentoodebug \
 			${OPTIONS} \
 			threading=single,multi link=shared,static runtime-link=shared \
@@ -181,7 +203,10 @@ src_compile() {
 
 	if use tools; then
 		cd "${S}/tools/"
-		${BJAM} ${NUMJOBS} -q \
+		einfo "Using the following command to build the tools: "
+		einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoorelease ${OPTIONS}"
+
+		${BJAM} ${NUMJOBS} -q -d+2\
 			gentoorelease \
 			${OPTIONS} \
 			|| die "building tools failed"
@@ -190,12 +215,12 @@ src_compile() {
 }
 
 src_install () {
-	einfo "Using the following options to install: "
-	einfo "  ${OPTIONS}"
-
 	export BOOST_ROOT="${S}"
 
-	${BJAM} -q \
+	einfo "Using the following command to install: "
+	einfo "${BJAM} -q -d+2 gentoorelease ${OPTIONS} threading=single,multi link=shared,static runtime-link=shared --includedir=\"${D}/usr/include\" --libdir=\"${D}/usr/$(get_libdir)\" install"
+
+	${BJAM} -q -d+2 \
 		gentoorelease \
 		${OPTIONS} \
 		threading=single,multi link=shared,static runtime-link=shared \
@@ -204,7 +229,10 @@ src_install () {
 		install || die "install failed for options '${OPTIONS}'"
 
 	if use debug ; then
-		${BJAM} -q \
+		einfo "Using the following command to install: "
+		einfo "${BJAM} -q -d+2 gentoodebug ${OPTIONS} threading=single,multi link=shared,static runtime-link=shared --includedir=\"${D}/usr/include\" --libdir=\"${D}/usr/$(get_libdir)\" --buildid=debug"
+
+		${BJAM} -q -d+2 \
 			gentoodebug \
 			${OPTIONS} \
 			threading=single,multi link=shared,static runtime-link=shared \
@@ -374,7 +402,10 @@ src_test() {
 	export BOOST_ROOT=${S}
 
 	cd "${S}/tools/regression/build"
-	${BJAM} -q \
+	einfo "Using the following command to build test helpers: "
+	einfo "${BJAM} -q -d+2 gentoorelease ${OPTIONS} process_jam_log compiler_status"
+
+	${BJAM} -q -d+2 \
 		gentoorelease \
 		${OPTIONS} \
 		process_jam_log compiler_status \
@@ -389,6 +420,9 @@ src_test() {
 	# but adapted to our needs.
 
 	# Run the tests & write them into a file for postprocessing
+	einfo "Using the following command to test: "
+	einfo "${BJAM} ${OPTIONS} --dump-tests"
+
 	${BJAM} \
 		${OPTIONS} \
 		--dump-tests 2>&1 | tee regress.log
