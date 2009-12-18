@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.41.0-r1.ebuild,v 1.1 2009/12/08 14:48:51 djc Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.41.0-r2.ebuild,v 1.1 2009/12/17 13:21:09 djc Exp $
 
 EAPI="2"
 
@@ -15,11 +15,11 @@ LICENSE="Boost-1.0"
 SLOT="$(get_version_component_range 1-2)"
 IUSE="debug doc +eselect expat icu mpi python test tools"
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 
 RDEPEND="icu? ( >=dev-libs/icu-3.3 )
 	expat? ( dev-libs/expat )
-	mpi? ( || ( >=sys-cluster/openmpi-1.2.9[cxx] <sys-cluster/openmpi-1.2.9[-nocxx] sys-cluster/mpich2[cxx] sys-cluster/lam-mpi ) )
+	mpi? ( || ( >=sys-cluster/openmpi-1.2.9[cxx] <sys-cluster/openmpi-1.2.9[-nocxx] sys-cluster/mpich2[cxx,threads] sys-cluster/lam-mpi ) )
 	sys-libs/zlib
 	python? ( virtual/python )
 	!!<=dev-libs/boost-1.35.0-r2
@@ -99,6 +99,10 @@ src_prepare() {
 	# https://svn.boost.org/trac/boost/ticket/3010
 	epatch "${FILESDIR}/boost-${PV}-iostreams-missing-include-guard.patch"
 
+	# bug 297163
+	# https://svn.boost.org/trac/boost/ticket/3352
+	epatch "${FILESDIR}/boost-${PV}-fix-CRC-on-x64-during-gzip-decompression.patch"
+
 	# This enables building the boost.random library with /dev/urandom support
 	if [[ -e /dev/urandom ]] ; then
 		mkdir -p libs/random/build
@@ -174,7 +178,7 @@ src_compile() {
 		sed -e 's/ --jobs[= ]/ -j /g' \
 			-e 's/ -j \([1-9][0-9]*\)/ -j\1/g' \
 			-e 's/ -j\>/ -j1/g' | \
-        	( while read -d ' ' j ; do if [[ "${j#-j}" = "$j" ]]; then continue; fi; jobs="${j#-j}"; done; echo ${jobs} ) )
+			( while read -d ' ' j ; do if [[ "${j#-j}" = "$j" ]]; then continue; fi; jobs="${j#-j}"; done; echo ${jobs} ) )
 	if [[ "${jobs}" != "" ]]; then NUMJOBS="-j"${jobs}; fi;
 
 	export BOOST_ROOT="${S}"
