@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.413 2009/12/14 21:14:13 truedfx Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.415 2009/12/20 19:06:55 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -975,6 +975,9 @@ gcc-compiler_pkg_postrm() {
 	[[ ${ROOT} != "/" ]] && return 0
 
 	if [[ ! -e ${LIBPATH}/libstdc++.so ]] ; then
+		# make sure the profile is sane during same-slot upgrade #289403
+		do_gcc_config
+
 		einfo "Running 'fix_libtool_files.sh ${GCC_RELEASE_VER}'"
 		/sbin/fix_libtool_files.sh ${GCC_RELEASE_VER}
 		if [[ -n ${BRANCH_UPDATE} ]] ; then
@@ -2298,8 +2301,7 @@ do_gcc_config() {
 
 	local current_gcc_config="" current_specs="" use_specs=""
 
-	# We grep out any possible errors
-	current_gcc_config=$(env -i ROOT="${ROOT}" gcc-config -c ${CTARGET} | grep -v '^ ')
+	current_gcc_config=$(env -i ROOT="${ROOT}" gcc-config -c ${CTARGET} 2>/dev/null)
 	if [[ -n ${current_gcc_config} ]] ; then
 		# figure out which specs-specific config is active
 		current_specs=$(gcc-config -S ${current_gcc_config} | awk '{print $3}')
