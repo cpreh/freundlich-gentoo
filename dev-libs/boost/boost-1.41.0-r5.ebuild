@@ -1,6 +1,6 @@
 # Copyright 1999-2009 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.41.0-r2.ebuild,v 1.1 2009/12/17 13:21:09 djc Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.41.0-r3.ebuild,v 1.1 2009/12/21 10:13:40 djc Exp $
 
 EAPI="2"
 
@@ -102,6 +102,10 @@ src_prepare() {
 	# bug 297163
 	# https://svn.boost.org/trac/boost/ticket/3352
 	epatch "${FILESDIR}/boost-${PV}-fix-CRC-on-x64-during-gzip-decompression.patch"
+
+	# bug 297500
+	# https://svn.boost.org/trac/boost/ticket/3724
+	epatch "${FILESDIR}/boost-${PV}-spirit-fixed-include-guard-conflict.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if [[ -e /dev/urandom ]] ; then
