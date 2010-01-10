@@ -1,6 +1,6 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.40.0.ebuild,v 1.1 2009/09/08 23:28:03 tanderson Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.44.0.ebuild,v 1.1 2010/01/09 16:50:09 peper Exp $
 
 inherit bash-completion eutils flag-o-matic
 
@@ -9,7 +9,7 @@ HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
 EAPI="2"
-IUSE="doc inquisitio portage pink python-bindings qa ruby-bindings vim-syntax visibility xml zsh-completion"
+IUSE="doc inquisitio portage pink python-bindings ruby-bindings vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
@@ -19,7 +19,6 @@ COMMON_DEPEND="
 	>=app-shells/bash-3.2
 	inquisitio? ( dev-libs/libpcre[cxx] )
 	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1 )
-	qa? ( dev-libs/libpcre[cxx] >=dev-libs/libxml2-2.6 app-crypt/gnupg )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
 	xml? ( >=dev-libs/libxml2-2.6 )"
 
@@ -74,7 +73,6 @@ src_compile() {
 	econf \
 		$(use_enable doc doxygen ) \
 		$(use_enable pink ) \
-		$(use_enable qa ) \
 		$(use_enable ruby-bindings ruby ) \
 		$(useq ruby-bindings && useq doc && echo --enable-ruby-doc ) \
 		$(use_enable python-bindings python ) \
@@ -100,9 +98,6 @@ src_install() {
 	BASH_COMPLETION_NAME="importare" dobashcompletion bash-completion/importare
 	BASH_COMPLETION_NAME="instruo" dobashcompletion bash-completion/instruo
 	BASH_COMPLETION_NAME="reconcilio" dobashcompletion bash-completion/reconcilio
-	use qa && \
-		BASH_COMPLETION_NAME="qualudis" \
-		dobashcompletion bash-completion/qualudis
 	use inquisitio && \
 		BASH_COMPLETION_NAME="inquisitio" \
 		dobashcompletion bash-completion/inquisitio
