@@ -1,0 +1,14 @@
+diff -Nurp unrar/consio.cpp unrar_new/consio.cpp
+--- unrar/consio.cpp	2009-12-12 11:13:29.000000000 +0100
++++ unrar_new/consio.cpp	2010-01-11 19:14:01.236771944 +0100
+@@ -139,6 +139,10 @@ void GetPasswordText(char *Str,int MaxLe
+ #ifndef SILENT
+ bool GetPassword(PASSWORD_TYPE Type,const char *FileName,char *Password,int MaxLength)
+ {
++	fprintf(
++		stderr,
++		"Archive is password protected, but no password was specified");
++	return false;
+   Alarm();
+   while (true)
+   {
