@@ -20,7 +20,9 @@ DEPEND="!app-arch/unrar-gpl"
 
 S=${WORKDIR}/unrar
 
-PATCHES=( "${FILESDIR}"/interactivity-${PV}.patch )
+src_prepare() {
+	epatch "${FILESDIR}"/interactivity-${PV}.patch
+}
 
 src_compile() {
 	emake \
