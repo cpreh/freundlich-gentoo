@@ -1,0 +1,73 @@
+diff --git a/configure.ac b/configure.ac
+index b8dc01d..ce37c87 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -87,10 +87,6 @@ AC_CHECK_HEADER(X11/extensions/Xv.h, have_xv=yes, have_xv=no)
+ if test "x$have_xv" = xno; then
+ 	AC_MSG_ERROR([unable to find xv headers])
+ fi
+-AC_CHECK_HEADER(X11/extensions/XTest.h, have_xtest=yes, have_xtest=no)
+-if test "x$have_xtest" = xno; then
+-	AC_MSG_ERROR([unable to find xtest headers])
+-fi
+ 
+ AC_ARG_ENABLE(opengl, [  --enable-opengl         build OpenGL plugin (default=no)],
+ [ BUILD_OPENGL="$enableval" ],[ BUILD_OPENGL="no" ])
+diff --git a/gui/LnxMain.c b/gui/LnxMain.c
+index 26497cc..8168e09 100644
+--- a/gui/LnxMain.c
++++ b/gui/LnxMain.c
+@@ -40,8 +40,6 @@
+ #include <locale.h>
+ #endif
+ 
+-#include <X11/extensions/XTest.h>
+-
+ enum {
+ 	RUN = 0,
+ 	RUN_CD,
+@@ -532,33 +530,9 @@ void SysCloseLibrary(void *lib) {
+ 	dlclose(lib);
+ }
+ 
+-static void SysDisableScreenSaver() {
+-	static time_t fake_key_timer = 0;
+-	static char first_time = 1, has_test_ext = 0;
+-	Display *display;
+-	extern unsigned long gpuDisp;
+-
+-	display = (Display *)gpuDisp;
+-
+-	if (first_time) {
+-		// check if xtest is available
+-		int a, b, c, d;
+-		has_test_ext = XTestQueryExtension(display, &a, &b, &c, &d);
+-
+-		first_time = 0;
+-	}
+-
+-	if (has_test_ext && fake_key_timer < time(NULL)) {
+-		XTestFakeRelativeMotionEvent(display, 1, 0, 0);
+-		fake_key_timer = time(NULL) + 55;
+-	}
+-}
+-
+ void SysUpdate() {
+ 	PADhandleKey(PAD1_keypressed());
+ 	PADhandleKey(PAD2_keypressed());
+-
+-	SysDisableScreenSaver();
+ }
+ 
+ /* ADB TODO Replace RunGui() with StartGui ()*/
+diff --git a/gui/Makefile.am b/gui/Makefile.am
+index eacfd67..7b0e838 100644
+--- a/gui/Makefile.am
++++ b/gui/Makefile.am
+@@ -18,5 +18,5 @@ pcsx_SOURCES = \
+ 	Cheat.c
+ 
+ pcsx_LDADD = \
+-	$(GTK2_LIBS) $(GLADE2_LIBS) -lpthread -lz -lm -lXext -lXtst \
++	$(GTK2_LIBS) $(GLADE2_LIBS) -lpthread -lz -lm -lXext \
+ 	../libpcsxcore/libpcsxcore.a
