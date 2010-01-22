@@ -40,12 +40,11 @@ DEPEND="
 	>=x11-libs/gtk+-2
 	x11-libs/libX11
 	x11-libs/libXext
+	|| ( >=x11-libs/libXtst-1.1.0 <x11-proto/xextproto-7.1.0 )
 	"
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/remove-old-xtest.patch
-
 	eautoreconf
 }
 
