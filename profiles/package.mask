@@ -1,3 +1,5 @@
 =app-dicts/jmdict-scm
+=dev-libs/boost-1.42.0_beta1
+=dev-util/boost-build-1.42.0_beta1
 =media-video/mplayer-scm
 =sys-devel/gcc-4.5.0-scm
