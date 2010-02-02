@@ -8,6 +8,8 @@ inherit python flag-o-matic multilib toolchain-funcs versionator check-reqs
 
 MY_P=${PN}_$(replace_all_version_separators _)
 
+RESTRICT="mirror"
+
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
 SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
@@ -87,25 +89,9 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/1.40.0-remove_toolset_from_targetname.patch"
-	epatch "${FILESDIR}/1.40.0-gcc-4.4-partial.patch"
-	epatch "${FILESDIR}/1.41.0-spirit-token-what.patch"
 
 	 # bug 291660
-	epatch "${FILESDIR}/boost-${PV}-parameter-needs-python.patch"
-
-	# http://thread.gmane.org/gmane.comp.lib.boost.devel/196471
-	epatch "${FILESDIR}/boost-${PV}-mpi_process_group-missing-include.patch"
-
-	# https://svn.boost.org/trac/boost/ticket/3010
-	epatch "${FILESDIR}/boost-${PV}-iostreams-missing-include-guard.patch"
-
-	# bug 297163
-	# https://svn.boost.org/trac/boost/ticket/3352
-	epatch "${FILESDIR}/boost-${PV}-fix-CRC-on-x64-during-gzip-decompression.patch"
-
-	# bug 297500
-	# https://svn.boost.org/trac/boost/ticket/3724
-	epatch "${FILESDIR}/boost-${PV}-spirit-fixed-include-guard-conflict.patch"
+	epatch "${FILESDIR}/boost-1.41.0-parameter-needs-python.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if [[ -e /dev/urandom ]] ; then
