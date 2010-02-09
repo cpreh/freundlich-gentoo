@@ -1,20 +1,32 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.4.2.ebuild,v 1.1 2009/10/17 21:37:32 halcy0n Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.4.3.ebuild,v 1.1 2010/02/08 12:58:14 vapier Exp $
 
 PATCH_VER="1.0"
 UCLIBC_VER="1.0"
-PATCH_GCC_VER="4.4.2"
 
 ETYPE="gcc-compiler"
+
+# Hardened gcc 4 stuff
+#PIE_VER="10.1.5"
+#SPECS_VER="0.9.4"
+
+# arch/libc configurations known to be stable or untested with {PIE,SSP,FORTIFY}-by-default
+#PIE_GLIBC_STABLE="x86 amd64 ~ppc ~ppc64 ~arm ~sparc"
+#PIE_UCLIBC_STABLE="x86 arm"
+#SSP_STABLE="amd64 x86 ppc ppc64 ~arm ~sparc"
+#SSP_UCLIBC_STABLE=""
+
+# whether we should split out specs files for multiple {PIE,SSP}-by-default
+# and vanilla configurations.
 SPLIT_SPECS=no #${SPLIT_SPECS-true} hard disable until #106690 is fixed
 
 inherit toolchain
 
 DESCRIPTION="The GNU Compiler Collection.  Includes C/C++, java compilers, pie+ssp extensions, Haj Ten Brugge runtime bounds checking"
 
-LICENSE="GPL-3 LGPL-3 libgcc libstdc++ gcc-runtime-library-exception-3.1"
-KEYWORDS="~alpha ~amd64 -arm -hppa ~ia64 ~ppc ~ppc64 -sparc ~x86 ~x86-fbsd"
+LICENSE="GPL-3 LGPL-3 || ( GPL-3 libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.2"
+KEYWORDS="~alpha ~amd64 ~arm -hppa ~ia64 ~mips ~ppc ~ppc64 -sparc ~x86 ~x86-fbsd"
 
 RDEPEND=">=sys-libs/zlib-1.1.4
 	>=sys-devel/gcc-config-1.4
@@ -47,10 +59,11 @@ DEPEND="${RDEPEND}
 	test? ( >=dev-util/dejagnu-1.4.4 >=sys-devel/autogen-5.5.4 )
 	>=sys-apps/texinfo-4.8
 	>=sys-devel/bison-1.875
+	elibc_glibc? ( >=sys-libs/glibc-2.8 )
 	amd64? ( multilib? ( gcj? ( app-emulation/emul-linux-x86-xlibs ) ) )
 	ppc? ( >=${CATEGORY}/binutils-2.17 )
 	ppc64? ( >=${CATEGORY}/binutils-2.17 )
-	>=${CATEGORY}/binutils-2.16.1"
+	>=${CATEGORY}/binutils-2.15.94"
 PDEPEND=">=sys-devel/gcc-config-1.4"
 if [[ ${CATEGORY} != cross-* ]] ; then
 	PDEPEND="${PDEPEND} elibc_glibc? ( >=sys-libs/glibc-2.8 )"
