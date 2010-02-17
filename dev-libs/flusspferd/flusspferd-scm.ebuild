@@ -48,7 +48,5 @@ src_configure() {
 	use subprocess || mycmakeargs+=" -D PLUGIN_SUBPROCESS:=OFF"
 	use xml || mycmakeargs+=" -D PLUGIN_XML:=OFF"
 
-	echo ${mycmakeargs}
-
 	cmake-utils_src_configure
 }
