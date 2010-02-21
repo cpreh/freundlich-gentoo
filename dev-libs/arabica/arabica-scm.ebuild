@@ -24,6 +24,8 @@ DEPEND="
 	xerces-c? ( >=dev-libs/xerces-c-2.7.0 )
 	xml2? ( >=dev-libs/libxml2-2.6.20-r2 )"
 
+RDEPEND="${DEPEND}"
+
 pkg_setup() {
 	local count=0
 	for i in expat xerces-c xml2 ; do

@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.44.0.ebuild,v 1.1 2010/01/09 16:50:09 peper Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.44.1.ebuild,v 1.2 2010/01/21 18:41:16 dev-zero Exp $
 
 inherit bash-completion eutils flag-o-matic
 
@@ -18,7 +18,7 @@ COMMON_DEPEND="
 	>=app-admin/eselect-1.2_rc1
 	>=app-shells/bash-3.2
 	inquisitio? ( dev-libs/libpcre[cxx] )
-	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1 )
+	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
 	xml? ( >=dev-libs/libxml2-2.6 )"
 
@@ -47,21 +47,6 @@ create-paludis-user() {
 }
 
 pkg_setup() {
-	if use inquisitio || use qa; then
-		if ! built_with_use dev-libs/libpcre cxx ; then
-			eerror "Paludis needs dev-libs/libpcre built with C++ support"
-			eerror "Please build dev-libs/libpcre with USE=cxx support"
-			die "Rebuild dev-libs/libpcre with USE=cxx"
-		fi
-	fi
-
-	if use python-bindings && \
-		! built_with_use --missing true dev-libs/boost python; then
-		eerror "With USE python-bindings you need boost build with the python"
-		eerror "use flag."
-		die "Rebuild dev-libs/boost with USE python"
-	fi
-
 	create-paludis-user
 }
 
