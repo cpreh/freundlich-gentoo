@@ -5,6 +5,8 @@
 PATCH_VER="1.0"
 UCLIBC_VER="1.0"
 
+RESTRICT="mirror"
+
 PATCH_GCC_VER="4.4.3"
 
 ETYPE="gcc-compiler"
