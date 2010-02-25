@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
+EGIT_HAS_SUBMODULES=true
+
 inherit cmake-utils git
 
 EAPI="3"
