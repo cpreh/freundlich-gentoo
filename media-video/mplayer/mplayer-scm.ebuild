@@ -16,7 +16,7 @@ IUSE="3dnow 3dnowext +a52 +aac aalib +alsa altivec +ass bidi bindist bl bs2b
 doc +dts +dv dvb +dvd +dvdnav dxr3 +enca +encode esd +faac +faad fbcon ftp
 gif ggi -gmplayer +iconv ipv6 jack joystick jpeg jpeg2k kernel_linux ladspa
 libcaca lirc +live lzo mad md5sum +mmx mmxext mng +mp3 nas +network nut openal
-+opengl +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real +rtc
+opencore-amr +opengl +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real +rtc
 samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga tga +theora +tremor
 +truetype +toolame +twolame +unicode v4l v4l2 vdpau vidix +vorbis win32codecs
 +X +x264 xanim xinerama +xscreensaver +xv +xvid xvmc zoran"
@@ -94,6 +94,7 @@ RDEPEND+="
 	aalib? ( media-libs/aalib )
 	alsa? ( media-libs/alsa-lib )
 	bidi? ( dev-libs/fribidi )
+	bs2b? ( media-libs/libbs2b )
 	cdio? ( dev-libs/libcdio )
 	cdparanoia? ( media-sound/cdparanoia )
 	dirac? ( media-video/dirac )
@@ -125,6 +126,7 @@ RDEPEND+="
 	nas? ( media-libs/nas )
 	nut? ( >=media-libs/libnut-661 )
 	openal? ( media-libs/openal )
+	opencore-amr? ( media-libs/opencore-amr )
 	jpeg2k? ( media-libs/openjpeg )
 	png? ( media-libs/libpng )
 	pnm? ( media-libs/netpbm )
@@ -152,6 +154,7 @@ X_DEPS="
 "
 ASM_DEP="dev-lang/yasm"
 DEPEND="${RDEPEND}
+	dev-util/pkgconfig
 	X? (
 		${X_DEPS}
 		dga? ( x11-proto/xf86dgaproto )
@@ -231,8 +234,8 @@ src_prepare() {
 	subversion_wc_info
 	sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
 
-	epatch "${FILESDIR}"/network.patch
-	find -name '*.c' -exec sed -i s/closesocket/close/ '{}' \;
+	#epatch "${FILESDIR}"/network.patch
+	#find -name '*.c' -exec sed -i s/closesocket/close/ '{}' \;
 
 	if use svga; then
 		echo
@@ -443,7 +446,7 @@ src_configure() {
 			--disable-toolame
 		"
 		uses="aac faac x264 xvid toolame twolame"
-		for i in uses; do
+		for i in ${uses}; do
 			use ${i} && elog "Useflag \"${i}\" require \"encode\" useflag enabled to work."
 		done
 	fi
@@ -595,7 +598,7 @@ src_configure() {
 		--disable-xvmc
 		"
 		uses="dga dxr3 ggi opengl osdmenu vdpau vidix xinerama xscreensaver xv"
-		for i in uses; do
+		for i in ${uses}; do
 			use ${i} && elog "Useflag \"${i}\" require \"X\" useflag enabled to work."
 		done
 	fi
