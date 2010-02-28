@@ -43,7 +43,6 @@ RDEPEND="media-libs/jpeg
 		jpeg2k? ( >=media-video/ffmpeg-0.5[x264,xvid,mp3,encode,theora,jpeg2k] )
 	)
 	openal? ( >=media-libs/openal-1.6.372 )
-	web? ( >=net-libs/xulrunner-1.9.0.10:1.9 )
 	fftw? ( sci-libs/fftw:3.0 )
 	jack? ( media-sound/jack-audio-connection-kit )
 	sndfile? ( media-libs/libsndfile )
@@ -58,6 +57,7 @@ DEPEND=">=sys-devel/gcc-4.3.2[openmp?]
 		dev-python/epydoc
 		>=app-doc/doxygen-1.5.7[-nodot]
 	)
+	dev-util/scons
 	x11-base/xorg-server
 	${RDEPEND}"
 
