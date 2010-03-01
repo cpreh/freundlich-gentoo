@@ -234,9 +234,6 @@ src_prepare() {
 	subversion_wc_info
 	sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
 
-	#epatch "${FILESDIR}"/network.patch
-	#find -name '*.c' -exec sed -i s/closesocket/close/ '{}' \;
-
 	if use svga; then
 		echo
 		einfo "Enabling vidix non-root mode."
