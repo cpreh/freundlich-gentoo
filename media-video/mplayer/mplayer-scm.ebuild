@@ -352,7 +352,7 @@ src_configure() {
 	# broken upstream, won't work with recent kernels
 	myconf+=" --disable-ivtv"
 	if { use dvb || use v4l || use v4l2 || use pvr || use radio; }; then
-		use dvb || myconf+=" --disable-dvb --disable-dvbhead"
+		use dvb || myconf+=" --disable-dvb"
 		use pvr || myconf+=" --disable-pvr"
 		use v4l	|| myconf+=" --disable-tv-v4l1"
 		use v4l2 || myconf+=" --disable-tv-v4l2"
@@ -376,7 +376,6 @@ src_configure() {
 			--disable-radio-v4l2
 			--disable-radio-bsdbt848
 			--disable-dvb
-			--disable-dvbhead
 			--disable-v4l2
 			--disable-pvr"
 	fi
