@@ -1,5 +1,5 @@
 =app-dicts/jmdict-scm
+=dev-util/valgrind-scm
 =media-gfx/blender-scm
-=media-libs/openal-scm
 =media-video/mplayer-scm
 =sys-devel/gcc-4.5.0-scm
