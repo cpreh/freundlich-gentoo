@@ -1,6 +1,6 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.4.1-r1.ebuild,v 1.2 2009/08/08 18:20:17 griffon26 Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.5.0.ebuild,v 1.4 2010/01/15 22:00:13 fauli Exp $
 
 ESVN_REPO_URI="svn://svn.valgrind.org/valgrind/trunk"
 
@@ -11,7 +11,7 @@ HOMEPAGE="http://www.valgrind.org"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="-* ~amd64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="mpi"
 
 DEPEND="mpi? ( virtual/mpi )"
@@ -26,15 +26,13 @@ src_unpack() {
 	einfo "Changing configure.in to respect CFLAGS"
 	sed -i -e 's:^CFLAGS="-Wno-long-long":CFLAGS="$CFLAGS -Wno-long-long":' configure.in
 
+	# undefined references to __guard and __stack_smash_handler in VEX (bug #114347)
+	einfo "Changing Makefile.all.am to disable SSP"
+	sed -i -e 's:^AM_CFLAGS_BASE = :AM_CFLAGS_BASE = -fno-stack-protector :' Makefile.all.am
+
 	# Correct hard coded doc location
 	sed -i -e "s:doc/valgrind:doc/${P}:" docs/Makefile.am
 
-	# Remove defaulting to ppc32-linux on ppc64 without multilib
-	# "valgrind: failed to start tool 'memcheck' for platform 'ppc32-linux':
-	#  No such file or directory"
-	if use ppc64 && ! has_multilib_profile; then
-		epatch "${FILESDIR}/valgrind-3.3.0-only64bit.patch"
-	fi
 
 	# Regenerate autotools files
 	eautoreconf
@@ -75,8 +73,8 @@ src_compile() {
 }
 
 src_install() {
-	make DESTDIR="${D}" install || die "Install failed!"
-	dodoc ACKNOWLEDGEMENTS AUTHORS FAQ.txt NEWS README*
+	emake DESTDIR="${D}" install || die "Install failed!"
+	dodoc AUTHORS FAQ.txt NEWS README*
 }
 
 pkg_postinst() {
