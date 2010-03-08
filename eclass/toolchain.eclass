@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.418 2010/02/28 18:26:53 armin76 Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.420 2010/03/07 04:37:01 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -1231,16 +1231,17 @@ gcc-compiler-configure() {
 	fi
 
 	case $(tc-arch) in
-		# bug #264534
-		arm)
+		arm)	#264534
 			local arm_arch="${CTARGET%%-*}"
-			# Convert armv7{a,r,m} to armv7-{a,r,m}
-			[[ ! -z "${arm_arch##armv7}" ]] && arm_arch="${arm_arch/armv7/armv7-}"
-			# Remove 'l'
-			[[ -z "${arm_arch##armv*l}" ]] && arm_arch="${arm_arch/l/}"
-			# Remove 'eb'
-			[[ -z "${arm_arch##armv*eb}" ]] && arm_arch="${arm_arch/eb/}"
-			confgcc="${confgcc} --with-arch=${arm_arch}"
+			# Only do this if arm_arch is armv*
+			if [[ ${arm_arch} == armv* ]] ; then
+				# Convert armv7{a,r,m} to armv7-{a,r,m}
+				[[ ${arm_arch} == armv7? ]] && arm_arch=${arm_arch/7/7-}
+				# Remove endian ('l' / 'eb')
+				[[ ${arm_arch} == *l  ]] && arm_arch=${arm_arch%l}
+				[[ ${arm_arch} == *eb ]] && arm_arch=${arm_arch%eb}
+				confgcc="${confgcc} --with-arch=${arm_arch}"
+			fi
 			;;
 		# Add --with-abi flags to set default MIPS ABI
 		mips)
