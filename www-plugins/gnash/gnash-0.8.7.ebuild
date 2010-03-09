@@ -17,7 +17,7 @@ SRC_URI="mirror://gnu/${PN}/${PV}/${P}.tar.bz2"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~hppa ~ppc ~sparc ~x86"
-IUSE="agg cairo cygnal dbus doc +ffmpeg gnome gstreamer gtk kde lirc mysql +nls nsplugin +opengl python +sdl ssh ssl test video_cards_intel"
+IUSE="agg cairo cygnal dbus doc +ffmpeg gnome gstreamer gtk kde lirc mysql +nls nsplugin +opengl python +sdl ssh ssl test video_cards_intel xpcom"
 
 RDEPEND=">=dev-libs/boost-1.35.0
 	dev-libs/expat
@@ -199,7 +199,7 @@ src_configure() {
 		$(use_enable cygnal cgibins) \
 		$(use_enable doc docbook) \
 		$(use_enable gnome ghelp) \
-		$(use_enable gtk xpcom) \
+		$(use_enable xpcom xpcom) \
 		$(use_enable gtk npapi) \
 		$(use_enable kde kparts4) \
 		$(use_enable lirc) \
