@@ -403,7 +403,6 @@ src_configure() {
 	fi
 	use bs2b || myconf+=" --disable-libbs2b"
 	use schroedinger || myconf+=" --disable-libschroedinger-lavc"
-	use xanim && myconf+=" --xanimcodecsdir=/usr/lib/xanim/mods"
 	if ! use png && ! use gmplayer; then
 		myconf+=" --disable-png"
 	fi
@@ -467,11 +466,7 @@ src_configure() {
 	# internal
 	use real || myconf+=" --disable-real"
 
-	# Real binary codec support only available on x86, amd64
-	if use real; then
-		use x86 && myconf+=" --realcodecsdir=/opt/RealPlayer/codecs"
-		use amd64 && myconf+=" --realcodecsdir=/usr/$(get_libdir)/codecs"
-	elif ! use bindist; then
+	if ! use bindist; then
 			myconf+=" $(use_enable win32codecs win32dll)"
 	fi
 
