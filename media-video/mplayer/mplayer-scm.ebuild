@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-1.0_rc4_p20100213.ebuild,v 1.2 2010/02/13 21:50:48 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.32 2010/03/15 15:15:35 lxnay Exp $
 
 EAPI="2"
 
@@ -23,7 +23,7 @@ samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga tga +theora +tremor
 IUSE+=" external-ffmpeg"
 IUSE+=" strictaliasing"
 
-VIDEO_CARDS="s3virge mga tdfx nvidia vesa"
+VIDEO_CARDS="s3virge mga tdfx vesa"
 for x in ${VIDEO_CARDS}; do
 	IUSE+=" video_cards_${x}"
 done
@@ -40,7 +40,7 @@ RELEASE_URI=""
 SRC_URI="${RELEASE_URI}
 	!truetype? ( ${FONT_URI} )
 	gmplayer? ( mirror://mplayer/skins/Blue-${BLUV}.tar.bz2 )
-	svga? (	http://dev.gentoo.org/~ssuominen/svgalib_helper-${SVGV}-mplayer.tar.gz )"
+	svga? (	mirror://gentoo/svgalib_helper-${SVGV}-mplayer.tar.gz )"
 #	svga? ( http://mplayerhq.hu/~alex/svgalib_helper-${SVGV}-mplayer.tar.bz2 )
 
 DESCRIPTION="Media Player for Linux"
@@ -81,9 +81,7 @@ RDEPEND+="
 		)
 		opengl? ( virtual/opengl )
 		truetype? ( ${FONT_RDEPS} )
-		video_cards_nvidia? (
-			vdpau? ( >=x11-drivers/nvidia-drivers-180.60 )
-		)
+		vdpau? ( || ( x11-libs/libvdpau >=x11-drivers/nvidia-drivers-180.51 ) )
 		xinerama? ( x11-libs/libXinerama )
 		xscreensaver? ( x11-libs/libXScrnSaver )
 		xv? (
@@ -555,7 +553,7 @@ src_configure() {
 		use dga || myconf+=" --disable-dga1 --disable-dga2"
 		use opengl || myconf+=" --disable-gl"
 		use osdmenu && myconf+=" --enable-menu"
-		use video_cards_nvidia && use vdpau || myconf+=" --disable-vdpau"
+		use vdpau || myconf+=" --disable-vdpau"
 		use video_cards_vesa || myconf+=" --disable-vesa"
 		use vidix || myconf+=" --disable-vidix --disable-vidix-pcidb"
 		use xscreensaver || myconf+=" --disable-xss"
