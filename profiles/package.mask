@@ -1,4 +1,5 @@
 =app-dicts/jmdict-scm
+=dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
 =media-gfx/blender-scm
 =media-video/mplayer-scm
