@@ -1751,7 +1751,7 @@ gcc-compiler_src_install() {
 
 	cd "${WORKDIR}"/build
 	# Do allow symlinks in private gcc include dir as this can break the build
-	find gcc/include*/ -type l -print0 | xargs rm -f
+	find gcc/include*/ -type l -print0 | xargs -0 rm -f
 	# Remove generated headers, as they can cause things to break
 	# (ncurses, openssl, etc).
 	for x in $(find gcc/include*/ -name '*.h') ; do
