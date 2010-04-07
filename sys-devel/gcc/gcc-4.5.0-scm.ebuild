@@ -9,7 +9,7 @@ inherit multilib subversion toolchain
 
 DESCRIPTION="The GNU Compiler Collection.  Includes C/C++, java compilers, pie+ssp extensions, Haj Ten Brugge runtime bounds checking"
 HOMEPAGE="http://gcc.gnu.org/"
-ESVN_REPO_URI="svn://gcc.gnu.org/svn/gcc/trunk"
+ESVN_REPO_URI="svn://gcc.gnu.org/svn/gcc/branches/gcc-4_5-branch"
 SRC_URI=""
 
 IUSE="debug lto offline"
