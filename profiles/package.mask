@@ -3,5 +3,4 @@
 =dev-util/valgrind-scm
 =media-gfx/blender-scm
 =media-video/mplayer-scm
-=sys-devel/gcc-4.5.0-scm
 =sys-devel/gcc-4.5.0_rc20100406
