@@ -159,6 +159,7 @@ else
 			tc_version_is_at_least "4.2" && IUSE="${IUSE} openmp"
 			tc_version_is_at_least "4.3" && IUSE="${IUSE} fixed-point"
 			tc_version_is_at_least "4.4" && IUSE="${IUSE} graphite"
+			tc_version_is_at_least "4.5.0_rc0" && IUSE="${IUSE} lto"
 		fi
 	fi
 
@@ -1346,6 +1347,7 @@ gcc_do_configure() {
 	tc_version_is_at_least "4.4" && \
 		confgcc="${confgcc} $(use_with graphite ppl) $(use_with graphite cloog)"
 
+	tc_version_is_at_least "4.5.0_rc0" && confgcc="${confgcc} $(use_enable lto)"
 
 	[[ $(tc-is-softfloat) == "yes" ]] && confgcc="${confgcc} --with-float=soft"
 
@@ -1908,6 +1910,16 @@ gcc-compiler_src_install() {
 
 	# Cpoy the needed minispec for hardened gcc 4
 	copy_minispecs_gcc_specs
+
+	# Move pretty-printers to gdb datadir to shut ldconfig up
+	if tc_version_is_at_least 4.5 ; then
+		gdbdir=/usr/share/gdb/auto-load
+		for module in $(find "${D}" -iname "*-gdb.py" -print); do
+			insinto ${gdbdir}/$(dirname "${module/${D}/}" | sed -e "s:/lib/:/$(get_libdir)/:g")
+			doins "${module}"
+			rm "${module}"
+		done
+	fi
 }
 
 gcc_slot_java() {
