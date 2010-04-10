@@ -89,7 +89,9 @@ src_prepare() {
 
 	einfo "Removing bundled Glew ..."
 	rm -r extern/glew
+
 	epatch "${FILESDIR}"/${PN}-${SLOT}-glew.patch
+	epatch "${FILESDIR}"/fix-gl-includes.patch
 
 	einfo "Removing bundled LAME ..."
 	rm -r extern/libmp3lame

@@ -1,0 +1,11 @@
+--- source/blender/editors/include/BIF_gl.h	2010-04-10 21:38:28.000000000 +0200
++++ source/blender/editors/include/BIF_gl.h	2010-04-10 21:38:41.000000000 +0200
+@@ -31,7 +31,7 @@
+ #ifndef BIF_GL_H
+ #define BIF_GL_H
+ 
+-#include "../../../../extern/glew/include/GL/glew.h"
++#include <GL/glew.h>
+ 
+ 	/*
+ 	 * these should be phased out. cpack should be replaced in
