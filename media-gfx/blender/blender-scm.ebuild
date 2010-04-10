@@ -168,8 +168,6 @@ src_configure() {
 	# set CXXFLAGS used in /etc/make.conf correctly
 	echo "CXXFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
 		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
-	echo "CCFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
-		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
 	# FIX: linux2-config.py lacks a BGE_CXXFLAGS
 	echo "BGE_CXXFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
 		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
