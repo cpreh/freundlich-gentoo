@@ -2,12 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="2"
+EAPI=2
 NEEP_PYTHON="3.1"
-inherit eutils python subversion versionator
+inherit eutils python subversion versionator flag-o-matic
 
 IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp verse \
-	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl collada sse"
+	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl collada sse \
+	redcode +zlib iconv test"
 
 LANGS="en ar bg ca cs de el es fi fr hr it ja ko nl pl pt_BR ro ru sr sv uk zh_CN"
 for X in ${LANGS} ; do
@@ -15,27 +16,27 @@ for X in ${LANGS} ; do
 done
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
-HOMEPAGE="http://www.blender.org/"
+HOMEPAGE="http://www.blender.org"
 ESVN_REPO_URI="https://svn.blender.org/svnroot/bf-blender/trunk/blender"
 
 #SLOT="$(get_version_component_range 1-2)"
 SLOT="2.5"
 LICENSE="|| ( GPL-2 BL )"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 
 RDEPEND="media-libs/jpeg
 	media-libs/libpng
 	x11-libs/libXi
 	x11-libs/libX11
-	sys-libs/zlib
 	media-libs/tiff
 	media-libs/libsamplerate
 	virtual/opengl
 	>=media-libs/freetype-2.0
 	virtual/libintl
-	virtual/libiconv
 	media-libs/glew
 	dev-cpp/eigen:2
+	iconv? ( virtual/libiconv )
+	zlib? ( sys-libs/zlib )
 	sdl? ( media-libs/libsdl[audio,joystick] )
 	openexr? ( media-libs/openexr )
 	ffmpeg? (
@@ -43,6 +44,7 @@ RDEPEND="media-libs/jpeg
 		jpeg2k? ( >=media-video/ffmpeg-0.5[x264,xvid,mp3,encode,theora,jpeg2k] )
 	)
 	openal? ( >=media-libs/openal-1.6.372 )
+	web? ( >=net-libs/xulrunner-1.9.0.10:1.9 )
 	fftw? ( sci-libs/fftw:3.0 )
 	jack? ( media-sound/jack-audio-connection-kit )
 	sndfile? ( media-libs/libsndfile )
@@ -52,14 +54,21 @@ RDEPEND="media-libs/jpeg
 		dev-libs/expat
 	)"
 
-DEPEND=">=sys-devel/gcc-4.3.2[openmp?]
+DEPEND=">=dev-util/scons-0.98
+	>=sys-devel/gcc-4.3.2[openmp?]
 	apidoc? (
-		dev-python/epydoc
+		dev-python/sphinx
 		>=app-doc/doxygen-1.5.7[-nodot]
 	)
-	dev-util/scons
 	x11-base/xorg-server
 	${RDEPEND}"
+
+# configure internationalization only if LINGUAS have more
+# languages than 'en', otherwise must be disabled
+if [[ ${LINGUAS} != "en" && -n ${LINGUAS} ]]; then
+	DEPEND="${DEPEND}
+		sys-devel/gettext"
+fi
 
 S="${WORKDIR}/${PN}"
 
@@ -76,54 +85,40 @@ blend_with() {
 }
 
 src_prepare() {
+	#epatch "${FILESDIR}"/${PN}-${SLOT}-CVE-2008-1103.patch
+	#epatch "${FILESDIR}"/${PN}-${SLOT}-CVE-2008-4863.patch
+	#epatch "${FILESDIR}"/${PN}-2.49a-sys-openjpeg.patch
 	epatch "${FILESDIR}"/${PN}-desktop.patch
 	epatch "${FILESDIR}"/${PN}-${SLOT}-doxygen.patch
+
+	# TODO: write a proper Makefile to replace the borked bmake script
+	epatch "${FILESDIR}"/${PN}-${SLOT}-bmake.patch
 
 	# OpenJPEG
 	einfo "Removing bundled OpenJPEG ..."
 	rm -r extern/libopenjpeg
 
-	# FFmpeg
-	einfo "Removing bundled FFmpeg ..."
-	rm -r extern/ffmpeg
-
+	# Glew
 	einfo "Removing bundled Glew ..."
 	rm -r extern/glew
-
 	epatch "${FILESDIR}"/${PN}-${SLOT}-glew.patch
-	epatch "${FILESDIR}"/fix-gl-includes.patch
 
-	einfo "Removing bundled LAME ..."
-	rm -r extern/libmp3lame
+	# binreloc
+#	einfo "Removing bundled binreloc ..."
+#	rm -r extern/binreloc
+#	epatch "${FILESDIR}"/${PN}-${SLOT}-binreloc.patch
 
-	einfo "Removing bundled x264 ..."
-	rm -r extern/x264
-
-	einfo "Removing bundled Xvid ..."
-	rm -r extern/xvidcore
-
-	#einfo "Removing bundled LZMA ..."
-	#rm -r extern/lzma
-
-	#einfo "Removing bundled binreloc ..."
-	#rm -r extern/binreloc
-
+	# Eigen2
 	einfo "Removing bundled Eigen2 ..."
 	rm -r extern/Eigen2
 	epatch "${FILESDIR}"/${PN}-${SLOT}-eigen.patch
+
+	# Bullet
+#	einfo "Removing bundled Bullet2 ..."
+#	rm -r extern/bullet2
 }
 
 src_configure() {
-	# add ffmpeg info to the Scons build options
-	# and configure ogg vorbis/theora support for ffmpeg
-	if use ffmpeg; then
-		cat <<- EOF >> "${S}"/user-config.py
-			BF_FFMPEG="/usr"
-			BF_FFMPEG_LIB="avformat avcodec swscale avutil avdevice"
-			WITH_BF_OGG=1
-		EOF
-	fi
-
 	# add system openjpeg into Scons build options.
 	cat <<- EOF >> "${S}"/user-config.py
 		BF_OPENJPEG="/usr"
@@ -131,61 +126,68 @@ src_configure() {
 		BF_OPENJPEG_LIB="openjpeg"
 	EOF
 
+	# add system sci-physic/bullet into Scons build options.
+#	cat <<- EOF >> "${S}"/user-config.py
+#		WITH_BF_BULLET=1
+#		BF_BULLET="/usr"
+#		BF_BULLET_INC="/usr/include"
+#		BF_BULLET_LIB="BulletCollision"
+#	EOF
+
 	# configure internationalization only if LINGUAS have more
 	# languages than 'en', otherwise must be disabled
-	if [[ -z ${LINGUAS} ]] || [[ ${LINGUAS} == "en" ]]; then
-		cat <<- EOF >> "${S}"/user-config.py
-			WITH_BF_INTERNATIONAL=0
-		EOF
-	fi
+	[[ -z ${LINGUAS} ]] || [[ ${LINGUAS} == "en" ]] && echo "WITH_BF_INTERNATIONAL=0" >> "${S}"/user-config.py
 
 	# configure Elbeem fluid system
-	if ! use elbeem; then
-		cat <<- EOF >> "${S}"/user-config.py
-			BF_NO_ELBEEM=1
-		EOF
-	fi
+	use elbeem || echo "BF_NO_ELBEEM=1" >> "${S}"/user-config.py
 
 	# configure Tweak Mode
-	if use tweak-mode; then
-		cat <<- EOF >> "${S}"/user-config.py
-			BF_TWEAK_MODE=1
-		EOF
-	fi
+	use tweak-mode && echo "BF_TWEAK_MODE=1" >> "${S}"/user-config.py
 
 	# FIX: Game Engine module needs to be active to build the Blender Player
 	if ! use game-engine && use player; then
 		elog "Forcing Game Engine [+game-engine] as required by Blender Player [+player]"
-		cat <<- EOF >> "${S}"/user-config.py
-			WITH_BF_GAMEENGINE=1
-		EOF
+		echo "WITH_BF_GAMEENGINE=1" >> "${S}"/user-config.py
 	else
 		blend_with game-engine gameengine
 	fi
 
 	# set CFLAGS used in /etc/make.conf correctly
-	echo "CFLAGS= [`for i in ${CFLAGS[@]}; do printf "%s \'$i"\',; done`] " \
+	echo "CFLAGS=[`for i in ${CFLAGS[@]}; do printf "%s \'$i"\',; done`] " \
 		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
 
 	# set CXXFLAGS used in /etc/make.conf correctly
-	echo "CXXFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
-		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
-	# FIX: linux2-config.py lacks a BGE_CXXFLAGS
-	echo "BGE_CXXFLAGS= [`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
-		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
+	local FILTERED_CXXFLAGS="`for i in ${CXXFLAGS[@]}; do printf "%s \'$i"\',; done`"
+	echo "CXXFLAGS=[${FILTERED_CXXFLAGS}]" | sed -e "s:,]: ]:" >> "${S}"/user-config.py
+	echo "BGE_CXXFLAGS=[${FILTERED_CXXFLAGS}]" | sed -e "s:,]: ]:" >> "${S}"/user-config.py
+
+	# reset general options passed to the C/C++ compilers (useless hardcoded flags)
+	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
+	# shadows, see bug #276338 for reference
+	echo "CCFLAGS= ['-funsigned-char']" >> "${S}"/user-config.py
 
 	# set LDFLAGS used in /etc/make.conf correctly
-	echo "LINKFLAGS= [`for i in ${LDFLAGS[@]}; do printf "%s \'$i"\',; done`]" \
-		| sed -e "s:,]: ]:" >> "${S}"/user-config.py
+	local FILTERED_LDFLAGS="`for i in ${LDFLAGS[@]}; do printf "%s \'$i"\',; done`"
+	echo "LINKFLAGS=[${FILTERED_LDFLAGS}]" | sed -e "s:,]: ]:" >> "${S}"/user-config.py
+	echo "PLATFORM_LINKFLAGS=[${FILTERED_LDFLAGS}]" | sed -e "s:,]: ]:" >> "${S}"/user-config.py
+
+	# reset REL_* variables (useless hardcoded flags)
+	cat <<- EOF >> "${S}"/user-config.py
+		REL_CFLAGS=[]
+		REL_CXXFLAGS=[]
+		REL_CCFLAGS=[]
+	EOF
 
 	# reset warning flags (useless for NON blender developers)
-	echo "C_WARN=['']"   >> "${S}"/user-config.py
-	echo "CC_WARN=['']"  >> "${S}"/user-config.py
-	echo "CXX_WARN=['']" >> "${S}"/user-config.py
+	cat <<- EOF >> "${S}"/user-config.py
+		C_WARN  =[ '-w', '-g0' ]
+		CC_WARN =[ '-w', '-g0' ]
+		CXX_WARN=[ '-w', '-g0' ]
+	EOF
 
 	# detecting -j value from MAKEOPTS
 	local NUMJOBS="$( echo "${MAKEOPTS}" | sed -ne 's,.*-j\([[:digit:]]\+\).*,\1,p' )"
-	[[ -z "${NUMJOBS}" ]] && NUMJOBS=1
+	[[ -z "${NUMJOBS}" ]] && NUMJOBS=1 # resetting to -j1 for empty MAKEOPTS
 
 	# generic settings which differ from the defaults from linux2-config.py
 	cat <<- EOF >> "${S}"/user-config.py
@@ -194,8 +196,10 @@ src_configure() {
 		BF_BUILDINFO=1
 		BF_QUIET=1
 		BF_NUMJOBS=${NUMJOBS}
+		BF_LINE_OVERWRITE=0
 		WITH_BF_FHS=1
 		WITH_BF_BINRELOC=0
+		WITH_BF_STATICOPENGL=0
 	EOF
 
 	# configure WITH_BF* Scons build options
@@ -211,13 +215,21 @@ src_configure() {
 		'jpeg2k openjpeg' \
 		'openal'\
 		'ffmpeg' \
+		'ffmpeg ogg' \
 		'player' \
 		'openmp' \
 		'collada' \
 		'sse rayoptimization' \
+		'redcode' \
+		'zlib' \
+		'iconv' \
 		'verse' ; do
 		blend_with ${arg}
 	done
+
+	# enable debugging/testing support
+	use debug && echo "BF_DEBUG=1" >> "${S}"/user-config.py
+	use test && echo "BF_UNIT_TEST=1" >> "${S}"/user-config.py
 }
 
 src_compile() {
@@ -229,7 +241,13 @@ src_compile() {
 	cd "${WORKDIR}"/install/share/blender/${SLOT}/plugins/ \
 		|| die "dir ${WORKDIR}/install/share/blender/${SLOT}/plugins/ do not exists"
 	chmod 755 bmake
-	emake  > /dev/null || die
+
+	# FIX: plugins are built without respecting user's LDFLAGS
+	emake \
+		CFLAGS="${CFLAGS} -fPIC" \
+		LDFLAGS="$(raw-ldflags) -Bshareable" \
+		> /dev/null \
+		|| die "plugins compilation failed"
 }
 
 src_install() {
@@ -366,7 +384,6 @@ src_install() {
 	doins release/freedesktop/blender-${SLOT}.desktop
 
 	# install docs
-	dodoc README
 	use doc && dodoc release/text/BlenderQuickStart.pdf
 	if use apidoc; then
 
@@ -397,7 +414,7 @@ src_install() {
 	fi
 
 	# final cleanup
-	rm -r "${WORKDIR}"/install/share/blender/${SLOT}/{Python-license.txt,icons,GPL-license.txt,copyright.txt,BlenderQuickStart.pdf,blender.html,release_249.txt}
+	rm -r "${WORKDIR}"/install/share/blender/${SLOT}/{Python-license.txt,icons,GPL-license.txt,copyright.txt}
 
 	# installing blender
 	insinto /usr/share/${PN}/${SLOT}
@@ -405,11 +422,10 @@ src_install() {
 	doins release/VERSION
 
 	# FIX: making all python scripts readable only by group 'users',
-	#      so nobody can modify scripts apart root user, but users
-	#      can write their python cache (*.pyc).
+	#      so nobody can modify scripts apart root user, but python
+	#      cache (*.pyc) can be written and shared across the users.
 	chown root:users -R "${D}/usr/share/${PN}/${SLOT}/scripts"
 	chmod 750 -R "${D}/usr/share/${PN}/${SLOT}/scripts"
-
 }
 
 pkg_preinst() {
@@ -424,15 +440,15 @@ pkg_postinst() {
 	elog "Blender uses python integration. As such, may have some"
 	elog "inherit risks with running unknown python scripting."
 	elog
-	elog "CVE-2008-1103-1.patch has been removed as it interferes"
-	elog "with autosave undo features. Up stream blender coders"
-	elog "have not addressed the CVE issue as the status is still"
-	elog "a CANDIDATE and not CONFIRMED."
-	elog
-	elog "CVE-2008-4863.patch has been remove as it interferes"
-	elog "with the load of bpy_ops.py and all the UI python"
-	elog "scripts."
-	elog
+#	elog "CVE-2008-1103-1.patch has been removed as it interferes"
+#	elog "with autosave undo features. Up stream blender coders"
+#	elog "have not addressed the CVE issue as the status is still"
+#	elog "a CANDIDATE and not CONFIRMED."
+#	elog
+#	elog "CVE-2008-4863.patch has been remove as it interferes"
+#	elog "with the load of bpy_ops.py and all the UI python"
+#	elog "scripts."
+#	elog
 	elog "It is recommended to change your blender temp directory"
 	elog "from /tmp to /home/user/tmp or another tmp file under your"
 	elog "home directory. This can be done by starting blender, then"
