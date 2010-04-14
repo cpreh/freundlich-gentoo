@@ -1912,7 +1912,7 @@ gcc-compiler_src_install() {
 	copy_minispecs_gcc_specs
 
 	# Move pretty-printers to gdb datadir to shut ldconfig up
-	if tc_version_is_at_least 4.5 ; then
+	if tc_version_is_at_least "4.5.0_rc0" ; then
 		gdbdir=/usr/share/gdb/auto-load
 		for module in $(find "${D}" -iname "*-gdb.py" -print); do
 			insinto ${gdbdir}/$(dirname "${module/${D}/}" | sed -e "s:/lib/:/$(get_libdir)/:g")

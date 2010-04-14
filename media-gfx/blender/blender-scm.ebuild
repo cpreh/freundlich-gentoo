@@ -22,7 +22,7 @@ ESVN_REPO_URI="https://svn.blender.org/svnroot/bf-blender/trunk/blender"
 #SLOT="$(get_version_component_range 1-2)"
 SLOT="2.5"
 LICENSE="|| ( GPL-2 BL )"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 RDEPEND="media-libs/jpeg
 	media-libs/libpng
@@ -44,7 +44,6 @@ RDEPEND="media-libs/jpeg
 		jpeg2k? ( >=media-video/ffmpeg-0.5[x264,xvid,mp3,encode,theora,jpeg2k] )
 	)
 	openal? ( >=media-libs/openal-1.6.372 )
-	web? ( >=net-libs/xulrunner-1.9.0.10:1.9 )
 	fftw? ( sci-libs/fftw:3.0 )
 	jack? ( media-sound/jack-audio-connection-kit )
 	sndfile? ( media-libs/libsndfile )
