@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.420 2010/03/07 04:37:01 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.422 2010/04/20 17:47:09 armin76 Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -159,7 +159,7 @@ else
 			tc_version_is_at_least "4.2" && IUSE="${IUSE} openmp"
 			tc_version_is_at_least "4.3" && IUSE="${IUSE} fixed-point"
 			tc_version_is_at_least "4.4" && IUSE="${IUSE} graphite"
-			tc_version_is_at_least "4.5.0_rc0" && IUSE="${IUSE} lto"
+			tc_version_is_at_least "4.5" && IUSE="${IUSE} lto"
 		fi
 	fi
 
@@ -1243,6 +1243,12 @@ gcc-compiler-configure() {
 				[[ ${arm_arch} == *eb ]] && arm_arch=${arm_arch%eb}
 				confgcc="${confgcc} --with-arch=${arm_arch}"
 			fi
+	
+			# Enable hardvfp
+			if [[ ${CTARGET##*-} == *eabi ]] && [[ $(tc-is-softfloat) == no ]] && \
+			    tc_version_is_at_least "4.5" ; then
+			        confgcc="${confgcc} --with-float=hard"
+			fi
 			;;
 		# Add --with-abi flags to set default MIPS ABI
 		mips)
@@ -1347,7 +1353,7 @@ gcc_do_configure() {
 	tc_version_is_at_least "4.4" && \
 		confgcc="${confgcc} $(use_with graphite ppl) $(use_with graphite cloog)"
 
-	tc_version_is_at_least "4.5.0_rc0" && confgcc="${confgcc} $(use_enable lto)"
+	tc_version_is_at_least "4.5" && confgcc="${confgcc} $(use_enable lto)"
 
 	[[ $(tc-is-softfloat) == "yes" ]] && confgcc="${confgcc} --with-float=soft"
 
@@ -1912,7 +1918,7 @@ gcc-compiler_src_install() {
 	copy_minispecs_gcc_specs
 
 	# Move pretty-printers to gdb datadir to shut ldconfig up
-	if tc_version_is_at_least "4.5.0_rc0" ; then
+	if tc_version_is_at_least "4.5" ; then
 		gdbdir=/usr/share/gdb/auto-load
 		for module in $(find "${D}" -iname "*-gdb.py" -print); do
 			insinto ${gdbdir}/$(dirname "${module/${D}/}" | sed -e "s:/lib/:/$(get_libdir)/:g")
