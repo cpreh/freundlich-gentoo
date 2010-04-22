@@ -20,7 +20,7 @@ DEPEND="
 	dev-cpp/fcppt
 	dev-cpp/majutsu
 	dev-libs/boost
-	games-engines/spacegameengine[bullet,gui,opengl,png,truetype,x11input]"
+	games-engines/spacegameengine[bullet,gui,openal,opengl,png,truetype,x11input]"
 RDEPEND="${DEPEND}"
 
 src_configure() {
