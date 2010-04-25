@@ -35,6 +35,7 @@ RDEPEND="media-libs/jpeg
 	virtual/libintl
 	media-libs/glew
 	dev-cpp/eigen:2
+	>=sci-physics/bullet-2.76
 	iconv? ( virtual/libiconv )
 	zlib? ( sys-libs/zlib )
 	sdl? ( media-libs/libsdl[audio,joystick] )
@@ -44,6 +45,7 @@ RDEPEND="media-libs/jpeg
 		jpeg2k? ( >=media-video/ffmpeg-0.5[x264,xvid,mp3,encode,theora,jpeg2k] )
 	)
 	openal? ( >=media-libs/openal-1.6.372 )
+	web? ( >=net-libs/xulrunner-1.9.0.10:1.9 )
 	fftw? ( sci-libs/fftw:3.0 )
 	jack? ( media-sound/jack-audio-connection-kit )
 	sndfile? ( media-libs/libsndfile )
@@ -115,6 +117,7 @@ src_prepare() {
 	# Bullet
 #	einfo "Removing bundled Bullet2 ..."
 #	rm -r extern/bullet2
+#	epatch "${FILESDIR}"/${PN}-${SLOT}-bullet.patch
 }
 
 src_configure() {
@@ -129,9 +132,17 @@ src_configure() {
 #	cat <<- EOF >> "${S}"/user-config.py
 #		WITH_BF_BULLET=1
 #		BF_BULLET="/usr"
-#		BF_BULLET_INC="/usr/include"
-#		BF_BULLET_LIB="BulletCollision"
+#		BF_BULLET_INC="/usr/include /usr/include/BulletCollision /usr/include/BulletDynamics /usr/include/LinearMath /usr/include/BulletSoftBody"
+#		BF_BULLET_LIB="BulletSoftBody BulletDynamics BulletCollision LinearMath"
 #	EOF
+
+	#add iconv into Scons build options.
+	if use !elibc_glibc && use !elibc_uclibc && use iconv; then
+		cat <<- EOF >> "${S}"/user-config.py
+			WITH_BF_ICONV=1
+			BF_ICONV="/usr"
+		EOF
+	fi
 
 	# configure internationalization only if LINGUAS have more
 	# languages than 'en', otherwise must be disabled
@@ -163,7 +174,7 @@ src_configure() {
 	# reset general options passed to the C/C++ compilers (useless hardcoded flags)
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
-	echo "CCFLAGS= ['-funsigned-char']" >> "${S}"/user-config.py
+	echo "CCFLAGS= ['-funsigned-char', '-D_LARGEFILE_SOURCE', '-D_FILE_OFFSET_BITS=64']" >> "${S}"/user-config.py
 
 	# set LDFLAGS used in /etc/make.conf correctly
 	local FILTERED_LDFLAGS="`for i in ${LDFLAGS[@]}; do printf "%s \'$i"\',; done`"
@@ -221,7 +232,6 @@ src_configure() {
 		'sse rayoptimization' \
 		'redcode' \
 		'zlib' \
-		'iconv' \
 		'verse' ; do
 		blend_with ${arg}
 	done
@@ -271,7 +281,9 @@ src_install() {
 	mv "${WORKDIR}/install/bin/blender" "${WORKDIR}/install/bin/blender-bin-${SLOT}"
 	doexe "${WORKDIR}/install/bin/blender-bin-${SLOT}"
 	doexe "${WORKDIR}/install/bin/blender-${SLOT}"
+	mv "${WORKDIR}"/install/bin/blenderplayer "${WORKDIR}/install/bin/blenderplayer-${SLOT}"
 	use player && doexe "${WORKDIR}"/install/bin/blenderplayer
+	mv "${WORKDIR}"/install/bin/verse_server "${WORKDIR}/install/bin/verse_server-${SLOT}"
 	use verse && doexe "${WORKDIR}"/install/bin/verse_server
 
 	# install plugins

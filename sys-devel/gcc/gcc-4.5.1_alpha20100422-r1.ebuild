@@ -1,8 +1,12 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.4.3.ebuild,v 1.1 2010/02/08 12:58:14 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.0.ebuild,v 1.3 2010/04/25 02:42:21 mr_bones_ Exp $
 
 RESTRICT="mirror"
+
+PATCH_GCC_VER="4.5.0"
+PATCH_VER="1.0"
+UCLIBC_VER="1.0"
 
 ETYPE="gcc-compiler"
 
@@ -30,9 +34,9 @@ KEYWORDS="~alpha ~amd64 ~arm -hppa ~ia64 ~mips ~ppc ~ppc64 -sparc ~x86 ~x86-fbsd
 RDEPEND=">=sys-libs/zlib-1.1.4
 	>=sys-devel/gcc-config-1.4
 	virtual/libiconv
-	>=dev-libs/gmp-4.2.2
-	>=dev-libs/mpfr-2.3.2
-	>=dev-libs/mpc-0.8
+	>=dev-libs/gmp-4.3.2
+	>=dev-libs/mpfr-2.4.2
+	>=dev-libs/mpc-0.8.1
 	graphite? (
 		>=dev-libs/ppl-0.10
 		>=dev-libs/cloog-ppl-0.15.8
@@ -60,9 +64,11 @@ DEPEND="${RDEPEND}
 	test? ( >=dev-util/dejagnu-1.4.4 >=sys-devel/autogen-5.5.4 )
 	>=sys-apps/texinfo-4.8
 	>=sys-devel/bison-1.875
-	>=sys-devel/flex-2.5.4
+	elibc_glibc? ( >=sys-libs/glibc-2.8 )
 	amd64? ( multilib? ( gcj? ( app-emulation/emul-linux-x86-xlibs ) ) )
-	>=${CATEGORY}/binutils-2.18"
+	ppc? ( >=${CATEGORY}/binutils-2.17 )
+	ppc64? ( >=${CATEGORY}/binutils-2.17 )
+	>=${CATEGORY}/binutils-2.15.94"
 PDEPEND=">=sys-devel/gcc-config-1.4"
 
 if [[ ${CATEGORY} != cross-* ]] ; then
