@@ -89,16 +89,6 @@ src_prepare() {
 
 	 # bug 291660
 	epatch "${FILESDIR}/boost-${PV}-parameter-needs-python.patch"
-
-	epatch "${FILESDIR}/gcc-4.5-mpl-${PV}.patch"
-
-	# This enables building the boost.random library with /dev/urandom support
-	if [[ -e /dev/urandom ]] ; then
-		mkdir -p libs/random/build
-		cp "${FILESDIR}/random-Jamfile" libs/random/build/Jamfile.v2
-		# yeah, we WANT it to work on non-Linux too
-		sed -i -e 's/#ifdef __linux__/#if 1/' libs/random/random_device.cpp || die
-	fi
 }
 
 src_configure() {
