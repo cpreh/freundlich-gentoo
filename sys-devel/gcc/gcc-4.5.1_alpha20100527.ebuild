@@ -1,11 +1,11 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.0.ebuild,v 1.3 2010/04/25 02:42:21 mr_bones_ Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.0.ebuild,v 1.6 2010/05/17 20:02:39 halcy0n Exp $
 
 RESTRICT="mirror"
 
 PATCH_GCC_VER="4.5.0"
-PATCH_VER="1.0"
+PATCH_VER="1.1"
 UCLIBC_VER="1.0"
 
 ETYPE="gcc-compiler"
@@ -70,7 +70,6 @@ DEPEND="${RDEPEND}
 	ppc64? ( >=${CATEGORY}/binutils-2.17 )
 	>=${CATEGORY}/binutils-2.15.94"
 PDEPEND=">=sys-devel/gcc-config-1.4"
-
 if [[ ${CATEGORY} != cross-* ]] ; then
 	PDEPEND="${PDEPEND} elibc_glibc? ( >=sys-libs/glibc-2.8 )"
 fi
