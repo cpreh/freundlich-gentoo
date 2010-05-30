@@ -7,6 +7,7 @@ RESTRICT="mirror"
 PATCH_GCC_VER="4.5.0"
 PATCH_VER="1.1"
 UCLIBC_VER="1.0"
+GENTOO_PATCH_EXCLUDE="02_all_gcc45-pr42347.patch"
 
 ETYPE="gcc-compiler"
 
