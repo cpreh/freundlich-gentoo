@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.5.0.ebuild,v 1.4 2010/01/15 22:00:13 fauli Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.5.0.ebuild,v 1.8 2010/05/21 18:59:32 pva Exp $
 
 ESVN_REPO_URI="svn://svn.valgrind.org/valgrind/trunk"
 
@@ -33,6 +33,12 @@ src_unpack() {
 	# Correct hard coded doc location
 	sed -i -e "s:doc/valgrind:doc/${P}:" docs/Makefile.am
 
+	# Fix up some suppressions that were not general enough for glibc versions
+	# with more than just a major and minor number.
+	epatch "${FILESDIR}/valgrind-3.4.1-glibc-2.10.1.patch"
+
+	# Respect LDFLAGS also for libmpiwrap.so (bug #279194)
+	epatch "${FILESDIR}/valgrind-3.5.0-respect-LDFLAGS.patch"
 
 	# Regenerate autotools files
 	eautoreconf
