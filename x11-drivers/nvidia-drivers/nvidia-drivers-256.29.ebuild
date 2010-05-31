@@ -8,13 +8,23 @@ inherit eutils multilib versionator linux-mod flag-o-matic nvidia-driver
 
 RESTRICT="mirror"
 
-X86_NV_PACKAGE="NVIDIA-Linux-x86_64-${PV}"
-AMD64_NV_PACKAGE="NVIDIA-Linux-x86_64-${PV}-no-compat32"
+NORMAL_NV_PACKAGE="NVIDIA-Linux-x86_64-${PV}"
+NO_COMPAT_NV_PACKAGE="NVIDIA-Linux-x86_64-${PV}-no-compat32"
+
+NORMAL_NV_PACKAGE_URI="ftp://download.nvidia.com/XFree86/Linux-x86_64/${PV}/${NORMAL_NV_PACKAGE}.run"
+NO_COMPAT_NV_PACKAGE_URI="ftp://download.nvidia.com/XFree86/Linux-x86_64/${PV}/${NO_COMPAT_NV_PACKAGE}.run"
 
 DESCRIPTION="NVIDIA X11 driver and GLX libraries"
 HOMEPAGE="http://www.nvidia.com/"
-SRC_URI="x86? ( ftp://download.nvidia.com/XFree86/Linux-x86_64/${PV}/${X86_NV_PACKAGE}.run )
-	 amd64? ( ftp://download.nvidia.com/XFree86/Linux-x86_64/${PV}/${AMD64_NV_PACKAGE}.run )"
+SRC_URI="x86? ( ${NORMAL_NV_PACKAGE_URI}  )
+	 amd64? (
+	 	multilib? (
+			${NORMAL_NV_PACKAGE_URI}
+		)
+		!multilib? (
+			${NO_COMPAT_NV_PACKAGE_URI}
+		)
+	)"
 
 LICENSE="NVIDIA"
 SLOT="0"
@@ -37,10 +47,14 @@ PDEPEND=">=x11-libs/libvdpau-0.3-r1
 
 if use x86; then
 	PKG_V="-pkg0"
-	NV_PACKAGE="${X86_NV_PACKAGE}"
+	NV_PACKAGE="${NORMAL_NV_PACKAGE}"
 elif use amd64; then
 	PKG_V="-pkg2"
-	NV_PACKAGE="${AMD64_NV_PACKAGE}"
+	if use multilib ; then
+		NV_PACKAGE="${NORMAL_NV_PACKAGE}"
+	else
+		NV_PACKAGE="${NO_COMPAT_NV_PACKAGE}"
+	fi
 fi
 
 S="${WORKDIR}/${NV_PACKAGE}${PKG_V}"
@@ -283,34 +297,40 @@ donvidia() {
 src_install-libs() {
 	local inslibdir=$(get_libdir)
 	local NV_ROOT="/usr/${inslibdir}/opengl/nvidia"
-	local sover=${PV}
+	local libdir= sover=${PV}
+
+	if has_multilib_profile && [[ ${ABI} == "x86" ]] ; then
+		libdir=32
+	else
+		libdir=./
+	fi
 
 	# The GLX libraries
-	donvidia ${NV_ROOT}/lib libGL.so ${sover}
-	donvidia ${NV_ROOT}/lib libnvidia-glcore.so ${sover}
-	donvidia ${NV_ROOT}/lib tls/libnvidia-tls.so ${sover}
+	donvidia ${NV_ROOT}/lib ${libdir}/libGL.so ${sover}
+	donvidia ${NV_ROOT}/lib ${libdir}/libnvidia-glcore.so ${sover}
+	donvidia ${NV_ROOT}/lib ${libdir}/tls/libnvidia-tls.so ${sover}
 
 	#cuda
-	if [[ -f libcuda.so.${sover} ]]; then
-		dolib.so libcuda.so.${sover}
+	if [[ -f ${libdir}/libcuda.so.${sover} ]]; then
+		dolib.so ${libdir}/libcuda.so.${sover}
 		[[ "${sover}" != "1" ]] && dosym libcuda.so.${sover} /usr/${inslibdir}/libcuda.so.1
 		dosym libcuda.so.1 /usr/${inslibdir}/libcuda.so
 	fi
 
 	#vdpau
-	if [[ -f libvdpau_nvidia.so.${sover} ]]; then
+	if [[ -f ${libdir}/libvdpau_nvidia.so.${sover} ]]; then
 		insinto /usr/${inslibdir}/vdpau
-		dolib.so libvdpau_nvidia.so.${sover}
+		dolib.so ${libdir}/libvdpau_nvidia.so.${sover}
 		dosym libvdpau_nvidia.so.${sover} /usr/${inslibdir}/libvdpau_nvidia.so.1
 	fi
 
 	# OpenCL
-	if [[ -f libOpenCL.so.1.0.0 ]]; then
-		dolib.so libnvidia-compiler.so.${sover}
+	if [[ -f ${libdir}/libOpenCL.so.1.0.0 ]]; then
+		dolib.so ${libdir}/libnvidia-compiler.so.${sover}
 		[[ "${sover}" != "1" ]] && dosym libnvidia-compiler.so.${sover} /usr/${inslibdir}/libnvidia-compiler.so.1
 		dosym libnvidia-compiler.so.1 /usr/${inslibdir}/libnvidia-compiler.so
 
-		dolib.so libOpenCL.so.1.0.0
+		dolib.so ${libdir}/libOpenCL.so.1.0.0
 		dosym libOpenCL.so.1.0.0 /usr/${inslibdir}/libOpenCL.so.1
 		dosym libOpenCL.so.1 /usr/${inslibdir}/libOpenCL.so
 	fi
