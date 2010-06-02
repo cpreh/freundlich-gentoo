@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.58 2010/05/09 16:44:58 aballier Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.61 2010/06/01 04:31:51 mr_bones_ Exp $
 
 EAPI="2"
 
@@ -161,7 +161,8 @@ DEPEND="${RDEPEND}
 		xscreensaver? ( x11-proto/scrnsaverproto )
 	)
 	amd64? ( ${ASM_DEP} )
-	doc? ( dev-libs/libxslt app-text/docbook-xml-dtd )
+	doc? ( dev-libs/libxslt app-text/docbook-xml-dtd
+		   app-text/docbook-xsl-stylesheets )
 	x86? ( ${ASM_DEP} )
 	x86-fbsd? ( ${ASM_DEP} )
 "
@@ -228,7 +229,7 @@ src_unpack() {
 src_prepare() {
 	# Set SVN version manually
 	subversion_wc_info
-	sed -i s/UNKNOWN/${ESVN_WC_REVISION}/ "${S}/version.sh"
+	sed -i -e "s/UNKNOWN/${ESVN_WC_REVISION}/" "${S}/version.sh" || die
 
 	if use svga; then
 		echo
