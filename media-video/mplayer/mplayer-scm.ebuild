@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.61 2010/06/01 04:31:51 mr_bones_ Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.62 2010/06/02 16:25:28 lu_zero Exp $
 
 EAPI="2"
 
@@ -59,6 +59,8 @@ RDEPEND+=" external-ffmpeg? ( media-video/ffmpeg )"
 #	nemesi? ( net-libs/libnemesi )
 RDEPEND+="
 	sys-libs/ncurses
+	app-arch/bzip2
+	sys-libs/zlib
 	!bindist? (
 		x86? (
 			win32codecs? ( media-libs/win32codecs )
@@ -139,7 +141,7 @@ RDEPEND+="
 	sdl? ( media-libs/libsdl )
 	speex? ( media-libs/speex )
 	svga? ( media-libs/svgalib )
-	theora? ( media-libs/libtheora )
+	theora? ( media-libs/libtheora[encode?] )
 	truetype? ( ${FONT_RDEPS} )
 	vorbis? ( media-libs/libvorbis )
 	xanim? ( media-video/xanim )
@@ -272,7 +274,6 @@ src_configure() {
 		use ${i} || myconf+=" --disable-${i}"
 	done
 	use bidi || myconf+=" --disable-fribidi"
-	use encode || myconf+=" --disable-mencoder"
 	use ipv6 || myconf+=" --disable-inet6"
 	use nut || myconf+=" --disable-libnut"
 	use rar || myconf+=" --disable-unrarexec"
@@ -375,15 +376,10 @@ src_configure() {
 	##########
 	# Codecs #
 	##########
-	# Use internal musepack codecs for SV7 and SV8 support
-	myconf+=" --disable-musepack"
-
-	use a52 || myconf+=" --disable-liba52"
+	myconf+=" --disable-musepack" # Use internal musepack codecs for SV7 and SV8 support
 	myconf+=" --disable-faad-internal" # always use system media-libs/faad2
 	use dirac || myconf+=" --disable-libdirac-lavc"
 	use dts || myconf+=" --disable-libdca"
-	use dv || myconf+=" --disable-libdv"
-	use lzo || myconf+=" --disable-liblzo"
 	if ! use mp3; then
 		myconf+="
 			--disable-mp3lame
@@ -391,7 +387,10 @@ src_configure() {
 			--disable-mp3lib
 		"
 	fi
-	use bs2b || myconf+=" --disable-libbs2b"
+	uses="a52 bs2b dv lzo"
+	for i in ${uses}; do
+		use ${i} || myconf+=" --disable-lib${i}"
+	done
 	use schroedinger || myconf+=" --disable-libschroedinger-lavc"
 	# Disable opencore-amr with bindist
 	# https://bugs.gentoo.org/show_bug.cgi?id=299405#c6
@@ -416,25 +415,17 @@ src_configure() {
 		"
 	fi
 	# Encoding
+	uses="faac x264 xvid toolame twolame"
 	if use encode; then
-		uses="faac x264 xvid toolame twolame"
 		for i in ${uses}; do
 			use ${i} || myconf+=" --disable-${i}"
 		done
 		use faac || myconf+=" --disable-faac-lavc"
 	else
-		myconf+="
-			--disable-faac-lavc
-			--disable-faac
-			--disable-x264
-			--disable-xvid
-			--disable-x264-lavc
-			--disable-xvid-lavc
-			--disable-twolame
-			--disable-toolame
-		"
-		uses="faac x264 xvid toolame twolame"
+		myconf+=" --disable-mencoder"
+		myconf+=" --disable-faac-lavc"
 		for i in ${uses}; do
+			myconf+=" --disable-${i}"
 			use ${i} && elog "Useflag \"${i}\" require \"encode\" useflag enabled to work."
 		done
 	fi
@@ -619,14 +610,14 @@ src_compile() {
 		local ALLOWED_LINGUAS="cs de en es fr hu it pl ru zh_CN"
 		local BUILT_DOCS=""
 		for i in ${LINGUAS} ; do
-			hasq $i ${ALLOWED_LINGUAS} && BUILT_DOCS+=" $i"
+			hasq ${i} ${ALLOWED_LINGUAS} && BUILT_DOCS+=" ${i}"
 		done
 		if [[ -z $BUILT_DOCS ]]
 		then
 			emake -j1 -C DOCS/xml html-chunked || die "Failed to generate html docs"
 		else
 			for i in ${BUILT_DOCS} ; do
-				emake -j1 -C DOCS/xml html-chunked-$i || die "Failed to generate html docs for $i"
+				emake -j1 -C DOCS/xml html-chunked-${i} || die "Failed to generate html docs for ${i}"
 			done
 		fi
 	fi
