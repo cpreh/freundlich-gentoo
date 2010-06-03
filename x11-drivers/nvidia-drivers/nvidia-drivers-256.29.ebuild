@@ -41,7 +41,9 @@ DEPEND="${COMMON}
 	kernel_linux? ( virtual/linux-sources )"
 RDEPEND="${COMMON}
 	kernel_linux? ( virtual/modutils )
-	acpi? ( sys-power/acpid )"
+	acpi? ( sys-power/acpid )
+	x11-libs/libXvMC
+	"
 PDEPEND=">=x11-libs/libvdpau-0.3-r1
 	gtk? ( media-video/nvidia-settings )"
 
