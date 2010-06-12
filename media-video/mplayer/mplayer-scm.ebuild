@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.62 2010/06/02 16:25:28 lu_zero Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.64 2010/06/11 13:59:50 aballier Exp $
 
 EAPI="2"
 
@@ -163,8 +163,10 @@ DEPEND="${RDEPEND}
 		xscreensaver? ( x11-proto/scrnsaverproto )
 	)
 	amd64? ( ${ASM_DEP} )
-	doc? ( dev-libs/libxslt app-text/docbook-xml-dtd
-		   app-text/docbook-xsl-stylesheets )
+	doc? (
+		dev-libs/libxslt app-text/docbook-xml-dtd
+		app-text/docbook-xsl-stylesheets
+	)
 	x86? ( ${ASM_DEP} )
 	x86-fbsd? ( ${ASM_DEP} )
 "
@@ -574,6 +576,7 @@ src_configure() {
 		--disable-xss
 		--disable-xv
 		--disable-xvmc
+		--disable-x11
 		"
 		uses="dga dxr3 ggi opengl osdmenu vdpau vidix xinerama xscreensaver xv"
 		for i in ${uses}; do
