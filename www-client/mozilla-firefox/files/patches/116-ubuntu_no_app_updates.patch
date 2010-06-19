@@ -1,0 +1,31 @@
+--- ./browser/components/preferences/advanced.js.orig	2009-11-20 21:26:52.816854828 +0000
++++ ./browser/components/preferences/advanced.js	2009-11-20 21:28:08.237855812 +0000
+@@ -408,7 +408,7 @@
+     var enabledPref = document.getElementById("app.update.enabled");
+     var enableAppUpdate = document.getElementById("enableAppUpdate");
+ 
+-    enableAppUpdate.disabled = !aus.canCheckForUpdates || enabledPref.locked;
++    enableAppUpdate.disabled = true;
+   },
+ 
+   /**
+@@ -423,8 +423,7 @@
+     var updateModeLabel = document.getElementById("updateModeLabel");
+     var updateMode = document.getElementById("updateMode");
+     
+-    var disable = enabledPref.locked || !enabledPref.value ||
+-                  autoPref.locked;
++    var disable = true;
+     updateModeLabel.disabled = updateMode.disabled = disable;
+   },
+ 
+@@ -440,8 +439,7 @@
+     
+     var warnIncompatible = document.getElementById("warnIncompatible");
+     
+-    var disable = enabledPref.locked || !enabledPref.value || autoPref.locked ||
+-                  !autoPref.value || modePref.locked;
++    var disable = true;
+     warnIncompatible.disabled = disable;
+   },
+ 
