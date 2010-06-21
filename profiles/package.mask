@@ -4,3 +4,4 @@
 =media-gfx/blender-scm
 =media-video/mplayer-scm
 =sys-devel/gcc-4.5.1_alpha20100617
+=www-client/mozilla-firefox-scm
