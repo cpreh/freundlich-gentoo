@@ -30,7 +30,7 @@ RDEPEND=">=sys-devel/binutils-2.16.1
 	!internal_lcms? ( >=media-libs/lcms-1.18 )
 	!internal_nss? ( >=dev-libs/nss-3.12.4 )
 	!internal_nspr? ( >=dev-libs/nspr-4.8 )
-	!internal_sqlite? ( >=dev-db/sqlite-3.6.22-r2[fts3,secure-delete] )
+	!internal_sqlite? ( >=dev-db/sqlite-3.6.22-r2[fts3,secure-delete,unlock-notify] )
 	!!www-client/${PN}-bin"
 
 DEPEND="${RDEPEND}
