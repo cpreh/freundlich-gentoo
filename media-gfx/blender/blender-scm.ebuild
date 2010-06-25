@@ -3,8 +3,8 @@
 # $Header: $
 
 EAPI=2
-NEEP_PYTHON="3.1"
-inherit eutils python subversion versionator flag-o-matic
+NEED_PYTHON="3.1"
+inherit eutils python subversion versionator flag-o-matic toolchain-funcs
 
 IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp verse \
 	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl collada sse \
@@ -55,7 +55,6 @@ RDEPEND="media-libs/jpeg
 	)"
 
 DEPEND=">=dev-util/scons-0.98
-	>=sys-devel/gcc-4.3.2[openmp?]
 	apidoc? (
 		dev-python/sphinx
 		>=app-doc/doxygen-1.5.7[-nodot]
@@ -226,7 +225,6 @@ src_configure() {
 		'ffmpeg' \
 		'ffmpeg ogg' \
 		'player' \
-		'openmp' \
 		'collada' \
 		'sse rayoptimization' \
 		'redcode' \
@@ -234,6 +232,12 @@ src_configure() {
 		'verse' ; do
 		blend_with ${arg}
 	done
+
+	if use openmp && tc-has-openmp; then
+		echo "WITH_BF_OPENMP=1"	>> "${S}"/user-config.py
+	else
+		echo "WITH_BF_OPENMP=0"	>> "${S}"/user-config.py
+	fi
 
 	# enable debugging/testing support
 	use debug && echo "BF_DEBUG=1" >> "${S}"/user-config.py
