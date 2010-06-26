@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.67 2010/06/25 11:53:40 aballier Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.68 2010/06/25 14:46:40 ssuominen Exp $
 
 EAPI="2"
 
@@ -526,7 +526,7 @@ src_configure() {
 
 	use debug && myconf+=" --enable-debug=3"
 
-	if use x86; then
+	if use x86 && gcc-specs-pie; then
 		filter-flags -fPIC -fPIE
 		append-ldflags -nopie
 	fi

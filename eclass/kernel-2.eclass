@@ -647,7 +647,9 @@ install_sources() {
 		doexe ${S}/tools/perf/${perfbin}
 	fi
 
-	rm -r ${S}/tools || die "removing perf failed"
+	if kernel_is ge 2 6 31 ; then
+		rm -rf ${S}/tools || die "removing perf failed"
+	fi
 
 	local file
 
