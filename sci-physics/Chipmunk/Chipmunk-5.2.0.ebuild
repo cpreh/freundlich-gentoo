@@ -28,7 +28,7 @@ src_configure() {
 
 	use demos || use ruby || mycmakeargs+=" -DBUILD_STATIC=OFF -DINSTALL_STATIC=OFF"
 	use demos || mycmakeargs+=" -DBUILD_DEMOS=OFF"
-	use demos && mycmakeargs+=" -DINSTAL_DEMOS=ON"
+	use demos && mycmakeargs+=" -DINSTALL_DEMOS=ON"
 	use ruby && mycmakeargs+=" -DBUILD_RUBY_EXT=ON"
 
 	cmake-utils_src_configure
