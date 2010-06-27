@@ -111,7 +111,6 @@ RDEPEND+="
 	)
 	esd? ( media-sound/esound )
 	enca? ( app-i18n/enca )
-	faad? ( media-libs/faad2 )
 	gif? ( media-libs/giflib )
 	iconv? ( virtual/libiconv )
 	jack? ( media-sound/jack-audio-connection-kit )
@@ -380,7 +379,7 @@ src_configure() {
 	# Codecs #
 	##########
 	myconf+=" --disable-musepack" # Use internal musepack codecs for SV7 and SV8 support
-	myconf+=" --disable-faad-internal" # always use system media-libs/faad2
+	use faad && myconf+=" --enable-faad-internal"
 	use dirac || myconf+=" --disable-libdirac-lavc"
 	use dts || myconf+=" --disable-libdca"
 	if ! use mp3; then
@@ -402,7 +401,7 @@ src_configure() {
 		myconf+=" --disable-png"
 	fi
 
-	uses="faad gif jpeg live mad mng pnm speex tga theora xanim"
+	uses="gif jpeg live mad mng pnm speex tga theora xanim"
 	for i in ${uses}; do
 		use ${i} || myconf+=" --disable-${i}"
 	done
