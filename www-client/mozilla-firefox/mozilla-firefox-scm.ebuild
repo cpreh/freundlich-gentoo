@@ -18,7 +18,7 @@ SLOT="0"
 LICENSE="|| ( MPL-1.1 GPL-2 LGPL-2.1 )"
 
 IUSE_INTERNAL="+pgo internal_cairo +internal_lcms +internal_nspr +internal_nss +internal_sqlite"
-IUSE="${IUSE_INTERNAL} +alsa bindist java +safebrowsing spell libnotify wifi webm"
+IUSE="${IUSE_INTERNAL} +alsa bindist ipc java +safebrowsing spell libnotify wifi webm"
 
 RDEPEND=">=sys-devel/binutils-2.16.1
 	x11-libs/pango[X]
@@ -141,6 +141,7 @@ src_configure() {
 	fi
 
 	# General use flags
+	mozconfig_use_enable ipc # +ipc, upstream default
 	mozconfig_use_enable libnotify
 	mozconfig_use_enable java javaxpcom
 	mozconfig_use_enable wifi necko-wifi
