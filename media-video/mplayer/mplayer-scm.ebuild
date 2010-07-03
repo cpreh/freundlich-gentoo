@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.68 2010/06/25 14:46:40 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.70 2010/06/30 16:45:23 scarabeus Exp $
 
 EAPI="2"
 
@@ -17,7 +17,7 @@ doc +dts +dv dvb +dvd +dvdnav dxr3 +enca +encode esd +faac +faad fbcon ftp
 gif ggi -gmplayer +iconv ipv6 jack joystick jpeg jpeg2k kernel_linux ladspa
 libcaca lirc +live lzo mad md5sum +mmx mmxext mng +mp3 nas +network nut openal
 amr +opengl +osdmenu oss png pnm pulseaudio pvr +quicktime radio +rar +real +rtc
-samba +shm +schroedinger sdl +speex sse sse2 ssse3 svga tga +theora +tremor
+samba +shm +schroedinger sdl +speex sse sse2 ssse3 tga +theora +tremor
 +truetype +toolame +twolame +unicode v4l v4l2 vdpau vidix +vorbis vpx
 win32codecs +X +x264 xanim xinerama +xscreensaver +xv +xvid xvmc zoran"
 IUSE+=" external-ffmpeg"
@@ -39,8 +39,7 @@ FONT_URI="
 RELEASE_URI=""
 SRC_URI="${RELEASE_URI}
 	!truetype? ( ${FONT_URI} )
-	gmplayer? ( mirror://mplayer/skins/Blue-${BLUV}.tar.bz2 )
-	svga? ( mirror://gentoo/svgalib_helper-${SVGV}-mplayer.tar.gz )"
+	gmplayer? ( mirror://mplayer/skins/Blue-${BLUV}.tar.bz2 )"
 
 DESCRIPTION="Media Player for Linux"
 HOMEPAGE="http://www.mplayerhq.hu/"
@@ -139,7 +138,6 @@ RDEPEND+="
 	schroedinger? ( media-libs/schroedinger )
 	sdl? ( media-libs/libsdl )
 	speex? ( media-libs/speex )
-	svga? ( media-libs/svgalib )
 	theora? ( media-libs/libtheora[encode?] )
 	truetype? ( ${FONT_RDEPS} )
 	vorbis? ( media-libs/libvorbis )
@@ -227,7 +225,6 @@ src_unpack() {
 	fi
 
 	use gmplayer && unpack "Blue-${BLUV}.tar.bz2"
-	use svga && unpack "svgalib_helper-${SVGV}-mplayer.tar.gz"
 }
 
 src_prepare() {
@@ -235,15 +232,6 @@ src_prepare() {
 	subversion_wc_info
 	sed -i -e "s/UNKNOWN/${ESVN_WC_REVISION}/" "${S}/version.sh" || die
 
-	if use svga; then
-		echo
-		einfo "Enabling vidix non-root mode."
-		einfo "(You need a proper svgalib_helper.o module for your kernel"
-		einfo "to actually use this)"
-		echo
-
-		mv "${WORKDIR}/svgalib_helper" "${S}/libdha"
-	fi
 
 	base_src_prepare
 }
@@ -264,6 +252,7 @@ src_configure() {
 	#Optional features#
 	###################
 	myconf+="
+		--disable-svga --enable-svgalib_helper
 		--disable-arts
 		--disable-kai
 		$(use_enable network)
