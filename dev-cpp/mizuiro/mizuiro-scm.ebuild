@@ -14,11 +14,18 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="+fcppt"
 
 DEPEND="
-	dev-cpp/fcppt
 	dev-libs/boost
+	fcppt? ( dev-cpp/fcppt )
 "
 RDEPEND="${DEPEND}"
 
+src_configure() {
+	local mycmakeargs="
+		$(cmake-utils_use_enable fcppt)
+	"
+
+	cmake-utils_src_configure
+}
