@@ -323,10 +323,6 @@ if [[ ${ETYPE} == sources ]]; then
 	DESCRIPTION="Sources for the ${KV_MAJOR}.${KV_MINOR} linux kernel"
 	IUSE="symlink build"
 
-	if kernel_is ge 2 6 31 ; then
-		IUSE="${IUSE} perf"
-		RDEPEND="${RDEPEND} perf? ( dev-libs/elfutils )"
-	fi
 	# Bug #266157, deblob for libre support
 	if [[ -z ${K_PREDEBLOBBED} ]] ; then
 		if [[ -z ${K_DEBLOB_AVAILABLE} ]] ; then
@@ -639,14 +635,6 @@ install_headers() {
 }
 
 install_sources() {
-	if use perf ; then
-		local perfbin="perf_$(replace_all_version_separators _ ${P})"
-		echo ">>> Installing perf ..."
-		mv ${S}/tools/perf/perf ${S}/tools/perf/${perfbin} || die "moving perf bin failed"
-		exeinto /usr/bin
-		doexe ${S}/tools/perf/${perfbin}
-	fi
-
 	if kernel_is ge 2 6 31 ; then
 		rm -rf ${S}/tools || die "removing perf failed"
 	fi
@@ -1156,11 +1144,6 @@ kernel-2_src_unpack() {
 kernel-2_src_compile() {
 	cd "${S}"
 	[[ ${ETYPE} == headers ]] && compile_headers
-
-	if [[ ${ETYPE} == sources ]] && use perf ; then
-		cd tools/perf || die "cannot cd into perf"
-		emake || die "emake perf failed"
-	fi 
 
 	if [[ $K_DEBLOB_AVAILABLE == 1 ]] && use deblob ; then
 		echo ">>> Running deblob script ..."
