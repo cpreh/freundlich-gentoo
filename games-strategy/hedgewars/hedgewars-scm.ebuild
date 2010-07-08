@@ -3,12 +3,11 @@
 # $Header: /var/cvsroot/gentoo-x86/games-strategy/hedgewars/hedgewars-0.9.13.ebuild,v 1.2 2010/04/06 21:18:47 mr_bones_ Exp $
 
 EAPI=2
-inherit cmake-utils eutils games subversion
+inherit cmake-utils eutils games mercurial 
 
-MY_P=${PN}-src-${PV}
 DESCRIPTION="Free Worms-like turn based strategy game"
 HOMEPAGE="http://hedgewars.org/"
-ESVN_REPO_URI="svn://svn.fireforge.net/svnroot/hedgewars/trunk"
+EHG_REPO_URI="https://hedgewars.googlecode.com/hg/"
 
 LICENSE="GPL-2 Apache-2.0 FDL-1.3"
 SLOT="0"
@@ -27,7 +26,7 @@ DEPEND="${RDEPEND}
 RDEPEND="${RDEPEND}
 	>=media-fonts/dejavu-2.28"
 
-S=${WORKDIR}/${MY_P}
+S="${WORKDIR}/hg"
 
 src_configure() {
 	mycmakeargs="-DCMAKE_INSTALL_PREFIX=${GAMES_PREFIX} -DDATA_INSTALL_DIR=${GAMES_DATADIR}"
