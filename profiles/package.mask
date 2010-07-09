@@ -3,5 +3,5 @@
 =dev-util/valgrind-scm
 =media-gfx/blender-scm
 =media-video/mplayer-scm
-=sys-devel/gcc-4.5.1_alpha20100624
+=sys-devel/gcc-4.5.1_alpha20100708
 =www-client/mozilla-firefox-scm
