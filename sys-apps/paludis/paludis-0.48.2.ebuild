@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.48.1.ebuild,v 1.1 2010/07/08 13:44:03 peper Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.48.2.ebuild,v 1.3 2010/07/10 23:27:00 mr_bones_ Exp $
 
 inherit bash-completion eutils
 
@@ -19,7 +19,7 @@ COMMON_DEPEND="
 	>=app-shells/bash-3.2
 	cave? ( dev-libs/libpcre[cxx] )
 	inquisitio? ( dev-libs/libpcre[cxx] )
-	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1[python] )
+	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
 	xml? ( >=dev-libs/libxml2-2.6 )"
 
@@ -35,7 +35,7 @@ DEPEND="${COMMON_DEPEND}
 RDEPEND="${COMMON_DEPEND}
 	sys-apps/sandbox"
 
-# Keep this as a PDEPEND. It avoids issues when Paludis is used as the
+# Keep syntax as a PDEPEND. It avoids issues when Paludis is used as the
 # default virtual/portage provider.
 PDEPEND="
 	vim-syntax? ( >=app-editors/vim-core-7 )"
@@ -44,7 +44,7 @@ PROVIDE="virtual/portage"
 
 create-paludis-user() {
 	enewgroup "paludisbuild"
-	enewuser "paludisbuild" "-1" "-1" "/var/tmp/paludis" "paludisbuild"
+	enewuser "paludisbuild" -1 -1 "/var/tmp/paludis" "paludisbuild"
 }
 
 pkg_setup() {
@@ -52,8 +52,8 @@ pkg_setup() {
 }
 
 src_compile() {
-	local repositories=`echo default unpackaged | tr -s \  ,`
-	local clients=`echo default accerso adjutrix appareo importare \
+	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
+	local clients=`echo default accerso adjutrix appareo $(usev cave )  importare \
 		$(usev inquisitio ) instruo paludis reconcilio | tr -s \  ,`
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
@@ -63,13 +63,14 @@ src_compile() {
 		$(useq ruby-bindings && useq doc && echo --enable-ruby-doc ) \
 		$(use_enable python-bindings python ) \
 		$(useq python-bindings && useq doc && echo --enable-python-doc ) \
-		$(use_enable xml ) \
 		$(use_enable vim-syntax vim ) \
 		$(use_enable visibility ) \
+		$(use_enable xml ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
 		--with-repositories=${repositories} \
 		--with-clients=${clients} \
-		--with-environments=${environments}
+		--with-environments=${environments} \
+		|| die "econf failed"
 
 	emake || die "emake failed"
 }
@@ -84,6 +85,9 @@ src_install() {
 	BASHCOMPLETION_NAME="importare" dobashcompletion bash-completion/importare
 	BASHCOMPLETION_NAME="instruo" dobashcompletion bash-completion/instruo
 	BASHCOMPLETION_NAME="reconcilio" dobashcompletion bash-completion/reconcilio
+	use cave && \
+		BASHCOMPLETION_NAME="cave" \
+		dobashcompletion bash-completion/cave
 	use inquisitio && \
 		BASHCOMPLETION_NAME="inquisitio" \
 		dobashcompletion bash-completion/inquisitio
@@ -96,6 +100,7 @@ src_install() {
 		doins zsh-completion/_reconcilio
 		use inquisitio && doins zsh-completion/_inquisitio
 		doins zsh-completion/_paludis_packages
+		use cave && doins zsh-completion/_cave
 	fi
 }
 
@@ -105,22 +110,16 @@ src_test() {
 	export BASH_ENV=/dev/null
 
 	if [[ `id -u` == 0 ]] ; then
+		# hate
 		export PALUDIS_REDUCED_UID=0
 		export PALUDIS_REDUCED_GID=0
 	fi
 
 	if ! emake check ; then
-		eerror "Tests failed. Looking for file for you to add to your bug report..."
+		eerror "Tests failed. Looking for files for you to add to your bug report..."
 		find "${S}" -type f -name '*.epicfail' -or -name '*.log' | while read a ; do
-			eerror "	$a"
+			eerror "    $a"
 		done
-		die "Make check failed."
-	fi
-}
-
-pkg_postinst() {
-	# Remove the symlink created by app-admin/eselect-news
-	if [[ -L "${ROOT}/var/lib/paludis/news" ]] ; then
-		rm "${ROOT}/var/lib/paludis/news"
+		die "Make check failed"
 	fi
 }
