@@ -51,9 +51,9 @@ pkg_setup() {
 	create-paludis-user
 }
 
-src_compile() {
+src_configure() {
 	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
-	local clients=`echo default accerso adjutrix appareo $(usev cave )  importare \
+	local clients=`echo accerso adjutrix appareo $(usev cave )  importare \
 		$(usev inquisitio ) instruo paludis reconcilio | tr -s \  ,`
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
@@ -71,7 +71,9 @@ src_compile() {
 		--with-clients=${clients} \
 		--with-environments=${environments} \
 		|| die "econf failed"
+}
 
+src_compile() {
 	emake || die "emake failed"
 }
 
