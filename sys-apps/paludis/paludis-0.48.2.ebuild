@@ -9,7 +9,7 @@ HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
 EAPI="2"
-IUSE="doc inquisitio portage pink python-bindings ruby-bindings vim-syntax visibility xml zsh-completion"
+IUSE="cave doc inquisitio portage pink python-bindings ruby-bindings vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
@@ -17,6 +17,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 COMMON_DEPEND="
 	>=app-admin/eselect-1.2_rc1
 	>=app-shells/bash-3.2
+	cave? ( dev-libs/libpcre[cxx] )
 	inquisitio? ( dev-libs/libpcre[cxx] )
 	python-bindings? ( >=dev-lang/python-2.4 >=dev-libs/boost-1.33.1-r1[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
