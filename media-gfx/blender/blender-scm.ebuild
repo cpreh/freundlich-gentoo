@@ -6,9 +6,12 @@ EAPI=2
 NEED_PYTHON="3.1"
 inherit eutils python subversion versionator flag-o-matic toolchain-funcs
 
-IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp verse \
-	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl collada sse \
-	redcode +zlib iconv test"
+IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp \
+	+dds debug doc fftw jack apidoc sndfile lcms tweak-mode sdl sse \
+	redcode +zlib iconv"
+
+# not complete/working features
+#IUSE="verse collada test"
 
 LANGS="en ar bg ca cs de el es fi fr hr it ja ko nl pl pt_BR ro ru sr sv uk zh_CN"
 for X in ${LANGS} ; do
@@ -22,7 +25,7 @@ ESVN_REPO_URI="https://svn.blender.org/svnroot/bf-blender/trunk/blender"
 #SLOT="$(get_version_component_range 1-2)"
 SLOT="2.5"
 LICENSE="|| ( GPL-2 BL )"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 
 RDEPEND="media-libs/jpeg
 	media-libs/libpng
@@ -49,10 +52,7 @@ RDEPEND="media-libs/jpeg
 	jack? ( media-sound/jack-audio-connection-kit )
 	sndfile? ( media-libs/libsndfile )
 	lcms? ( media-libs/lcms )
-	collada? (
-		dev-libs/libpcre
-		dev-libs/expat
-	)"
+	"
 
 DEPEND=">=dev-util/scons-0.98
 	apidoc? (
@@ -80,6 +80,19 @@ blend_with() {
 	else
 		echo "WITH_BF_${UWORD}=0" | tr '[:lower:]' '[:upper:]' \
 			>> "${S}"/user-config.py
+	fi
+}
+
+pkg_setup() {
+	enable_openmp=0
+	if use openmp; then
+		if tc-has-openmp; then
+			enable_openmp=1
+		else
+			ewarn "You are using gcc built without 'openmp' USE."
+			ewarn "Switch CXX to an OpenMP capable compiler."
+			die "Need openmp"
+		fi
 	fi
 }
 
@@ -126,10 +139,19 @@ src_configure() {
 		BF_OPENJPEG_LIB="openjpeg"
 	EOF
 
+	# FIX: littlecms includes path aren't specified
+	if use lcms; then
+		cat <<- EOF >> "${S}"/user-config.py
+			BF_LCMS_INC="/usr/include/"
+			BF_LCMS_LIB="lcms"
+			BF_LCMS_LIBPATH="/usr/lib/"
+		EOF
+	fi
+
 	# add system sci-physic/bullet into Scons build options.
 #	cat <<- EOF >> "${S}"/user-config.py
 #		WITH_BF_BULLET=1
-#		BF_BULLET="/usr"
+#		BF_BULLET="/usr/include"
 #		BF_BULLET_INC="/usr/include /usr/include/BulletCollision /usr/include/BulletDynamics /usr/include/LinearMath /usr/include/BulletSoftBody"
 #		BF_BULLET_LIB="BulletSoftBody BulletDynamics BulletCollision LinearMath"
 #	EOF
@@ -199,15 +221,18 @@ src_configure() {
 
 	# generic settings which differ from the defaults from linux2-config.py
 	cat <<- EOF >> "${S}"/user-config.py
+		BF_OPENGL_LIB='GL GLU X11 Xi GLEW'
 		BF_INSTALLDIR="../install"
 		WITHOUT_BF_PYTHON_INSTALL=1
-		BF_BUILDINFO=1
+		BF_PYTHON="/usr"
+		BF_BUILDINFO=0
 		BF_QUIET=1
 		BF_NUMJOBS=${NUMJOBS}
 		BF_LINE_OVERWRITE=0
 		WITH_BF_FHS=1
 		WITH_BF_BINRELOC=0
 		WITH_BF_STATICOPENGL=0
+		WITH_BF_OPENMP=${enable_openmp}
 	EOF
 
 	# configure WITH_BF* Scons build options
@@ -225,19 +250,12 @@ src_configure() {
 		'ffmpeg' \
 		'ffmpeg ogg' \
 		'player' \
-		'collada' \
 		'sse rayoptimization' \
 		'redcode' \
 		'zlib' \
 		'verse' ; do
 		blend_with ${arg}
 	done
-
-	if use openmp && tc-has-openmp; then
-		echo "WITH_BF_OPENMP=1"	>> "${S}"/user-config.py
-	else
-		echo "WITH_BF_OPENMP=0"	>> "${S}"/user-config.py
-	fi
 
 	# enable debugging/testing support
 	use debug && echo "BF_DEBUG=1" >> "${S}"/user-config.py
@@ -276,7 +294,9 @@ src_install() {
 			exit 1
 		fi
 
-		BLENDERPATH="/usr/share/blender/${SLOT}" exec /usr/bin/blender-bin-${SLOT} "\$@"
+		PYTHONPATH="/usr/lib/python${NEED_PYTHON}" \
+		BLENDERPATH="/usr/share/blender/${SLOT}" \
+			exec /usr/bin/blender-bin-${SLOT} "\$@"
 	EOF
 
 	# install binaries
@@ -284,10 +304,16 @@ src_install() {
 	mv "${WORKDIR}/install/bin/blender" "${WORKDIR}/install/bin/blender-bin-${SLOT}"
 	doexe "${WORKDIR}/install/bin/blender-bin-${SLOT}"
 	doexe "${WORKDIR}/install/bin/blender-${SLOT}"
-	mv "${WORKDIR}"/install/bin/blenderplayer "${WORKDIR}/install/bin/blenderplayer-${SLOT}"
-	use player && doexe "${WORKDIR}"/install/bin/blenderplayer
-	mv "${WORKDIR}"/install/bin/verse_server "${WORKDIR}/install/bin/verse_server-${SLOT}"
-	use verse && doexe "${WORKDIR}"/install/bin/verse_server
+	if use player; then
+		mv "${WORKDIR}"/install/bin/blenderplayer \
+			"${WORKDIR}/install/bin/blenderplayer-${SLOT}"
+		doexe "${WORKDIR}"/install/bin/blenderplayer
+	fi
+#	if use verse; then
+#		mv "${WORKDIR}"/install/bin/verse_server \
+#			"${WORKDIR}/install/bin/verse_server-${SLOT}"
+#		doexe "${WORKDIR}"/install/bin/verse_server
+#	fi
 
 	# install plugins
 	exeinto /usr/share/${PN}/${SLOT}/textures
@@ -296,21 +322,21 @@ src_install() {
 	doexe "${WORKDIR}"/install/share/blender/${SLOT}/plugins/sequence/*.so
 	insinto /usr/include/${PN}/${SLOT}
 	doins "${WORKDIR}"/install/share/blender/${SLOT}/plugins/include/*.h
-	rm -r "${WORKDIR}"/install/share/blender/${SLOT}/plugins
+	rm -r "${WORKDIR}"/install/share/blender/${SLOT}/plugins || die
 
 	# install I18N
 	if [[ ${LINGUAS} != "en" && -n ${LINGUAS} ]]; then
 
-		rm "${WORKDIR}"/install/share/blender/${SLOT}/.Blanguages \
+		rm "${WORKDIR}"/install/share/blender/${SLOT}/config/.Blanguages \
 			|| die "file .Blanguages do not exists"
-		echo "English:en_US" > "${WORKDIR}"/install/share/blender/${SLOT}/.Blanguages
+		echo "English:en_US" > "${WORKDIR}"/install/share/blender/${SLOT}/config/.Blanguages
 
 		insinto /usr/share/${PN}/${SLOT}/locale
 		for LANG in ${LINGUAS}; do
 			[[ ${LANG} == "en" ]] && continue
 
 			# installing locale
-			doins -r "${WORKDIR}/install/share/blender/${SLOT}/locale/${LANG}" || die "failed '${LANG}' locale installation"
+			doins -r "${WORKDIR}/install/share/blender/${SLOT}/datafiles/locale/${LANG}" || die "failed '${LANG}' locale installation"
 
 			# populating file .Blanguages with only the locales choiced by the
 			# user through LINGUAS
@@ -383,7 +409,7 @@ src_install() {
 				I18N="Korean:ko"
 				;;
 			esac
-			echo "${I18N}" >> "${WORKDIR}"/install/share/blender/${SLOT}/.Blanguages
+			echo "${I18N}" >> "${WORKDIR}"/install/share/blender/${SLOT}/config/.Blanguages
 	    done
 	fi
 
@@ -438,8 +464,8 @@ src_install() {
 	# FIX: making all python scripts readable only by group 'users',
 	#      so nobody can modify scripts apart root user, but python
 	#      cache (*.pyc) can be written and shared across the users.
-	chown root:users -R "${D}/usr/share/${PN}/${SLOT}/scripts"
-	chmod 750 -R "${D}/usr/share/${PN}/${SLOT}/scripts"
+	chown root:users -R "${D}/usr/share/${PN}/${SLOT}/scripts" || die
+	chmod 750 -R "${D}/usr/share/${PN}/${SLOT}/scripts" || die
 }
 
 pkg_preinst() {
