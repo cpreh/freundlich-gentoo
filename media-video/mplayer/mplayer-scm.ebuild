@@ -255,7 +255,7 @@ src_configure() {
 		--disable-svga --enable-svgalib_helper
 		--disable-arts
 		--disable-kai
-		$(use_enable network)
+		$(use_enable network networking)
 		$(use_enable joystick)
 	"
 	uses="ass bl enca ftp rtc" # nemesi <- not working with in-tree ebuild
