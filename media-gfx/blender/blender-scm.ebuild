@@ -3,7 +3,7 @@
 # $Header: $
 
 EAPI=2
-NEED_PYTHON="3.1"
+PYTHON_DEPEND="3:3.1"
 inherit eutils python subversion versionator flag-o-matic toolchain-funcs
 
 IUSE="+game-engine player +elbeem +openexr ffmpeg jpeg2k openal openmp \
