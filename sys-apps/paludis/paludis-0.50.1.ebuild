@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.48.3.ebuild,v 1.1 2010/07/14 09:30:44 peper Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.50.1.ebuild,v 1.1 2010/07/26 13:07:40 dagger Exp $
 
 inherit bash-completion eutils
 
@@ -17,6 +17,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 COMMON_DEPEND="
 	>=app-admin/eselect-1.2_rc1
 	>=app-shells/bash-3.2
+	>=sys-devel/gcc-4.4
 	cave? ( dev-libs/libpcre[cxx] )
 	inquisitio? ( dev-libs/libpcre[cxx] )
 	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
