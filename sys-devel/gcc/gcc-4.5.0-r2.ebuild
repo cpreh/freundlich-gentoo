@@ -1,19 +1,9 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.0.ebuild,v 1.8 2010/06/27 04:23:46 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.0.ebuild,v 1.10 2010/07/26 05:06:55 dirtyepic Exp $
 
-RESTRICT="mirror"
-
-PATCH_GCC_VER="4.5.0"
-PIE_GCC_VER="4.5.0"
-PATCH_VER="1.3"
+PATCH_VER="1.4"
 UCLIBC_VER="1.0"
-GENTOO_PATCH_EXCLUDE="
-	02_all_gcc45-pr42347.patch
-	30_all_gcc45-pr44046-core2-native.patch
-	31_all_gcc45-pr43921-atom-bootstrap.patch
-	32_all_gcc45-pr43572-tailcall.patch
-"
 
 ETYPE="gcc-compiler"
 
