@@ -1,0 +1,121 @@
+--- boost/spirit/home/support/attributes.hpp	2010-05-01 22:29:31.000000000 +0200
++++ boost/spirit/home/support/attributes.hpp	2010-07-27 19:43:05.000000000 +0200
+@@ -12,6 +12,7 @@
+ #pragma once
+ #endif
+ 
++#include <boost/spirit/home/support/container.hpp>
+ #include <boost/spirit/home/support/unused.hpp>
+ #include <boost/spirit/home/support/has_semantic_action.hpp>
+ #include <boost/spirit/home/support/attributes_fwd.hpp>
+@@ -921,29 +922,35 @@
+     template <typename Out, typename T>
+     void print_attribute(Out& out, T const& val);
+ 
++    template <typename Out, typename T>
++    void print_attribute(Out& out, boost::optional<T> const& val);
++
+     namespace detail
+     {
+         // for stl container data types
+         template <typename Out, typename T>
+-        void print_attribute_impl(Out& out, T const& val, mpl::true_)
++        void print_attribute_impl2(Out& out, T const& val, mpl::true_)
+         {
+             out << '[';
+-            if (!val.empty())
++            if (!traits::is_empty(val))
+             {
+-                for (typename T::const_iterator i = val.begin(); i != val.end(); ++i)
++                bool first = true;
++                typename container_iterator<T const>::type iend = traits::end(val);
++                for (typename container_iterator<T const>::type i = traits::begin(val);
++                     !traits::compare(i, iend); traits::next(i))
+                 {
+-                    if (i != val.begin())
++                    if (!first)
+                         out << ", ";
+-                    print_attribute(out, *i);
++                    first = false;
++                    print_attribute(out, traits::deref(i));
+                 }
+-
+             }
+             out << ']';
+         }
+ 
+         // for non-fusion data types
+         template <typename Out, typename T>
+-        void print_attribute_impl2(Out& out, T const& val, mpl::false_)
++        void print_attribute_impl3(Out& out, T const& val, mpl::false_)
+         {
+             out << val;
+         }
+@@ -972,7 +979,7 @@
+ 
+         // for fusion data types
+         template <typename Out, typename T>
+-        void print_attribute_impl2(Out& out, T const& val, mpl::true_)
++        void print_attribute_impl3(Out& out, T const& val, mpl::true_)
+         {
+             out << '[';
+             fusion::for_each(val, print_fusion_sequence<Out>(out));
+@@ -981,16 +988,56 @@
+ 
+         // for non-stl container data types
+         template <typename Out, typename T>
++        void print_attribute_impl2(Out& out, T const& val, mpl::false_)
++        {
++            print_attribute_impl3(out, val, fusion::traits::is_sequence<T>());
++        }
++
++        template <typename Out>
++        struct print_attribute_visitor : static_visitor<>
++        {
++            explicit print_attribute_visitor(Out& out) : out_(out) { }
++            template <typename T>
++            void operator()(T const& val) const
++            {
++                print_attribute(out_, val);
++            }
++            Out& out_;
++        };
++
++        // for non-variants
++        template <typename Out, typename T>
++        void print_attribute_impl(Out& out, T const& val, mpl::true_)
++        {
++            print_attribute_impl2(out, val, is_container<T>());
++        }
++
++        // for variants
++        template <typename Out, typename T>
+         void print_attribute_impl(Out& out, T const& val, mpl::false_)
+         {
+-            print_attribute_impl2(out, val, fusion::traits::is_sequence<T>());
++            apply_visitor(print_attribute_visitor<Out>(out), val);
+         }
+     }
+ 
+     template <typename Out, typename T>
+     inline void print_attribute(Out& out, T const& val)
+     {
+-        detail::print_attribute_impl(out, val, is_container<T>());
++        detail::print_attribute_impl(out, val, not_is_variant<T>());
++    }
++
++    template <typename Out, typename T>
++    inline void print_attribute(Out& out, boost::optional<T> const& val)
++    {
++        if (val)
++            print_attribute(out, *val);
++        else
++            out << "<empty>";
++    }
++
++    template <typename Out>
++    inline void print_attribute(Out&, unused_type)
++    {
+     }
+ }}}
+ 

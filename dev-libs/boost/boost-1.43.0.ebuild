@@ -88,6 +88,8 @@ src_prepare() {
 
 	 # bug 291660
 	epatch "${FILESDIR}/boost-${PV}-parameter-needs-python.patch"
+
+	epatch "${FILESDIR}/boost-${PV}-spirit-attributes.patch"
 }
 
 src_configure() {
