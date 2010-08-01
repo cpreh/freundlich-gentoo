@@ -13,6 +13,7 @@ GENTOO_PATCH_EXCLUDE="
 	30_all_gcc45-pr44046-core2-native.patch
 	31_all_gcc45-pr43921-atom-bootstrap.patch
 	32_all_gcc45-pr43572-tailcall.patch
+	75_all_arm-pr43698.patch
 	93_all_gcc-4.5-cloog-dl.patch
 "
 
