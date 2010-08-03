@@ -1,5 +1,7 @@
 =app-dicts/jmdict-scm
 =dev-cpp/fcppt-scm
+=dev-libs/boost-1.44.0_beta1
+=dev-util/boost-build-1.44.0_beta1
 =dev-util/valgrind-scm
 =media-gfx/blender-scm
 =media-video/mplayer-scm
