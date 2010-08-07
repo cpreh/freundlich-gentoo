@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-inherit cmake-utils git
-
 EAPI="2"
+
+inherit cmake-utils git
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="http://redmine.supraverse.net/projects/fcppt"
@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="doc static-libs"
 
 RDEPEND="
-	>=dev-libs/boost-1.41.0
+	>=dev-libs/boost-1.40.0
 	"
 DEPEND="
 	${RDEPEND}
