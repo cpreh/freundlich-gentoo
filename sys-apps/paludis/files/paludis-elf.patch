@@ -1,0 +1,48 @@
+From 544fb40242bc97c6994b6aa1c5d8296fd9558533 Mon Sep 17 00:00:00 2001
+From: David Leverton <levertond@googlemail.com>
+Date: Sat, 7 Aug 2010 22:08:37 +0100
+Subject: [PATCH] Don't consider OS ABI when checking library compatibility
+
+glibc 2.12 complicates the rules here (accepting both _SYSV and
+_LINUX, as well as any ABI version up to the "current") so it's not
+clear it makes sense to categorise files as one or the other as far as
+mutual compatibility goes.
+---
+ paludis/elf_linkage_checker.cc |    8 +-------
+ 1 files changed, 1 insertions(+), 7 deletions(-)
+
+diff --git a/paludis/elf_linkage_checker.cc b/paludis/elf_linkage_checker.cc
+index c1f8b44..a3959b1 100644
+--- a/paludis/elf_linkage_checker.cc
++++ b/paludis/elf_linkage_checker.cc
+@@ -56,7 +56,7 @@ namespace
+         static const unsigned MIPS_ABI2 = 32;
+ 
+         unsigned _machine;
+-        unsigned char _class, _os_abi, _os_abi_version;
++        unsigned char _class;
+         bool _bigendian, _mips_n32;
+ 
+         bool operator< (const ElfArchitecture &) const PALUDIS_ATTRIBUTE((warn_unused_result));
+@@ -77,8 +77,6 @@ namespace
+         ElfArchitecture(const ElfObject<ElfType_> & elf) :
+             _machine(normalise_arch(elf.get_arch())),
+             _class(ElfType_::elf_class),
+-            _os_abi(elf.get_os_abi()),
+-            _os_abi_version(elf.get_os_abi_version()),
+             _bigendian(elf.is_big_endian()),
+             _mips_n32(EM_MIPS == _machine && MIPS_ABI2 & elf.get_flags())
+         {
+@@ -92,10 +90,6 @@ namespace
+             return _machine < other._machine;
+         if (_class != other._class)
+             return _class < other._class;
+-        if (_os_abi != other._os_abi)
+-            return _os_abi < other._os_abi;
+-        if (_os_abi_version != other._os_abi_version)
+-            return _os_abi_version < other._os_abi_version;
+         if (_bigendian != other._bigendian)
+             return _bigendian < other._bigendian;
+         return _mips_n32 < other._mips_n32;
+-- 
+1.7.1

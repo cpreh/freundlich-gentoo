@@ -2,13 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.50.3.ebuild,v 1.1 2010/07/31 11:27:39 peper Exp $
 
+EAPI="2"
+
 inherit bash-completion eutils
 
 DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
-EAPI="2"
 IUSE="cave doc inquisitio portage pink python-bindings ruby-bindings vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
@@ -50,6 +51,10 @@ create-paludis-user() {
 
 pkg_setup() {
 	create-paludis-user
+}
+
+src_prepare() {
+	epatch "${FILESDIR}"/${PN}-elf.patch
 }
 
 src_configure() {
