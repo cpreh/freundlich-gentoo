@@ -1,21 +1,9 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.0.ebuild,v 1.8 2010/06/27 04:23:46 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.1.ebuild,v 1.1 2010/08/07 22:45:19 dirtyepic Exp $
 
-RESTRICT="mirror"
-
-PATCH_GCC_VER="4.5.0"
-PIE_GCC_VER="4.5.0"
-PATCH_VER="1.4"
+PATCH_VER="1.0"
 UCLIBC_VER="1.0"
-GENTOO_PATCH_EXCLUDE="
-	02_all_gcc45-pr42347.patch
-	30_all_gcc45-pr44046-core2-native.patch
-	31_all_gcc45-pr43921-atom-bootstrap.patch
-	32_all_gcc45-pr43572-tailcall.patch
-	75_all_arm-pr43698.patch
-	93_all_gcc-4.5-cloog-dl.patch
-"
 
 ETYPE="gcc-compiler"
 
@@ -33,7 +21,7 @@ SSP_UCLIBC_STABLE=""
 
 inherit toolchain
 
-DESCRIPTION="The GNU Compiler Collection.  Includes C/C++, java compilers, pie+ssp extensions, Haj Ten Brugge runtime bounds checking"
+DESCRIPTION="The GNU Compiler Collection."
 
 LICENSE="GPL-3 LGPL-3 || ( GPL-3 libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.2"
 KEYWORDS=""
