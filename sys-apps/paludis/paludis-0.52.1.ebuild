@@ -53,10 +53,6 @@ pkg_setup() {
 	create-paludis-user
 }
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-elf.patch
-}
-
 src_configure() {
 	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
 	local clients=`echo accerso adjutrix appareo $(usev cave )  importare \
