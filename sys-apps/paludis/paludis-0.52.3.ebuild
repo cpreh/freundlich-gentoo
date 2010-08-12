@@ -1,8 +1,8 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.50.3.ebuild,v 1.1 2010/07/31 11:27:39 peper Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.52.3.ebuild,v 1.1 2010/08/11 15:47:20 dagger Exp $
 
-EAPI="2"
+EAPI="3"
 
 inherit bash-completion eutils
 
@@ -40,7 +40,8 @@ RDEPEND="${COMMON_DEPEND}
 # Keep syntax as a PDEPEND. It avoids issues when Paludis is used as the
 # default virtual/portage provider.
 PDEPEND="
-	vim-syntax? ( >=app-editors/vim-core-7 )"
+	vim-syntax? ( >=app-editors/vim-core-7 )
+	app-admin/eselect-package-manager"
 
 PROVIDE="virtual/portage"
 
@@ -125,5 +126,18 @@ src_test() {
 			eerror "    $a"
 		done
 		die "Make check failed"
+	fi
+}
+
+pkg_postinst() {
+	pm_is_paludis=false
+	if [[ -f ${ROOT}/etc/env.d/50package-manager ]] ; then
+		pm_is_paludis=$( source ${ROOT}/etc/env.d/50package-manager ; [[ ${PACKAGE_MANAGER} == paludis ]] && echo true || echo false )
+	fi
+
+	if ! $pm_is_paludis ; then
+		elog "If you are using paludis or cave as your primary package manager,"
+		elog "you should consider running:"
+		elog "    eselect package-manager set paludis"
 	fi
 }
