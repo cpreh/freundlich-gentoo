@@ -173,9 +173,9 @@ src_compile() {
 	export BOOST_ROOT="${S}"
 
 	einfo "Using the following command to build: "
-	einfo "${BJAM} ${NUMJOBS} -d+2 gentoorelease ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared"
+	einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoorelease ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared"
 
-	${BJAM} ${NUMJOBS} -d+2 \
+	${BJAM} ${NUMJOBS} -q -d+2 \
 		gentoorelease \
 		${OPTIONS} \
 		threading=single,multi ${LINK_OPTS} runtime-link=shared \
@@ -184,9 +184,9 @@ src_compile() {
 	# ... and do the whole thing one more time to get the debug libs
 	if use debug ; then
 		einfo "Using the following command to build: "
-		einfo "${BJAM} ${NUMJOBS} -d+2 gentoodebug ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --buildid=debug"
+		einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoodebug ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --buildid=debug"
 
-		${BJAM} ${NUMJOBS} -d+2 \
+		${BJAM} ${NUMJOBS} -q -d+2 \
 			gentoodebug \
 			${OPTIONS} \
 			threading=single,multi ${LINK_OPTS} runtime-link=shared \
@@ -197,9 +197,9 @@ src_compile() {
 	if use tools; then
 		cd "${S}/tools/"
 		einfo "Using the following command to build the tools: "
-		einfo "${BJAM} ${NUMJOBS} -d+2 gentoorelease ${OPTIONS}"
+		einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoorelease ${OPTIONS}"
 
-		${BJAM} ${NUMJOBS} -d+2\
+		${BJAM} ${NUMJOBS} -q -d+2\
 			gentoorelease \
 			${OPTIONS} \
 			|| die "building tools failed"
@@ -211,9 +211,9 @@ src_install () {
 	export BOOST_ROOT="${S}"
 
 	einfo "Using the following command to install: "
-	einfo "${BJAM} -d+2 gentoorelease ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --includedir=\"${D}/usr/include\" --libdir=\"${D}/usr/$(get_libdir)\" install"
+	einfo "${BJAM} -q -d+2 gentoorelease ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --includedir=\"${D}/usr/include\" --libdir=\"${D}/usr/$(get_libdir)\" install"
 
-	${BJAM} -d+2 \
+	${BJAM} -q -d+2 \
 		gentoorelease \
 		${OPTIONS} \
 		threading=single,multi ${LINK_OPTS} runtime-link=shared \
@@ -223,9 +223,9 @@ src_install () {
 
 	if use debug ; then
 		einfo "Using the following command to install: "
-		einfo "${BJAM} -d+2 gentoodebug ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --includedir=\"${D}/usr/include\" --libdir=\"${D}/usr/$(get_libdir)\" --buildid=debug"
+		einfo "${BJAM} -q -d+2 gentoodebug ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --includedir=\"${D}/usr/include\" --libdir=\"${D}/usr/$(get_libdir)\" --buildid=debug"
 
-		${BJAM} -d+2 \
+		${BJAM} -q -d+2 \
 			gentoodebug \
 			${OPTIONS} \
 			threading=single,multi ${LINK_OPTS} runtime-link=shared \
@@ -421,9 +421,9 @@ src_test() {
 
 	cd "${S}/tools/regression/build" || die
 	einfo "Using the following command to build test helpers: "
-	einfo "${BJAM} -d+2 gentoorelease ${OPTIONS} process_jam_log compiler_status"
+	einfo "${BJAM} -q -d+2 gentoorelease ${OPTIONS} process_jam_log compiler_status"
 
-	${BJAM} -d+2 \
+	${BJAM} -q -d+2 \
 		gentoorelease \
 		${OPTIONS} \
 		process_jam_log compiler_status \
