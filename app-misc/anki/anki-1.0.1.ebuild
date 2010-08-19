@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-misc/anki/anki-0.9.9.8.6-r1.ebuild,v 1.1 2010/05/21 21:39:22 arfrever Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-misc/anki/anki-1.0.ebuild,v 1.1 2010/08/18 17:27:44 patrick Exp $
 
 EAPI="3"
 PYTHON_DEPEND="2"
@@ -20,7 +20,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="furigana +graph latex recording +sound"
 
 RDEPEND="dev-python/beautifulsoup
-	>=dev-python/PyQt4-4.4[X,svg,webkit]
+	>=dev-python/PyQt4-4.7[X,svg,webkit]
 	>=dev-python/sqlalchemy-0.5.3
 	>=dev-python/simplejson-1.7.3
 	|| ( >=dev-python/pysqlite-2.3.0 >=dev-lang/python-2.5[sqlite] )
