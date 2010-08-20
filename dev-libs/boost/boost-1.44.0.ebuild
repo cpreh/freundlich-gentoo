@@ -256,7 +256,7 @@ src_install () {
 		dohtml \
 			-A pdf,txt,cpp,hpp \
 			*.{htm,html,png,css} \
-			-r doc more people wiki || die
+			-r doc more || die
 		dohtml \
 			-A pdf,txt \
 			-r tools || die
