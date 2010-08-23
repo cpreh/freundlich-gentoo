@@ -85,6 +85,7 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/remove-toolset-1.43.0.patch"
+	epatch "${FILESDIR}/${P}-spirit-attributes.patch"
 }
 
 src_configure() {
