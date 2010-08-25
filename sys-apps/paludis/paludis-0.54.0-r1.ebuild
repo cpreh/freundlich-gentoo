@@ -19,7 +19,7 @@ COMMON_DEPEND="
 	>=app-admin/eselect-1.2_rc1
 	>=app-shells/bash-3.2
 	>=sys-devel/gcc-4.4
-	dev-libs/libpcre
+	dev-libs/libpcre[cxx]
 	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
 	xml? ( >=dev-libs/libxml2-2.6 )
