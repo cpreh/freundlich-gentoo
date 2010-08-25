@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.52.3.ebuild,v 1.1 2010/08/11 15:47:20 dagger Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.54.0.ebuild,v 1.1 2010/08/24 19:13:27 peper Exp $
 
 EAPI="3"
 
@@ -10,7 +10,7 @@ DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
-IUSE="cave doc inquisitio portage pink python-bindings ruby-bindings vim-syntax visibility xml zsh-completion"
+IUSE="doc portage pink python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~x86"
@@ -19,11 +19,11 @@ COMMON_DEPEND="
 	>=app-admin/eselect-1.2_rc1
 	>=app-shells/bash-3.2
 	>=sys-devel/gcc-4.4
-	cave? ( dev-libs/libpcre[cxx] )
-	inquisitio? ( dev-libs/libpcre[cxx] )
+	dev-libs/libpcre
 	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
-	xml? ( >=dev-libs/libxml2-2.6 )"
+	xml? ( >=dev-libs/libxml2-2.6 )
+	search-index? ( >=dev-db/sqlite-3 )"
 
 DEPEND="${COMMON_DEPEND}
 	doc? (
@@ -56,8 +56,7 @@ pkg_setup() {
 
 src_configure() {
 	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
-	local clients=`echo accerso adjutrix appareo $(usev cave )  importare \
-		$(usev inquisitio ) instruo paludis reconcilio | tr -s \  ,`
+	local clients=`echo accerso adjutrix appareo cave instruo paludis | tr -s \  ,`
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
 		$(use_enable doc doxygen ) \
@@ -69,6 +68,7 @@ src_configure() {
 		$(use_enable vim-syntax vim ) \
 		$(use_enable visibility ) \
 		$(use_enable xml ) \
+		$(use_enable search-index ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
 		--with-repositories=${repositories} \
 		--with-clients=${clients} \
@@ -87,25 +87,15 @@ src_install() {
 	BASHCOMPLETION_NAME="adjutrix" dobashcompletion bash-completion/adjutrix
 	BASHCOMPLETION_NAME="paludis" dobashcompletion bash-completion/paludis
 	BASHCOMPLETION_NAME="accerso" dobashcompletion bash-completion/accerso
-	BASHCOMPLETION_NAME="importare" dobashcompletion bash-completion/importare
 	BASHCOMPLETION_NAME="instruo" dobashcompletion bash-completion/instruo
-	BASHCOMPLETION_NAME="reconcilio" dobashcompletion bash-completion/reconcilio
-	use cave && \
-		BASHCOMPLETION_NAME="cave" \
-		dobashcompletion bash-completion/cave
-	use inquisitio && \
-		BASHCOMPLETION_NAME="inquisitio" \
-		dobashcompletion bash-completion/inquisitio
+	BASHCOMPLETION_NAME="cave" dobashcompletion bash-completion/cave
 
 	if use zsh-completion ; then
 		insinto /usr/share/zsh/site-functions
 		doins zsh-completion/_paludis
 		doins zsh-completion/_adjutrix
-		doins zsh-completion/_importare
-		doins zsh-completion/_reconcilio
-		use inquisitio && doins zsh-completion/_inquisitio
 		doins zsh-completion/_paludis_packages
-		use cave && doins zsh-completion/_cave
+		doins zsh-completion/_cave
 	fi
 }
 
