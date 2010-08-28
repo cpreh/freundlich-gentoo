@@ -41,20 +41,3 @@ pkg_setup() {
 		$(use_enable python)
 		--with-html-dir=/usr/share/doc/${PF}/html"
 }
-
-src_prepare() {
-	gnome2_src_prepare
-
-	# Fix ugly artifacts with upstream patches from bgo#618749
-	# FIXME: Second patch needs to be skipped since it causes problems with
-	# x11-terms/terminal, see bug #324631. If this is not solved by upstream,
-	# the problem could reappear with >=x11-libs/vte-0.25.2
-	epatch "${FILESDIR}/${PN}-0.24.1-background-color.patch"
-#	epatch "${FILESDIR}/${PN}-0.24.1-background-color2.patch"
-	epatch "${FILESDIR}/${PN}-0.24.1-cleanup-background.patch"
-
-	# Prevent cursor from become invisible, bgo#602596
-	# FIXME: The following patches cannot be applied until bug #323443 is solved.
-#	epatch "${FILESDIR}/${PN}-0.24.2-invisible-cursor.patch"
-#	epatch "${FILESDIR}/${PN}-0.24.2-invisible-cursor2.patch"
-}
