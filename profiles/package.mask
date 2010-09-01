@@ -3,3 +3,4 @@
 =dev-util/valgrind-scm
 =media-video/mplayer-scm
 =www-client/firefox-scm
+=x11-libs/vte-0.25.90
