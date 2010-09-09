@@ -6,7 +6,7 @@ EAPI=2
 RESTRICT="mirror"
 inherit toolchain-funcs savedconfig versionator
 
-MYPV="${PN}-0.4.7~pre4"
+MYPV="${PN}-0.4.7~pre5"
 
 DESCRIPTION="VTE based, super lightweight terminal emulator"
 HOMEPAGE="http://www.calno.com/evilvte"

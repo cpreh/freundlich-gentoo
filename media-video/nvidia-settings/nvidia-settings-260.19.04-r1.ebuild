@@ -45,13 +45,13 @@ src_compile() {
 	emake CDEBUGFLAGS="${CFLAGS}" CC="$(tc-getCC)" libXNVCtrl.a || die "Building libXNVCtrl failed!"
 	filter-flags -fPIC
 
-	cd "${S}"
-	einfo "Building nVidia-Settings..."
-	emake  CC="$(tc-getCC)" STRIP_CMD=/bin/true || die "Failed to build nvidia-settings"
+	#cd "${S}"
+	#einfo "Building nVidia-Settings..."
+	#emake  CC="$(tc-getCC)" STRIP_CMD=/bin/true || die "Failed to build nvidia-settings"
 }
 
 src_install() {
-	emake STRIP_CMD=/bin/true install || die
+	#emake STRIP_CMD=/bin/true install || die
 
 	# Install libXNVCtrl and headers
 	insinto "/usr/$(get_libdir)"
