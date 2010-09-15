@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/www/viewcvs.gentoo.org/raw_cvs/gentoo-x86/games-arcade/blobwars/Attic/blobwars-1.08.ebuild,v 1.9 2008/08/16 20:31:23 mr_bones_ dead $
 
-EAPI=2
+EAPI=3
 
 RESTRICT="mirror"
 
@@ -18,9 +18,9 @@ KEYWORDS="~alpha ~amd64 ~ppc ~sparc ~x86"
 IUSE=""
 
 RDEPEND="media-libs/libsdl
-	media-libs/sdl-mixer
+	media-libs/sdl-mixer[mikmod]
 	media-libs/sdl-ttf
-	media-libs/sdl-image
+	media-libs/sdl-image[gif,jpeg,png]
 	virtual/libintl"
 DEPEND="${RDEPEND}
 	sys-devel/gettext"
