@@ -10,7 +10,7 @@ inherit games
 
 DESCRIPTION="You take on the role of Edgar, battling creatures and solving puzzles"
 HOMEPAGE="http://www.parallelrealities.co.uk/projects/edgar.php"
-SRC_URI="http://www.parallelrealities.co.uk/download/edgar/edgar-${PV}-2.tar.gz"
+SRC_URI="http://www.parallelrealities.co.uk/download/edgar/edgar-${PV}-1.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -25,7 +25,8 @@ DEPEND="${RDEPEND}"
 
 src_prepare(){
 	sed -i -e "s:\$(PREFIX)/games/:\$(PREFIX)/games/bin/:g" makefile || die "replacing install path failed"
-	sed -i -e "s/-Os/${CFLAGS}/g" makefile || die "replacing CFLAGS failed"
+	sed -i -e "s/CFLAGS = /CFLAGS = ${CFLAGS} /g" makefile || die "replacing CFLAGS failed"
+	sed -i -e "s/LFLAGS = /LFLAGS = ${LDFLAGS} /g" makefile || die "replacing LDFLAGS failed"
 }
 
 src_install() {
