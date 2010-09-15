@@ -18,7 +18,7 @@ KEYWORDS="~alpha ~amd64 ~ppc ~sparc ~x86"
 IUSE=""
 
 RDEPEND="media-libs/libsdl
-	media-libs/sdl-mixer[mikmod]
+	media-libs/sdl-mixer[mikmod,vorbis]
 	media-libs/sdl-ttf
 	media-libs/sdl-image[gif,jpeg,png]
 	virtual/libintl"

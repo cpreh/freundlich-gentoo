@@ -18,8 +18,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 RDEPEND="media-libs/libsdl
-	media-libs/sdl-mixer
-	media-libs/sdl-image
+	media-libs/sdl-mixer[mikmod,vorbis]
+	media-libs/sdl-image[gif,jpeg,png]
 	media-libs/sdl-ttf"
 DEPEND="${RDEPEND}"
 
