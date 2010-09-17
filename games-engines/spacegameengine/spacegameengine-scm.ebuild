@@ -4,7 +4,7 @@
 
 EAPI=3
 
-inherit base cmake-utils games git
+inherit cmake-utils git
 
 EGIT_REPO_URI="git://timeout.supraverse.net/spacegameengine.git"
 
@@ -14,12 +14,12 @@ HOMEPAGE="http://redmine.supraverse.net/projects/show/sge"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="bullet devil dga examples gui openal opengl png test truetype vorbis wave x11input"
+IUSE="+bullet +devil examples +gui md3 +openal +opengl +png test +truetype +vorbis +wave +x11input"
 
 DEPEND="
-	dev-cpp/majutsu
-	dev-cpp/mizuiro
-	dev-libs/boost
+	=dev-cpp/fcppt-scm
+	=dev-cpp/mizuiro-scm
+	>=dev-libs/boost-1.43.0
 	x11-libs/libX11
 	bullet? (
 		sci-physics/bullet
@@ -42,26 +42,19 @@ DEPEND="
 	vorbis? (
 		media-libs/libvorbis
 	)
-	x11input? (
-		dga? (
-			x11-libs/libXxf86dga
-		)
-	)
 "
 RDEPEND="${DEPEND}"
 
 src_configure() {
 	local mycmakeargs="	
-		-D ENABLE_MD3=OFF
 		-D ENABLE_AUDIO_NULL=OFF
 		-D ENABLE_BITMAP_FONT=OFF
 		-D ENABLE_ODE=OFF
-		-D ENABLE_XCB=OFF
 		$(cmake-utils_use_enable bullet)
 		$(cmake-utils_use_enable devil)
-		$(cmake-utils_use_enable dga)
 		$(cmake-utils_use_enable examples)
 		$(cmake-utils_use_enable gui)
+		$(cmake-utils_use_enable md3)
 		$(cmake-utils_use_enable openal)
 		$(cmake-utils_use_enable opengl)
 		$(cmake-utils_use_enable png)
@@ -72,12 +65,4 @@ src_configure() {
 	"
 
 	cmake-utils_src_configure
-}
-
-src_compile() {
-	cmake-utils_src_compile
-}
-
-src_install() {
-	cmake-utils_src_install
 }

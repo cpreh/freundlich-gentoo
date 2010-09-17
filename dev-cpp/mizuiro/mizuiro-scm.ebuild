@@ -18,7 +18,7 @@ IUSE="+fcppt"
 
 DEPEND="
 	dev-libs/boost
-	fcppt? ( dev-cpp/fcppt )
+	fcppt? ( >=dev-cpp/fcppt-0.3 )
 "
 RDEPEND="${DEPEND}"
 

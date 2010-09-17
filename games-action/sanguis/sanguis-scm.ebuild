@@ -4,7 +4,7 @@
 
 EAPI=3
 
-inherit cmake-utils games git
+inherit cmake-utils git
 
 EGIT_REPO_URI="git://timeout.supraverse.net/sanguis.git"
 
@@ -17,20 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 DEPEND="
-	dev-cpp/fcppt
-	dev-cpp/majutsu
+	=dev-cpp/fcppt-scm
 	dev-libs/boost
 	games-engines/spacegameengine[bullet,gui,openal,opengl,png,truetype,x11input]"
 RDEPEND="${DEPEND}"
-
-src_configure() {
-	cmake-utils_src_configure
-}
-
-src_compile() {
-	cmake-utils_src_compile
-}
-
-src_install() {
-	cmake-utils_src_install
-}
