@@ -18,7 +18,7 @@ IUSE="+bullet +devil examples +gui md3 +openal +opengl +png test +truetype +vorb
 
 DEPEND="
 	=dev-cpp/fcppt-scm
-	=dev-cpp/mizuiro-scm
+	=dev-cpp/mizuiro-scm[fcppt]
 	>=dev-libs/boost-1.43.0
 	x11-libs/libX11
 	bullet? (
