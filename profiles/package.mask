@@ -2,5 +2,7 @@
 =dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
 =media-video/mplayer-scm
+=sys-devel/gcc-4.5.2_alpha20100916
 =www-client/firefox-scm
 =x11-libs/vte-0.25.91
+=x11-terms/rxvt-unicode-scm
