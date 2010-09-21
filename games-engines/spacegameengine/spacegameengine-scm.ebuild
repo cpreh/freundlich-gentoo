@@ -49,7 +49,6 @@ src_configure() {
 	local mycmakeargs="	
 		-D ENABLE_AUDIO_NULL=OFF
 		-D ENABLE_BITMAP_FONT=OFF
-		-D ENABLE_ODE=OFF
 		$(cmake-utils_use_enable bullet)
 		$(cmake-utils_use_enable devil)
 		$(cmake-utils_use_enable examples)
