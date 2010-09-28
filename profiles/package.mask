@@ -4,4 +4,3 @@
 =media-video/mplayer-scm
 =www-client/firefox-scm
 =x11-libs/vte-0.25.91
-=x11-terms/rxvt-unicode-scm
