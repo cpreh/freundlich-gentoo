@@ -23,7 +23,10 @@ IUSE="alltargets debug +static-analyzer system-cxx-headers test"
 
 # Note: for LTO support, clang will depend on binutils with gold plugins, and LLVM built after that - http://llvm.org/docs/GoldPlugin.html
 DEPEND="static-analyzer? ( dev-lang/perl )"
-RDEPEND="~sys-devel/llvm-${PV}[alltargets=]"
+RDEPEND="
+	~sys-devel/llvm-${PV}[alltargets=]
+	~sys-devel/gcc-4.4.5
+"
 
 S="${WORKDIR}/llvm-${PV}"
 
@@ -98,7 +101,7 @@ src_configure() {
 
 	if use system-cxx-headers; then
 		# Try to get current C++ headers path
-		CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-root=$(gcc-config -X| cut -d: -f1 | sed '/-v4$/! s,$,/include/g++-v4,')"
+		CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-root=$(gcc-config -X 4.4.5 | cut -d: -f1 | sed '/-v4$/! s,$,/include/g++-v4,')"
 		CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-arch=$CHOST"
 		if has_multilib_profile; then
 			CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-32bit-dir=32"
