@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/clang/clang-2.8.ebuild,v 1.2 2010/10/06 09:22:22 voyageur Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/clang/clang-2.8-r1.ebuild,v 1.1 2010/10/12 09:24:54 voyageur Exp $
 
 EAPI=3
 
@@ -12,17 +12,18 @@ inherit eutils multilib python
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="http://clang.llvm.org/"
 # Fetching LLVM as well: see http://llvm.org/bugs/show_bug.cgi?id=4840
-SRC_URI="http://llvm.org/releases/${PV}/llvm-${PV}.tgz
+# Drop the -> on 2.9
+SRC_URI="http://llvm.org/releases/${PV}/llvm-${PV}.tgz -> llvm-${PV}-r1.tgz
 	http://llvm.org/releases/${PV}/${P}.tgz"
 
 LICENSE="UoI-NCSA"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~ppc-macos"
-IUSE="debug +static-analyzer system-cxx-headers test"
+IUSE="alltargets debug +static-analyzer system-cxx-headers test"
 
 # Note: for LTO support, clang will depend on binutils with gold plugins, and LLVM built after that - http://llvm.org/docs/GoldPlugin.html
 DEPEND="static-analyzer? ( dev-lang/perl )"
-RDEPEND="~sys-devel/llvm-${PV}"
+RDEPEND="~sys-devel/llvm-${PV}[alltargets=]"
 
 S="${WORKDIR}/llvm-${PV}"
 
@@ -63,8 +64,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# --enable-shared: undefined symbol, bug #338231
-	local CONF_FLAGS=""
+	local CONF_FLAGS="--enable-shared"
 
 	if use debug; then
 		CONF_FLAGS="${CONF_FLAGS} --disable-optimized"
@@ -81,6 +81,12 @@ src_configure() {
 	if use prefix ; then
 		CONF_FLAGS="${CONF_FLAGS} \
 			--with-c-include-dirs=${EPREFIX}/usr/include:/usr/include"
+	fi
+
+	if use alltargets; then
+		CONF_FLAGS="${CONF_FLAGS} --enable-targets=all"
+	else
+		CONF_FLAGS="${CONF_FLAGS} --enable-targets=host-only"
 	fi
 
 	if use amd64; then
