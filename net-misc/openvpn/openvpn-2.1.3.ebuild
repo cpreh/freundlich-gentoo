@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/openvpn/openvpn-2.1.2.ebuild,v 1.3 2010/09/07 02:17:15 josejx Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/openvpn/openvpn-2.1.3.ebuild,v 1.2 2010/10/12 20:06:59 djc Exp $
 
 EAPI=2
 
@@ -43,7 +43,10 @@ src_prepare() {
 		plugin/*/Makefile || die "sed failed"
 
 	epatch "${FILESDIR}/${P}-options-fix.patch"
-	eautoreconf
+
+	if use ipv6 || use eurephia; then
+		eautoreconf
+	fi
 }
 
 src_configure() {
@@ -67,8 +70,7 @@ src_configure() {
 		$(use_enable passwordsave password-save) \
 		$(use_enable ssl) \
 		$(use_enable ssl crypto) \
-		$(use_enable iproute2) \
-		|| die "configure failed"
+		$(use_enable iproute2)
 }
 
 src_compile() {
@@ -78,13 +80,11 @@ src_compile() {
 
 	if ! use minimal ; then
 		cd plugin
-		for i in $( ls 2>/dev/null ); do
+		for i in *; do
 			[[ ${i} == "README" || ${i} == "examples" || ${i} == "defer" ]] && continue
 			[[ ${i} == "auth-pam" ]] && ! use pam && continue
 			einfo "Building ${i} plugin"
-			cd "${i}"
-			emake CC=$(tc-getCC) || die "make failed"
-			cd ..
+			emake -C "${i}" CC=$(tc-getCC) || die "make failed"
 		done
 		cd ..
 	fi
@@ -98,20 +98,17 @@ src_install() {
 	use eurephia && dodoc README.eurephia
 
 	# remove empty dir
-	rmdir "${D}/usr/share/doc/openvpn"
-
-	# Empty dir
-	dodir /etc/openvpn
+	rmdir "${D}/usr/share/doc/openvpn" || die "rmdir failed"
 	keepdir /etc/openvpn
 
 	# Install some helper scripts
 	exeinto /etc/openvpn
-	doexe "${FILESDIR}/up.sh"
-	doexe "${FILESDIR}/down.sh"
+	doexe "${FILESDIR}/up.sh" || die "doexe failed"
+	doexe "${FILESDIR}/down.sh" || die "doexe failed"
 
 	# Install the init script and config file
-	newinitd "${FILESDIR}/${PN}-2.1.init" openvpn
-	newconfd "${FILESDIR}/${PN}-2.1.conf" openvpn
+	newinitd "${FILESDIR}/${PN}-2.1.init" openvpn || die "newinitd failed"
+	newconfd "${FILESDIR}/${PN}-2.1.conf" openvpn || die "newconfd failed"
 
 	# install examples, controlled by the respective useflag
 	if use examples ; then
@@ -139,24 +136,24 @@ pkg_postinst() {
 	enewgroup openvpn
 	enewuser openvpn "" "" "" openvpn
 
-	if [[ -n $(ls /etc/openvpn/*/local.conf 2>/dev/null) ]] ; then
+	if [[ -n $(ls ${ROOT}/etc/openvpn/*/local.conf 2>/dev/null) ]] ; then
 		ewarn "WARNING: The openvpn init script has changed"
 		ewarn ""
 	fi
 
-	einfo "The openvpn init script expects to find the configuration file"
-	einfo "openvpn.conf in /etc/openvpn along with any extra files it may need."
-	einfo ""
-	einfo "To create more VPNs, simply create a new .conf file for it and"
-	einfo "then create a symlink to the openvpn init script from a link called"
-	einfo "openvpn.newconfname - like so"
-	einfo "   cd /etc/openvpn"
-	einfo "   ${EDITOR##*/} foo.conf"
-	einfo "   cd /etc/init.d"
-	einfo "   ln -s openvpn openvpn.foo"
-	einfo ""
-	einfo "You can then treat openvpn.foo as any other service, so you can"
-	einfo "stop one vpn and start another if you need to."
+	elog "The openvpn init script expects to find the configuration file"
+	elog "openvpn.conf in /etc/openvpn along with any extra files it may need."
+	elog ""
+	elog "To create more VPNs, simply create a new .conf file for it and"
+	elog "then create a symlink to the openvpn init script from a link called"
+	elog "openvpn.newconfname - like so"
+	elog "   cd /etc/openvpn"
+	elog "   ${EDITOR##*/} foo.conf"
+	elog "   cd /etc/init.d"
+	elog "   ln -s openvpn openvpn.foo"
+	elog ""
+	elog "You can then treat openvpn.foo as any other service, so you can"
+	elog "stop one vpn and start another if you need to."
 
 	if grep -Eq "^[ \t]*(up|down)[ \t].*" "${ROOT}/etc/openvpn"/*.conf 2>/dev/null ; then
 		ewarn ""
