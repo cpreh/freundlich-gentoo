@@ -1,0 +1,11 @@
+--- boost/units/detail/utility.hpp	2010-10-17 17:04:15.000000000 +0200
++++ boost/units/detail/utility.hpp	2010-10-17 17:03:01.000000000 +0200
+@@ -15,7 +15,7 @@
+ #include <typeinfo>
+ #include <string>
+ 
+-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
++#if !defined(__clang__) && (defined(__GLIBCXX__) || defined(__GLIBCPP__))
+ #define BOOST_UNITS_USE_DEMANGLING
+ #include <cxxabi.h>
+ #endif // __GNUC__
