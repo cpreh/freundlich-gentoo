@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/clang/clang-2.8-r1.ebuild,v 1.1 2010/10/12 09:24:54 voyageur Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/clang/clang-2.8-r2.ebuild,v 1.1 2010/10/21 08:14:07 voyageur Exp $
 
 EAPI=3
 
@@ -100,8 +100,10 @@ src_configure() {
 	CONF_FLAGS="${CONF_FLAGS} --with-llvmgccdir=/dev/null"
 
 	if use system-cxx-headers; then
-		# Try to get current C++ headers path
-		CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-root=$(gcc-config -X 4.4.5 | cut -d: -f1 | sed '/-v4$/! s,$,/include/g++-v4,')"
+		# Try to get current gcc headers path
+		local CXX_PATH=$(gcc-config 4.4.5 -X| cut -d: -f1 | sed 's,/include/g++-v4$,,')
+		CONF_FLAGS="${CONF_FLAGS} --with-c-include-dirs=/usr/include:${CXX_PATH}/include"
+		CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-root=${CXX_PATH}/include/g++-v4"
 		CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-arch=$CHOST"
 		if has_multilib_profile; then
 			CONF_FLAGS="${CONF_FLAGS} --with-cxx-include-32bit-dir=32"
