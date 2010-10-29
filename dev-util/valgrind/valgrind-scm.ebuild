@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.5.0.ebuild,v 1.8 2010/05/21 18:59:32 pva Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.5.0-r1.ebuild,v 1.1 2010/10/28 17:39:53 blueness Exp $
 
 ESVN_REPO_URI="svn://svn.valgrind.org/valgrind/trunk"
 
@@ -81,6 +81,8 @@ src_compile() {
 src_install() {
 	emake DESTDIR="${D}" install || die "Install failed!"
 	dodoc AUTHORS FAQ.txt NEWS README*
+
+	pax-mark m "${D}"/usr/$(get_libdir)/valgrind/*-*-linux
 }
 
 pkg_postinst() {
