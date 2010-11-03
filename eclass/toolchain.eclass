@@ -1400,7 +1400,6 @@ gcc_do_configure() {
 				confgcc="${confgcc} --enable-threads=posix" ;;
 		esac
 	fi
-	[[ ${CTARGET} == *-elf ]] && confgcc="${confgcc} --with-newlib"
 	# __cxa_atexit is "essential for fully standards-compliant handling of
 	# destructors", but apparently requires glibc.
 	case ${CTARGET} in
