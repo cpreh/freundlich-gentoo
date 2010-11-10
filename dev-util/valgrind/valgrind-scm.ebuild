@@ -1,10 +1,12 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.5.0-r1.ebuild,v 1.1 2010/10/28 17:39:53 blueness Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.6.0.ebuild,v 1.1 2010/11/10 01:40:41 blueness Exp $
+
+EAPI=2
+inherit autotools eutils flag-o-matic toolchain-funcs multilib pax-utils subversion
 
 ESVN_REPO_URI="svn://svn.valgrind.org/valgrind/trunk"
 
-inherit autotools eutils flag-o-matic toolchain-funcs subversion
 
 DESCRIPTION="An open-source memory debugger for GNU/Linux"
 HOMEPAGE="http://www.valgrind.org"
@@ -15,36 +17,37 @@ KEYWORDS="-* ~amd64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="mpi"
 
 DEPEND="mpi? ( virtual/mpi )"
-RDEPEND="${DEPEND}
-	!dev-util/callgrind"
+RDEPEND="${DEPEND}"
 
-src_unpack() {
-	subversion_src_unpack
-	cd "${S}"
+src_prepare() {
+	# Respect CFLAGS, LDFLAGS
+	sed -i -e '/^CPPFLAGS =/d' -e '/^CFLAGS =/d' -e '/^LDFLAGS =/d' \
+		mpi/Makefile.am || die
 
-	# make sure our CFLAGS are respected
-	einfo "Changing configure.in to respect CFLAGS"
-	sed -i -e 's:^CFLAGS="-Wno-long-long":CFLAGS="$CFLAGS -Wno-long-long":' configure.in
-
-	# undefined references to __guard and __stack_smash_handler in VEX (bug #114347)
-	einfo "Changing Makefile.all.am to disable SSP"
-	sed -i -e 's:^AM_CFLAGS_BASE = :AM_CFLAGS_BASE = -fno-stack-protector :' Makefile.all.am
+	# Changing Makefile.all.am to disable SSP
+	sed -i -e 's:^AM_CFLAGS_BASE = :AM_CFLAGS_BASE = -fno-stack-protector :' \
+		Makefile.all.am || die
 
 	# Correct hard coded doc location
-	sed -i -e "s:doc/valgrind:doc/${P}:" docs/Makefile.am
+	sed -i -e "s:doc/valgrind:doc/${PF}:" \
+		docs/Makefile.am || die
+
+	# Yet more local labels, this time for ppc32 & ppc64
+	epatch "${FILESDIR}/valgrind-3.6.0-local-labels.patch"
+
+	# Don't build in empty assembly files for other platforms or we'll get a QA
+	# warning about executable stacks.
+	epatch "${FILESDIR}/valgrind-3.6.0-non-exec-stack.patch"
 
 	# Fix up some suppressions that were not general enough for glibc versions
 	# with more than just a major and minor number.
 	epatch "${FILESDIR}/valgrind-3.4.1-glibc-2.10.1.patch"
 
-	# Respect LDFLAGS also for libmpiwrap.so (bug #279194)
-	epatch "${FILESDIR}/valgrind-3.5.0-respect-LDFLAGS.patch"
-
 	# Regenerate autotools files
 	eautoreconf
 }
 
-src_compile() {
+src_configure() {
 	local myconf
 
 	# -fomit-frame-pointer	"Assembler messages: Error: junk `8' after expression"
@@ -59,12 +62,6 @@ src_compile() {
 	filter-flags -fstack-protector
 	replace-flags -ggdb3 -ggdb2
 
-	# gcc 3.3.x fails to compile valgrind with -O3 (bug #129776)
-	if [ "$(gcc-version)" == "3.3" ] && is-flagq -O3; then
-		ewarn "GCC 3.3 cannot compile valgrind with -O3 in CFLAGS, using -O2 instead."
-		replace-flags -O3 -O2
-	fi
-
 	if use amd64 || use ppc64; then
 		! has_multilib_profile && myconf="${myconf} --enable-only64bit"
 	fi
@@ -74,12 +71,11 @@ src_compile() {
 		myconf="${myconf} --without-mpicc"
 	fi
 
-	econf ${myconf} || die "Configure failed!"
-	emake || die "Make failed!"
+	econf ${myconf}
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die "Install failed!"
+	emake DESTDIR="${D}" install || die
 	dodoc AUTHORS FAQ.txt NEWS README*
 
 	pax-mark m "${D}"/usr/$(get_libdir)/valgrind/*-*-linux
