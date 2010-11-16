@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/games-strategy/hedgewars/hedgewars-0.9.13.ebuild,v 1.2 2010/04/06 21:18:47 mr_bones_ Exp $
+# $Header: /var/cvsroot/gentoo-x86/games-strategy/hedgewars/hedgewars-0.9.14.1.ebuild,v 1.1 2010/11/15 19:56:46 mr_bones_ Exp $
 
 EAPI=2
 inherit cmake-utils eutils games mercurial 
@@ -22,14 +22,14 @@ RDEPEND="x11-libs/qt-gui:4
 	media-libs/sdl-net
 	dev-lang/lua"
 DEPEND="${RDEPEND}
-	>=dev-lang/fpc-2.2"
+	>=dev-lang/fpc-2.4"
 RDEPEND="${RDEPEND}
 	>=media-fonts/dejavu-2.28"
 
 S="${WORKDIR}/hg"
 
 src_configure() {
-	mycmakeargs="-DCMAKE_INSTALL_PREFIX=${GAMES_PREFIX} -DDATA_INSTALL_DIR=${GAMES_DATADIR}"
+	mycmakeargs="-DCMAKE_INSTALL_PREFIX=${GAMES_PREFIX} -DDATA_INSTALL_DIR=${GAMES_DATADIR} -DCMAKE_VERBOSE_MAKEFILE=TRUE"
 	cmake-utils_src_configure
 }
 
