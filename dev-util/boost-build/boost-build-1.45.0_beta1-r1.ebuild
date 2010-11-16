@@ -31,6 +31,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	epatch "${FILESDIR}"/${P}-configure-fail.patch
+
 	# Remove stripping option
 	cd "${S}/engine/src"
 	sed -i -e 's|-s\b||' \
