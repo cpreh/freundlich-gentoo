@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.441 2010/10/28 04:24:13 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.443 2010/11/21 21:26:22 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -139,31 +139,35 @@ if [[ ${ETYPE} == "gcc-library" ]] ; then
 else
 	IUSE="multislot nptl test"
 
+	if tc_version_is_at_least 3 ; then
+		IUSE+=" vanilla"
+	fi
+
 	if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
-		IUSE="${IUSE} altivec build fortran nls nocxx"
-		[[ -n ${PIE_VER} ]] && IUSE="${IUSE} nopie"
-		[[ -n ${PP_VER}	 ]] && IUSE="${IUSE} nossp"
-		[[ -n ${SPECS_VER} ]] && IUSE="${IUSE} nossp"
-		[[ -n ${HTB_VER} ]] && IUSE="${IUSE} boundschecking"
-		[[ -n ${D_VER}	 ]] && IUSE="${IUSE} d"
+		IUSE+=" altivec build fortran nls nocxx"
+		[[ -n ${PIE_VER} ]] && IUSE+=" nopie"
+		[[ -n ${PP_VER}	 ]] && IUSE+=" nossp"
+		[[ -n ${SPECS_VER} ]] && IUSE+=" nossp"
+		[[ -n ${HTB_VER} ]] && IUSE+=" boundschecking"
+		[[ -n ${D_VER}	 ]] && IUSE+=" d"
 
 		if tc_version_is_at_least 3 ; then
-			IUSE="${IUSE} bootstrap doc gcj gtk hardened libffi multilib objc vanilla"
+			IUSE+=" bootstrap doc gcj gtk hardened libffi multilib objc"
 
 			# gcc-{nios2,bfin} don't accept these
 			if [[ ${PN} == "gcc" ]] ; then
-				IUSE="${IUSE} n32 n64"
+				IUSE+=" n32 n64"
 			fi
 
-			tc_version_is_at_least "4.0" && IUSE="${IUSE} objc-gc mudflap"
-			tc_version_is_at_least "4.1" && IUSE="${IUSE} objc++"
-			tc_version_is_at_least "4.2" && IUSE="${IUSE} openmp"
-			tc_version_is_at_least "4.3" && IUSE="${IUSE} fixed-point"
+			tc_version_is_at_least "4.0" && IUSE+=" objc-gc mudflap"
+			tc_version_is_at_least "4.1" && IUSE+=" objc++"
+			tc_version_is_at_least "4.2" && IUSE+=" openmp"
+			tc_version_is_at_least "4.3" && IUSE+=" fixed-point"
 			if tc_version_is_at_least "4.4" ; then
-				IUSE="${IUSE} graphite"
-				[[ -n ${SPECS_VER} ]] && IUSE="${IUSE} nossp"
+				IUSE+=" graphite"
+				[[ -n ${SPECS_VER} ]] && IUSE+=" nossp"
 			fi
-			tc_version_is_at_least "4.5" && IUSE="${IUSE} lto"
+			tc_version_is_at_least "4.5" && IUSE+=" lto"
 		fi
 	fi
 
@@ -1151,14 +1155,18 @@ gcc-compiler-configure() {
 		fi
 
 		if tc_version_is_at_least "4.2" ; then
-			# Make sure target has pthreads support. #326757 #335883
-			# There shouldn't be a chicken&egg problem here as openmp won't
-			# build without a C library, and you can't build that w/out
-			# already having a compiler ...
-			if ! is_crosscompile || \
-			   $(tc-getCPP ${CTARGET}) -E - <<<"#include <pthread.h>" >& /dev/null
-			then
-				confgcc="${confgcc} $(use_enable openmp libgomp)"
+			if has openmp ${IUSE} ; then
+				# Make sure target has pthreads support. #326757 #335883
+				# There shouldn't be a chicken&egg problem here as openmp won't
+				# build without a C library, and you can't build that w/out
+				# already having a compiler ...
+				if ! is_crosscompile || \
+				   $(tc-getCPP ${CTARGET}) -E - <<<"#include <pthread.h>" >& /dev/null
+				then
+					confgcc="${confgcc} $(use_enable openmp libgomp)"
+				fi
+			else
+				confgcc="${confgcc} --disable-libgomp"
 			fi
 		fi
 
