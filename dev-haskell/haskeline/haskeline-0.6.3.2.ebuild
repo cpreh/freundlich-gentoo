@@ -16,10 +16,14 @@ IUSE=""
 
 RDEPEND=">=dev-lang/ghc-6.6.1
 		<dev-haskell/extensible-exceptions-0.2
-		=dev-haskell/mtl-1.1*
+		<dev-haskell/mtl-2.1
 		>=dev-haskell/terminfo-0.3.1.3
 		<dev-haskell/utf8-string-0.4"
 DEPEND="${RDEPEND}
-		>=dev-haskell/cabal-1.6"
+		>=dev-haskell/cabal-1.6
+		=dev-haskell/bytestring-0.9*
+		<dev-haskell/containers-0.5
+		<dev-haskell/directory-1.2
+		<dev-haskell/filepath-1.3"
 
 CABAL_CONFIGURE_FLAGS="--flags=terminfo"

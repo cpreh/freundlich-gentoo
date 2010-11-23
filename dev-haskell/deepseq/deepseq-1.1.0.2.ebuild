@@ -16,9 +16,10 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-RDEPEND=">=dev-lang/ghc-6.8"
+RDEPEND=">=dev-lang/ghc-6.12"
 DEPEND=">=dev-haskell/cabal-1.6
-		${RDEPEND}"
+		${RDEPEND}
+		<dev-haskell/containers-0.5"
 
 src_prepare() {
 	# lower drps down to ghc-6.8+
