@@ -1,4 +1,5 @@
 =app-dicts/jmdict-scm
+=app-shells/fish-scm
 =dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
 =dev-vcs/darcs-scm
