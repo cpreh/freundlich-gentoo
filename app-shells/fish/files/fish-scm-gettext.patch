@@ -1,0 +1,11 @@
+--- configure.ac	2010-11-28 12:41:39.000000000 +0100
++++ configure.ac	2010-11-28 12:42:05.000000000 +0100
+@@ -235,6 +235,8 @@ AC_ARG_WITH(
+ )
+ 
+ if test x$local_gettext != xno; then
++	AM_GNU_GETTEXT
++	LIBS="$LIBS $LIBINTL"
+ 	AC_DEFINE([USE_GETTEXT],[1],[Perform string translations with gettext])
+ fi
+ 

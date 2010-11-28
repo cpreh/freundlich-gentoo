@@ -4,16 +4,16 @@
 
 EAPI="3"
 
-inherit base autotools eutils darcs
+inherit base autotools eutils git
 
 DESCRIPTION="fish is the Friendly Interactive SHell"
 HOMEPAGE="http://fishshell.org/"
-EDARCS_REPOSITORY="http://fishshell.org/darcs/fish"
+EGIT_REPO_URI="git://gitorious.org/fish-shell/fish-shell.git"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~x86-solaris"
-IUSE="X vanilla"
+IUSE="X"
 
 DEPEND="sys-libs/ncurses
 	sys-devel/bc
@@ -24,16 +24,12 @@ RDEPEND="${DEPEND}"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-1.23.0-glibc-2.8.patch"
-	"${FILESDIR}/${PN}-1.22.3-gettext.patch"
+	"${FILESDIR}/${P}-gettext.patch"
 	"${FILESDIR}/${P}-gentoo-alt.patch"
 )
 
 src_prepare() {
 	base_src_prepare
-
-	if ! use vanilla ; then
-		epatch "${FILESDIR}"/${P}-fish_indent.patch
-	fi
 
 	eautoreconf
 }

@@ -1,10 +1,6 @@
-* Remove Darwin cruft, remove some Solaris misdetection crap, add
-  AM_ICONV instead of weird iconv check that not suprisingly fails on
-  Darwin.
-
---- fish-1.23.1/configure.ac
-+++ fish-1.23.1/configure.ac
-@@ -91,45 +91,6 @@
+--- configure.ac.old	2010-11-28 12:41:39.000000000 +0100
++++ configure.ac	2010-11-28 12:49:27.000000000 +0100
+@@ -97,45 +97,6 @@ fi
  
  
  #
@@ -47,10 +43,10 @@
 -
 -
 -#
- # Tell autoconf to create config.h header 
+ # Tell autoconf to create config.h header
  #
  AC_CONFIG_HEADERS(config.h)
-@@ -153,10 +114,7 @@
+@@ -159,10 +120,7 @@ AH_BOTTOM([#if __GNUC__ >= 3
  # Set up various programs needed for install
  #
  
@@ -62,7 +58,7 @@
  AC_PROG_CPP
  AC_PROG_INSTALL
  
-@@ -419,12 +477,9 @@
+@@ -527,12 +485,9 @@ if test x$local_gettext != xno; then
  	AC_SEARCH_LIBS( gettext, intl,,)
  fi
  
@@ -77,17 +73,17 @@
 +LIBS="$LIBS_COMMON $LIBICONV"
  
  #
- # Check for libraries needed by fish_indent. 
-@@ -504,7 +504,6 @@
- if test x$local_gettext != xno; then 
+ # Check for libraries needed by fish_indent.
+@@ -555,7 +510,6 @@ LIBS="$LIBS_SHARED"
+ if test x$local_gettext != xno; then
  	AC_SEARCH_LIBS( gettext, intl,,)
  fi
 -AC_SEARCH_LIBS( iconv_open, iconv, , [AC_MSG_ERROR([Could not find an iconv implementation, needed to build fish])] )
  LIBS_FISH_PAGER=$LIBS
  LIBS=$LIBS_COMMON
  
-@@ -516,7 +516,6 @@
- if test x$local_gettext != xno; then 
+@@ -568,7 +522,6 @@ LIBS="$LIBS_SHARED"
+ if test x$local_gettext != xno; then
  	AC_SEARCH_LIBS( gettext, intl,,)
  fi
 -AC_SEARCH_LIBS( iconv_open, iconv, , [AC_MSG_ERROR([Could not find an iconv implementation, needed to build fish])] )
