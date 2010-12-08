@@ -1,6 +1,6 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.54.6.ebuild,v 1.1 2010/10/27 14:58:44 peper Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.56.0.ebuild,v 1.1 2010/12/07 21:57:53 dagger Exp $
 
 EAPI="3"
 
@@ -10,16 +10,18 @@ DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
-IUSE="doc portage pink python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
+IUSE="doc pbins portage pink python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 
 COMMON_DEPEND="
-	>=app-admin/eselect-1.2_rc1
+	>=app-admin/eselect-1.2.13
 	>=app-shells/bash-3.2
 	>=sys-devel/gcc-4.4
 	dev-libs/libpcre[cxx]
+	sys-apps/file
+	pbins? ( >=app-arch/libarchive-2.8.4[xattr] )
 	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
 	xml? ( >=dev-libs/libxml2-2.6 )
@@ -51,6 +53,15 @@ create-paludis-user() {
 }
 
 pkg_setup() {
+	if id paludisbuild >/dev/null 2>/dev/null ; then
+		if ! groups paludisbuild | grep --quiet '\<tty\>' ; then
+			eerror "The 'paludisbuild' user is now expected to be a member of the"
+			eerror "'tty' group. You should add the user to this group before"
+			eerror "upgrading Paludis."
+			die "Please add paludisbuild to tty group"
+		fi
+	fi
+
 	create-paludis-user
 }
 
@@ -60,6 +71,7 @@ src_configure() {
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
 		$(use_enable doc doxygen ) \
+		$(use_enable pbins ) \
 		$(use_enable pink ) \
 		$(use_enable ruby-bindings ruby ) \
 		$(useq ruby-bindings && useq doc && echo --enable-ruby-doc ) \
