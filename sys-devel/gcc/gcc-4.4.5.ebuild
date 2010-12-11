@@ -1,23 +1,13 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.4.4-r2.ebuild,v 1.1 2010/09/16 04:18:53 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.4.5.ebuild,v 1.2 2010/11/29 20:52:13 dirtyepic Exp $
 
-PATCH_VER="1.2"
+PATCH_VER="1.1"
 UCLIBC_VER="1.0"
 
 ETYPE="gcc-compiler"
 
-GENTOO_PATCH_EXCLUDE="
-	50_all_pr45312-kernel-miscompile.patch
-	62_all_ia64-pr41551.patch
-	70_all_gcc44-pr45070-arm_-Os.patch
-	95_all_sh-pr43744.patch
-"
-
 # Hardened gcc 4 stuff
-PATCH_GCC_VER="4.4.4"
-UCLIBC_GCC_VER="4.4.4"
-PIE_GCC_VER="4.4.4"
 PIE_VER="0.4.5"
 SPECS_VER="0.2.0"
 SPECS_GCC_VER="4.4.3"
@@ -81,13 +71,11 @@ fi
 
 src_unpack() {
 	gcc_src_unpack
-
 	use vanilla && return 0
 
 	sed -i 's/use_fixproto=yes/:/' gcc/config.gcc #PR33200
 
 	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env.patch
-
 	[[ ${CTARGET} == *-softfloat-* ]] && epatch "${FILESDIR}"/4.4.0/gcc-4.4.0-softfloat.patch
 }
 
