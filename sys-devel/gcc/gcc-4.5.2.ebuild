@@ -19,6 +19,17 @@ SSP_STABLE="amd64 x86 ppc ppc64 arm"
 SSP_UCLIBC_STABLE=""
 #end Hardened stuff
 
+RESTRICT="mirror"
+PIE_GCC_VER="4.5.1"
+PATCH_GCC_VER="4.5.1"
+GENTOO_PATCH_EXCLUDE="
+20_all_gcc-4.5-fno-strict-overflow.patch
+49_all_gcc-4.5-pr46491-kernel-miscompile.patch
+50_all_pr45312-kernel-miscompile.patch
+70_all_gcc45-pr45070-arm_-Os.patch
+90_all_gcc-4.5-graphite-ICE.patch
+"
+
 inherit toolchain
 
 DESCRIPTION="The GNU Compiler Collection"
