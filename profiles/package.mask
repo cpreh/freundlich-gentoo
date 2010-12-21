@@ -3,4 +3,5 @@
 =dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
 =dev-vcs/darcs-scm
+=dev-vcs/darcs-2.5-scm
 =media-video/mplayer-scm
