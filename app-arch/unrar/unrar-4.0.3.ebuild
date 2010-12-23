@@ -21,7 +21,7 @@ DEPEND="!<=app-arch/unrar-gpl-0.0.1_p20080417"
 S=${WORKDIR}/unrar
 
 src_prepare() {
-	epatch "${FILESDIR}"/interactivity-${PV}.patch
+	epatch "${FILESDIR}"/${PN}-interactivity.patch
 }
 
 src_compile() {

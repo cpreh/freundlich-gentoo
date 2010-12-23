@@ -20,7 +20,7 @@ IUSE="doc test"
 RDEPEND="~dev-haskell/hashed-storage-0.5.2
 		<dev-haskell/haskeline-0.7
 		=dev-haskell/html-1.0*
-		<dev-haskell/http-4000.1
+		>=dev-haskell/http-4000
 		=dev-haskell/mmap-0.5*
 		<dev-haskell/mtl-2
 		=dev-haskell/network-2*
