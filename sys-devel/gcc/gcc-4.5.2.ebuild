@@ -1,8 +1,8 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.1-r1.ebuild,v 1.2 2010/11/29 20:40:15 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.5.2.ebuild,v 1.1 2010/12/28 01:09:34 dirtyepic Exp $
 
-PATCH_VER="1.4"
+PATCH_VER="1.0"
 UCLIBC_VER="1.0"
 
 ETYPE="gcc-compiler"
@@ -18,17 +18,6 @@ SSP_STABLE="amd64 x86 ppc ppc64 arm"
 # uclibc need tls and nptl support for SSP support
 SSP_UCLIBC_STABLE=""
 #end Hardened stuff
-
-RESTRICT="mirror"
-PIE_GCC_VER="4.5.1"
-PATCH_GCC_VER="4.5.1"
-GENTOO_PATCH_EXCLUDE="
-20_all_gcc-4.5-fno-strict-overflow.patch
-49_all_gcc-4.5-pr46491-kernel-miscompile.patch
-50_all_pr45312-kernel-miscompile.patch
-70_all_gcc45-pr45070-arm_-Os.patch
-90_all_gcc-4.5-graphite-ICE.patch
-"
 
 inherit toolchain
 
