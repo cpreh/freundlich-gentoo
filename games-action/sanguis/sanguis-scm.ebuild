@@ -18,6 +18,6 @@ IUSE=""
 
 DEPEND="
 	=dev-cpp/fcppt-scm
-	dev-libs/boost
-	games-engines/spacegameengine[bullet,gui,openal,opengl,png,truetype,x11input]"
+	>=dev-libs/boost-1.45.0
+	games-engines/spacegameengine[bullet,config,console,fonttext,gui,iconv,openal,opengl,parse,png,sprite,texture,time,truetype,x11input]"
 RDEPEND="${DEPEND}"
