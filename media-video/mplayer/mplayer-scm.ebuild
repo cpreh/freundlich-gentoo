@@ -231,6 +231,8 @@ src_prepare() {
 	# fix path to bash executable in configure scripts
 	sed -i -e "1c\#!${EPREFIX}/bin/bash" configure version.sh || die
 
+	epatch "${FILESDIR}/ffmpeg-get-bmp-header.patch"
+
 	base_src_prepare
 }
 
