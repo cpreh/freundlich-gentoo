@@ -231,8 +231,6 @@ src_prepare() {
 	# fix path to bash executable in configure scripts
 	sed -i -e "1c\#!${EPREFIX}/bin/bash" configure version.sh || die
 
-	epatch "${FILESDIR}/ffmpeg-get-bmp-header.patch"
-
 	base_src_prepare
 }
 
@@ -366,7 +364,6 @@ src_configure() {
 	# Codecs #
 	##########
 	myconf+=" --disable-musepack" # Use internal musepack codecs for SV7 and SV8 support
-	myconf+=" --disable-faad-internal" # always use system media-libs/faad2
 	myconf+=" --disable-libmpeg2-internal" # always use system media-libs/libmpeg2
 	use dirac || myconf+=" --disable-libdirac-lavc"
 	use dts || myconf+=" --disable-libdca"
