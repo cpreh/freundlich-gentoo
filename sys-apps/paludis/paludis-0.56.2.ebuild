@@ -1,6 +1,6 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.56.0.ebuild,v 1.1 2010/12/07 21:57:53 dagger Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.56.2.ebuild,v 1.1 2011/01/01 10:56:13 dagger Exp $
 
 EAPI="3"
 
@@ -49,7 +49,7 @@ PROVIDE="virtual/portage"
 
 create-paludis-user() {
 	enewgroup "paludisbuild"
-	enewuser "paludisbuild" -1 -1 "/var/tmp/paludis" "paludisbuild"
+	enewuser "paludisbuild" -1 -1 "/var/tmp/paludis" "paludisbuild,tty"
 }
 
 pkg_setup() {
