@@ -8,7 +8,7 @@ inherit cmake-utils git
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="http://redmine.supraverse.net/projects/fcppt"
-EGIT_REPO_URI="git://timeout.supraverse.net/fcppt.git"
+EGIT_REPO_URI="git://github.com/freundlich/fcppt.git"
 
 LICENSE="Boost-1.0"
 SLOT="0"

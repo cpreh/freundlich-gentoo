@@ -6,7 +6,7 @@ EAPI=3
 
 inherit cmake-utils git
 
-EGIT_REPO_URI="git://timeout.supraverse.net/spacegameengine.git"
+EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
 
 DESCRIPTION="An easy to use game engine written in C++"
 HOMEPAGE="http://redmine.supraverse.net/projects/show/sge"
