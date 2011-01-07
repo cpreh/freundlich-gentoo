@@ -6,7 +6,7 @@ EAPI=3
 
 inherit cmake-utils git
 
-EGIT_REPO_URI="git://timeout.supraverse.net/mizuiro.git"
+EGIT_REPO_URI="git://github.com/freundlich/mizuiro.git"
 
 DESCRIPTION="A generic image library"
 HOMEPAGE=""
