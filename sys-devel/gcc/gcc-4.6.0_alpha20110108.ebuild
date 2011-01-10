@@ -12,19 +12,18 @@ HOMEPAGE="http://gcc.gnu.org/"
 LICENSE="GPL-3 LGPL-3 libgcc libstdc++ gcc-runtime-library-exception-3.1"
 KEYWORDS=""
 
-IUSE="lto"
+IUSE="debug"
 
 RDEPEND=">=sys-libs/zlib-1.1.4
 	>=sys-devel/gcc-config-1.4
 	virtual/libiconv
-	>=dev-libs/gmp-4.2.2
-	>=dev-libs/mpfr-2.3.2
-	>=dev-libs/mpc-0.8
+	>=dev-libs/gmp-4.3.2
+	>=dev-libs/mpfr-2.4.2
+	>=dev-libs/mpc-0.8.1
 	graphite? (
 		>=dev-libs/ppl-0.10
-		>=dev-libs/cloog-ppl-0.15.8
+		>=dev-libs/cloog-ppl-0.15.10
 	)
-	lto? ( >=dev-libs/elfutils-0.143 )
 	!build? (
 		gcj? (
 			gtk? (
@@ -40,11 +39,10 @@ RDEPEND=">=sys-libs/zlib-1.1.4
 			app-arch/zip
 			app-arch/unzip
 		)
-		>=sys-libs/ncurses-5.2-r2
 		nls? ( sys-devel/gettext )
 	)"
 DEPEND="${RDEPEND}
-	test? ( >=dev-util/dejagnu-1.4.4 >=sys-devel/autogen-5.5.4 )
+	test? ( >=dev-util/dejagnu-1.4.4 )
 	>=sys-apps/texinfo-4.8
 	>=sys-devel/bison-1.875
 	>=sys-devel/flex-2.5.4
@@ -61,11 +59,10 @@ src_unpack() {
 
 	use vanilla && return 0
 
-	# Fix cross-compiling
-	epatch "${GCC_FILESDIR}"/4.1.0/gcc-4.1.0-cross-compile.patch
+	[[ ${CHOST} == ${CTARGET} ]] && epatch "${GCC_FILESDIR}"/gcc-spec-env.patch
+	[[ ${CTARGET} == *-softfloat-* ]] && epatch "${GCC_FILESDIR}"/4.4.0/gcc-4.4.0-softfloat.patch
 
-	# Yes this is ugly
-	EXTRA_ECONF="$(use_enable lto) ${EXTRA_ECONF}"
+	use debug && GCC_CHECKS_LIST="yes"
 }
 
 pkg_postinst() {
