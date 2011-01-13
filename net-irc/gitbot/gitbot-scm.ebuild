@@ -8,7 +8,7 @@ EAPI="2"
 
 DESCRIPTION="Phillemann's C++ gitbot"
 HOMEPAGE=""
-EGIT_REPO_URI="git://timeout.supraverse.net/gitbot.git"
+EGIT_REPO_URI="git://github.com/freundlich/gitbot.git"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 DEPEND="
-	>=dev-cpp/fcppt-0.1
+	>=dev-cpp/fcppt-0.4
 	dev-libs/boost"
 RDEPEND="${DEPEND}"
 
