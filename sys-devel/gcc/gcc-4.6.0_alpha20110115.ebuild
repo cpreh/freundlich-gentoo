@@ -42,7 +42,10 @@ RDEPEND=">=sys-libs/zlib-1.1.4
 		nls? ( sys-devel/gettext )
 	)"
 DEPEND="${RDEPEND}
-	test? ( >=dev-util/dejagnu-1.4.4 )
+	test? (
+		>=dev-util/dejagnu-1.4.4
+		>=sys-devel/autogen-5.5.4
+	)
 	>=sys-apps/texinfo-4.8
 	>=sys-devel/bison-1.875
 	>=sys-devel/flex-2.5.4
