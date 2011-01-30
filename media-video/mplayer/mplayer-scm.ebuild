@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.88 2011/01/14 16:26:20 grobian Exp $
 
-EAPI=4
+EAPI=3
 
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 SVN_ECLASS="subversion"
