@@ -2,12 +2,15 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.88 2011/01/14 16:26:20 grobian Exp $
 
-EAPI=3
+EAPI=4
 
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 SVN_ECLASS="subversion"
 
-inherit toolchain-funcs eutils flag-o-matic multilib base ${SVN_ECLASS}
+EGIT_PROJECT="ffmpeg"
+EGIT_REPO_URI="git://git.ffmpeg.org/ffmpeg.git"
+
+inherit toolchain-funcs eutils flag-o-matic multilib base ${SVN_ECLASS} git
 
 MPLAYER_REVISION=SVN-scm
 
@@ -213,6 +216,8 @@ pkg_setup() {
 
 src_unpack() {
 	subversion_src_unpack
+
+	S="${S}"/ffmpeg git_fetch || die
 
 	cd "${WORKDIR}"
 
