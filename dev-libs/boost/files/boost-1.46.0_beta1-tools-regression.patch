@@ -1,0 +1,33 @@
+diff -Nurp src//compiler_status.cpp /var/tmp/paludis/dev-libs-boost-1.46.0_beta1/work/boost_1_46_0_beta1/tools/regression/src//compiler_status.cpp
+--- tools/regression/src/compiler_status.cpp	2010-01-13 19:03:18.000000000 +0100
++++ tools/regression/src/compiler_status.cpp	2011-01-30 22:47:24.000000000 +0100
+@@ -21,6 +21,7 @@
+ 
+ #include <boost/config/warning_disable.hpp>
+ 
++#define BOOST_FILESYSTEM_VERSION 2
+ #include "boost/config.hpp"
+ #include "boost/filesystem/operations.hpp"
+ #include "boost/filesystem/convenience.hpp"
+diff -Nurp src//library_status.cpp /var/tmp/paludis/dev-libs-boost-1.46.0_beta1/work/boost_1_46_0_beta1/tools/regression/src//library_status.cpp
+--- tools/regression/src/library_status.cpp	2011-01-28 04:36:35.000000000 +0100
++++ tools/regression/src/library_status.cpp	2011-01-30 22:49:10.000000000 +0100
+@@ -23,6 +23,7 @@ program maintenance.
+ 
+ *******************************************************************************/
+ 
++#define BOOST_FILESYSTEM_VERSION 2
+ #include "boost/filesystem/operations.hpp"
+ #include "boost/filesystem/fstream.hpp"
+ 
+diff -Nurp src//process_jam_log.cpp /var/tmp/paludis/dev-libs-boost-1.46.0_beta1/work/boost_1_46_0_beta1/tools/regression/src//process_jam_log.cpp
+--- tools/regression/src/process_jam_log.cpp	2008-12-15 13:16:41.000000000 +0100
++++ tools/regression/src/process_jam_log.cpp	2011-01-30 22:48:53.000000000 +0100
+@@ -8,6 +8,7 @@
+ 
+ #include <boost/config/warning_disable.hpp>
+ 
++#define BOOST_FILESYSTEM_VERSION 2
+ #include "detail/tiny_xml.hpp"
+ #include "boost/filesystem/operations.hpp"
+ #include "boost/filesystem/fstream.hpp"
