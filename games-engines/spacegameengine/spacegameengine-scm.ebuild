@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=3
+EAPI=4
 
 inherit cmake-utils git
 
@@ -53,6 +53,16 @@ DEPEND="
 	)
 "
 RDEPEND="${DEPEND}"
+
+REQUIRED_USE="
+	config? ( parse )
+	console? ( fonttext time )
+	fontbitmap? ( parse )
+	fonttext? ( sprite texture )
+	gui? ( config fonttext time )
+	systems? ( config )
+	x11input? ( time )
+"
 
 src_configure() {
 	local mycmakeargs="	
