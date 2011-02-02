@@ -25,6 +25,7 @@ zoran"
 
 IUSE+=" external-ffmpeg"
 IUSE+=" strictaliasing"
+IUSE+=" amd64 x86 x86-fbsd"
 
 VIDEO_CARDS="s3virge mga tdfx vesa"
 for x in ${VIDEO_CARDS}; do
