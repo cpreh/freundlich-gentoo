@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 audio_null +bullet +camera +config +console +devil
-examples +fontbitmap +fonttext +gui +iconv md3
+examples +fontbitmap +fonttext +iconv md3
 +openal +opengl +parse +png +shader +sprite +systems
 test +texture +time +truetype +vorbis +wave +x11input"
 
@@ -59,7 +59,6 @@ REQUIRED_USE="
 	console? ( fonttext time )
 	fontbitmap? ( parse )
 	fonttext? ( sprite texture )
-	gui? ( config fonttext time )
 	systems? ( config )
 	x11input? ( time )
 "
@@ -75,7 +74,6 @@ src_configure() {
 		$(cmake-utils_use_enable examples)
 		$(cmake-utils_use_enable fontbitmap)
 		$(cmake-utils_use_enable fonttext)
-		$(cmake-utils_use_enable gui)
 		$(cmake-utils_use_enable iconv)
 		$(cmake-utils_use_enable md3)
 		$(cmake-utils_use_enable openal)
@@ -92,6 +90,7 @@ src_configure() {
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
+		-D ENABLE_GUI=OFF
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	"
 
