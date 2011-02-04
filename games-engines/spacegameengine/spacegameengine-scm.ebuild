@@ -90,7 +90,6 @@ src_configure() {
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
-		-D ENABLE_GUI=OFF
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	"
 
