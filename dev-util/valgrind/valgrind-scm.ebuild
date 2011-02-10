@@ -43,10 +43,6 @@ src_prepare() {
 	# with more than just a major and minor number.
 	epatch "${FILESDIR}"/${PN}-3.4.1-glibc-2.10.1.patch
 
-	# Fix for recent glibc
-	epatch "${FILESDIR}"/${PN}-3.6.0-glibc-2.13.patch
-	#epatch "${FILESDIR}"/${PN}-3.6.0-strcasecmp.patch
-
 	# Regenerate autotools files
 	eautoreconf
 }
