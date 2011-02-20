@@ -8,11 +8,12 @@ RESTRICT="mirror"
 
 inherit python flag-o-matic multilib toolchain-funcs versionator check-reqs
 
-MY_P=${PN}_$(replace_all_version_separators _)
+MAIN_PV=$(get_version_component_range 1-3)
+MY_P=${PN}_$(replace_all_version_separators _ ${MAIN_PV})
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
-SRC_URI="http://boost.cowic.de/rc/${MY_P}.tar.bz2"
+SRC_URI="http://boost.cowic.de/rc/${MY_P}.tar.bz2 -> boost-${PV}.tar.bz2"
 LICENSE="Boost-1.0"
 SLOT="$(get_version_component_range 1-2)"
 IUSE="debug doc +eselect icu mpi python static-libs test tools"
@@ -86,14 +87,13 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/remove-toolset-${PV}.patch"
-	epatch "${FILESDIR}/${P}-lambda_bind.patch"
-	epatch "${FILESDIR}/${P}-tools-regression.patch"
+	epatch "${FILESDIR}/remove-toolset-${MAIN_PV}.patch"
+	epatch "${FILESDIR}/boost-${MAIN_PV}-lambda_bind.patch"
 
 	# This enables building the boost.random library with /dev/urandom support
 	if [[ -e /dev/urandom ]] ; then
 		mkdir -p libs/random/build
-		cp "${FILESDIR}/random-Jamfile-${PV}" libs/random/build/Jamfile.v2
+		cp "${FILESDIR}/random-Jamfile-${MAIN_PV}" libs/random/build/Jamfile.v2
 	fi
 }
 
