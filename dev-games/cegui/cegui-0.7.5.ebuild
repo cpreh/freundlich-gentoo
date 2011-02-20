@@ -28,7 +28,7 @@ RDEPEND="
 	dev-libs/libpcre
 	media-libs/freetype:2
 	devil? ( media-libs/devil )
-	expat? ( dev-libs/exapt )
+	expat? ( dev-libs/expat )
 	gtk? ( x11-libs/gtk+:2 )
 	irrlicht? ( dev-games/irrlicht )
 	lua? (
