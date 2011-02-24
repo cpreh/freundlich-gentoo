@@ -20,6 +20,6 @@ case ":$PATH:" in
 esac
 
 # Set the .desktop file name
-export CHROME_DESKTOP="chromium-chromium.desktop"
+export CHROME_DESKTOP="chromium-browser-chromium.desktop"
 
 exec "$PROGDIR/chrome" --extra-plugin-dir=/usr/lib/nsbrowser/plugins "$@"

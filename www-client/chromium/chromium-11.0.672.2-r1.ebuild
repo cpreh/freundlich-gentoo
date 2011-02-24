@@ -1,12 +1,12 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-client/chromium/chromium-11.0.672.2.ebuild,v 1.1 2011/02/18 10:46:51 phajdan.jr Exp $
+# $Header: /var/cvsroot/gentoo-x86/www-client/chromium/chromium-11.0.672.2-r1.ebuild,v 1.2 2011/02/22 18:24:22 phajdan.jr Exp $
 
 EAPI="3"
 PYTHON_DEPEND="2:2.6"
 V8_DEPEND="3.1.4"
 
-inherit eutils flag-o-matic multilib pax-utils portability python \
+inherit eutils fdo-mime flag-o-matic multilib pax-utils portability python \
 	toolchain-funcs versionator virtualx
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
@@ -50,8 +50,6 @@ DEPEND="${RDEPEND}
 RDEPEND+="
 	|| (
 		x11-themes/gnome-icon-theme
-		x11-themes/oxygen-molecule
-		x11-themes/tango-icon-theme
 		x11-themes/xfce4-icon-theme
 	)
 	x11-misc/xdg-utils
@@ -295,7 +293,11 @@ src_install() {
 	doexe out/Release/chrome
 	doexe out/Release/chrome_sandbox || die
 	fperms 4755 "${CHROMIUM_HOME}/chrome_sandbox"
-	doexe "${FILESDIR}"/chromium-launcher.sh || die
+	newexe "${FILESDIR}"/chromium-launcher-r1.sh chromium-launcher.sh || die
+
+	# It is important that we name the target "chromium-browser",
+	# xdg-utils expect it; bug #355517.
+	dosym "${CHROMIUM_HOME}/chromium-launcher.sh" /usr/bin/chromium-browser || die
 
 	insinto "${CHROMIUM_HOME}"
 	doins out/Release/chrome.pak || die
@@ -306,7 +308,7 @@ src_install() {
 
 	# chrome.1 is for chromium --help
 	newman out/Release/chrome.1 chrome.1 || die
-	newman out/Release/chrome.1 chromium.1 || die
+	newman out/Release/chrome.1 chromium-browser.1 || die
 
 	# Chromium looks for these in its folder
 	# See media_posix.cc and base_paths_linux.cc
@@ -315,10 +317,10 @@ src_install() {
 	dosym /usr/$(get_libdir)/libavutil.so.50 "${CHROMIUM_HOME}" || die
 
 	# Install icon and desktop entry.
-	newicon chrome/app/theme/chromium/product_logo_48.png ${PN}-browser.png || die
-	dosym "${CHROMIUM_HOME}/chromium-launcher.sh" /usr/bin/chromium || die
-	make_desktop_entry chromium "Chromium" ${PN}-browser "Network;WebBrowser" \
-		"MimeType=text/html;text/xml;application/xhtml+xml;"
+	newicon chrome/app/theme/chromium/product_logo_48.png \
+		chromium-browser.png || die
+	make_desktop_entry chromium-browser "Chromium" chromium-browser \
+		"Network;WebBrowser" "MimeType=text/html;text/xml;application/xhtml+xml;"
 	sed -e "/^Exec/s/$/ %U/" -i "${D}"/usr/share/applications/*.desktop || die
 
 	# Install GNOME default application entry (bug #303100).
@@ -327,4 +329,8 @@ src_install() {
 		insinto /usr/share/gnome-control-center/default-apps
 		doins "${FILESDIR}"/chromium.xml || die
 	fi
+}
+
+pkg_postinst() {
+	fdo-mime_desktop_database_update
 }
