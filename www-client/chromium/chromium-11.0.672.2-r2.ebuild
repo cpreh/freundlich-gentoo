@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-client/chromium/chromium-11.0.672.2-r1.ebuild,v 1.2 2011/02/22 18:24:22 phajdan.jr Exp $
+# $Header: /var/cvsroot/gentoo-x86/www-client/chromium/chromium-11.0.672.2-r2.ebuild,v 1.1 2011/02/25 10:37:57 wired Exp $
 
 EAPI="3"
 PYTHON_DEPEND="2:2.6"
@@ -298,6 +298,8 @@ src_install() {
 	# It is important that we name the target "chromium-browser",
 	# xdg-utils expect it; bug #355517.
 	dosym "${CHROMIUM_HOME}/chromium-launcher.sh" /usr/bin/chromium-browser || die
+	# keep the old symlink around for consistency
+	dosym "${CHROMIUM_HOME}/chromium-launcher.sh" /usr/bin/chromium || die
 
 	insinto "${CHROMIUM_HOME}"
 	doins out/Release/chrome.pak || die
