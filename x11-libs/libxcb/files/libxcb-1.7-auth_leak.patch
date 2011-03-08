@@ -1,0 +1,19 @@
+commit 36d26c9c893fdd826e857f5d94d85a9ce2e56d4e
+Author: Joshua Phillips <jp.sittingduck@gmail.com>
+Date:   Thu Sep 23 12:31:40 2010 +0100
+
+    Solve memory leak in _xcb_get_auth_info.
+
+diff --git a/src/xcb_auth.c b/src/xcb_auth.c
+index 1af27fc..9349783 100644
+--- a/src/xcb_auth.c
++++ b/src/xcb_auth.c
+@@ -327,7 +327,7 @@ int _xcb_get_auth_info(int fd, xcb_auth_info_t *info, int display)
+     if (!info->namelen)
+         goto no_auth;   /* out of memory */
+ 
+-    if (!gotsockname && (sockname = get_peer_sock_name(getsockname, fd)) == NULL)
++    if (!gotsockname && (free(sockname), sockname = get_peer_sock_name(getsockname, fd)) == NULL)
+     {
+         free(info->name);
+         goto no_auth;   /* can only authenticate sockets */
