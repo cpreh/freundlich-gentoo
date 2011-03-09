@@ -100,6 +100,7 @@ src_install() {
 
 	# remove .la files
 	use static-libs || rm -f "${D}"/usr/*/*.la
+	use static-libs || rm -f "${D}"/usr/*/python*/site-packages/*.la
 
 	if use doc ; then
 		emake html || die
