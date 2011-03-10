@@ -10,7 +10,7 @@ DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
-IUSE="accerso adjutrix appareo doc instruo paludis pbins pink portage python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
+IUSE="accerso adjutrix appareo doc instruo pbins pink portage python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
@@ -68,7 +68,7 @@ pkg_setup() {
 src_configure() {
 	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
 	local clients="cave"
-	local allclients="accerso adjutrix appareo instruo paludis"
+	local allclients="accerso adjutrix appareo instruo"
 
 	for client in ${allclients} ; do
 		if use ${client} ; then
@@ -107,15 +107,13 @@ src_install() {
 	dodoc AUTHORS README NEWS
 
 	use adjutrix && BASHCOMPLETION_NAME="adjutrix" dobashcompletion bash-completion/adjutrix
-	use paludis && BASHCOMPLETION_NAME="paludis" dobashcompletion bash-completion/paludis
 	use accerso && BASHCOMPLETION_NAME="accerso" dobashcompletion bash-completion/accerso
 	use instruo && BASHCOMPLETION_NAME="instruo" dobashcompletion bash-completion/instruo
 	BASHCOMPLETION_NAME="cave" dobashcompletion bash-completion/cave
 
 	if use zsh-completion ; then
 		insinto /usr/share/zsh/site-functions
-		doins zsh-completion/_paludis
-		doins zsh-completion/_adjutrix
+		use adjutrix && doins zsh-completion/_adjutrix
 		doins zsh-completion/_paludis_packages
 		doins zsh-completion/_cave
 	fi
