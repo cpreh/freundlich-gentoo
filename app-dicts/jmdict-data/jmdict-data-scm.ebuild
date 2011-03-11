@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
+EAPI="4"
+
 DESCRIPTION="XML data for jmdict"
 HOMEPAGE="http://mandrill.fuxx0r.net/jmdict.php"
 SRC_URI=""
@@ -17,16 +19,16 @@ DEPEND="app-arch/gzip
 RDEPEND=""
 
 src_unpack() {
-	cd ${WORKDIR}
-	wget ftp://ftp.monash.edu.au/pub/nihongo/JMdict.gz
-	gzip -d JMdict.gz
+	cd "${WORKDIR}"
+	wget -t 1 ftp://ftp.monash.edu.au/pub/nihongo/JMdict.gz || die "wget failed"
+	gzip -d JMdict.gz || die "gzip -d failed"
 }
 
 src_compile() {
-	mkdir -p ${S}/usr/share/jmdict
-	jmdict_import ${WORKDIR}/JMdict ${S} || die
+	mkdir -p "${S}"/usr/share/jmdict || die "mkdir failed"
+	jmdict_import "${WORKDIR}"/JMdict "${S}" || die "jmdict_import failed"
 }
 
 src_install() {
-	cp -R usr ${D}
+	cp -R usr "${D}"
 }
