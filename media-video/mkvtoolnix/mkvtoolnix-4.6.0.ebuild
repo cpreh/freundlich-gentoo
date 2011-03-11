@@ -33,10 +33,6 @@ DEPEND="${RDEPEND}
 	dev-ruby/rake
 "
 
-src_prepare() {
-	epatch "${FILESDIR}/${P}-fix-boost-1.46.0.patch"
-}
-
 src_configure() {
 	local myconf
 

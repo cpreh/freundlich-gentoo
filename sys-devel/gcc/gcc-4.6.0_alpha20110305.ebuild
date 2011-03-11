@@ -32,7 +32,7 @@ RDEPEND=">=sys-libs/zlib-1.1.4
 				x11-libs/libXtst
 				x11-proto/xproto
 				x11-proto/xextproto
-				>=x11-libs/gtk+-2.2
+				=x11-libs/gtk+-2*
 				x11-libs/pango
 			)
 			>=media-libs/libart_lgpl-2.1
