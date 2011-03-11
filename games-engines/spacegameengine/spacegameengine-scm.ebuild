@@ -24,7 +24,7 @@ DEPEND="
 	=dev-cpp/fcppt-scm
 	=dev-cpp/mizuiro-scm[fcppt]
 	=dev-cpp/libawl-scm
-	>=dev-libs/boost-1.44.0
+	>=dev-libs/boost-1.46.0
 	x11-libs/libX11
 	bullet? (
 		sci-physics/bullet
