@@ -1,0 +1,12 @@
+--- cegui/include/CEGUIString.h	2011-03-11 21:21:00.000000000 +0100
++++ cegui/include/CEGUIString.h	2011-03-11 21:21:21.000000000 +0100
+@@ -34,6 +34,9 @@
+ #include <string>
+ #include <string.h>
+ #include <stdexcept>
++#include <iterator>
++#include <iosfwd>
++#include <stddef.h>
+ 
+ // Start of CEGUI namespace section
+ namespace CEGUI

@@ -49,6 +49,7 @@ S=${WORKDIR}/${MY_P}
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-tinyxml.patch
 	epatch "${FILESDIR}"/${P}-fix-python-detection.patch
+	epatch "${FILESDIR}"/${P}-fix-string-includes.patch
 
 	if use examples ; then
 		cp -r Samples Samples.clean
