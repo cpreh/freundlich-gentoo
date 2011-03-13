@@ -5,3 +5,4 @@
 =dev-util/boost-build-1.46.1
 =dev-util/valgrind-scm
 =media-video/mplayer-scm
+=sys-apps/paludis-0.60.0_pre1
