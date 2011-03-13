@@ -1,7 +1,7 @@
 =app-dicts/jmdict-scm
 =app-shells/fish-scm
 =dev-cpp/fcppt-scm
-=dev-libs/boost-1.46.1_rc1
-=dev-util/boost-build-1.46.1_rc1
+=dev-libs/boost-1.46.1
+=dev-util/boost-build-1.46.1
 =dev-util/valgrind-scm
 =media-video/mplayer-scm
