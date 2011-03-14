@@ -18,7 +18,7 @@ IUSE="
 audio_null +bullet +camera cegui +config +console +devil
 examples +fontbitmap +fonttext +iconv md3
 +openal +opengl +parse +png +shader +sprite +systems
-test +texture +time +truetype +vorbis +wave +x11input"
+test +texture +time +truetype +viewport +vorbis +wave +x11input"
 
 DEPEND="
 	=dev-cpp/fcppt-scm
@@ -63,7 +63,7 @@ REQUIRED_USE="
 	console? ( fonttext time )
 	fontbitmap? ( parse )
 	fonttext? ( sprite texture )
-	systems? ( config )
+	systems? ( config viewport )
 	x11input? ( time )
 "
 
@@ -92,6 +92,7 @@ src_configure() {
 		$(cmake-utils_use_enable texture)
 		$(cmake-utils_use_enable time)
 		$(cmake-utils_use_enable truetype)
+		$(cmake-utils_use_enable viewport)
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
