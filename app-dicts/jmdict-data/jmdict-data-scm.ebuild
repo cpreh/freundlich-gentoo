@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="4"
+EAPI="1"
 
 DESCRIPTION="XML data for jmdict"
 HOMEPAGE="http://mandrill.fuxx0r.net/jmdict.php"
