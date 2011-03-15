@@ -3,5 +3,4 @@
 =dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
 =media-video/mplayer-scm
-=sys-apps/paludis-0.60.0_pre1
 =x11-drivers/nvidia-drivers-270.26
