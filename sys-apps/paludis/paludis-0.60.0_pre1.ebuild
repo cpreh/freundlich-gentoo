@@ -35,6 +35,7 @@ DEPEND="${COMMON_DEPEND}
 		ruby-bindings? ( dev-ruby/syntax dev-ruby/allison )
 	)
 	app-text/asciidoc
+	app-text/xmlto
 	dev-util/pkgconfig"
 
 RDEPEND="${COMMON_DEPEND}
