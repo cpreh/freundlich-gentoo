@@ -4,7 +4,7 @@
 
 EAPI=4
 
-EGIT_REPO_URI="git://git.ffmpeg.org/ffmpeg.git"
+EGIT_REPO_URI="git://git.videolan.org/ffmpeg.git"
 EGIT_PROJECT="ffmpeg"
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 
