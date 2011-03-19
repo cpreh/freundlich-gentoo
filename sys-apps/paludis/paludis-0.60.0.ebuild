@@ -1,6 +1,6 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2007 Ciaran McCreesh
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-0.58.0.ebuild,v 1.1 2011/01/09 18:57:05 peper Exp $
+# $Header: $
 
 EAPI="3"
 
@@ -13,29 +13,28 @@ SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 IUSE="accerso appareo doc instruo pbins pink portage python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~sparc ~x86"
 
 COMMON_DEPEND="
 	>=app-admin/eselect-1.2.13
 	>=app-shells/bash-3.2
-	>=sys-devel/gcc-4.4
 	dev-libs/libpcre[cxx]
-	sys-apps/file
-	pbins? ( >=app-arch/libarchive-2.8.4[xattr] )
-	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	ruby-bindings? ( >=dev-lang/ruby-1.8 )
+	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	xml? ( >=dev-libs/libxml2-2.6 )
-	search-index? ( >=dev-db/sqlite-3 )"
+	search-index? ( dev-db/sqlite:3 )
+	pbins? ( >=app-arch/libarchive-2.8.4[-xattr] )
+	sys-apps/file"
 
 DEPEND="${COMMON_DEPEND}
+	app-text/asciidoc
+	app-text/xmlto
 	doc? (
 		|| ( >=app-doc/doxygen-1.5.3 <=app-doc/doxygen-1.5.1 )
 		media-gfx/imagemagick
 		python-bindings? ( dev-python/epydoc dev-python/pygments )
 		ruby-bindings? ( dev-ruby/syntax dev-ruby/allison )
 	)
-	app-text/asciidoc
-	app-text/xmlto
 	dev-util/pkgconfig"
 
 RDEPEND="${COMMON_DEPEND}
@@ -54,17 +53,25 @@ create-paludis-user() {
 	enewuser "paludisbuild" -1 -1 "/var/tmp/paludis" "paludisbuild,tty"
 }
 
-pkg_setup() {
+pkg_pretend() {
 	if id paludisbuild >/dev/null 2>/dev/null ; then
 		if ! groups paludisbuild | grep --quiet '\<tty\>' ; then
-			eerror "The 'paludisbuild' user is now expected to be a member of the"
-			eerror "'tty' group. You should add the user to this group before"
-			eerror "upgrading Paludis."
-			die "Please add paludisbuild to tty group"
+			ewarn "The 'paludisbuild' user is now expected to be a member of the"
+			ewarn "'tty' group. You should add the user to this group before"
+			ewarn "upgrading Paludis."
 		fi
 	fi
+}
 
+pkg_setup() {
 	create-paludis-user
+
+	# 'paludis' tries to exec() itself after an upgrade
+	if [[ "${PKGMANAGER}" == paludis-0.[012345]* ]] && [[ -z "${CAVE}" ]] ; then
+		eerror "The 'paludis' client has been removed in Paludis 0.60. You must use"
+		eerror "'cave' to upgrade."
+		die "Can't use 'paludis' to upgrade Paludis"
+	fi
 }
 
 src_configure() {
@@ -83,7 +90,6 @@ src_configure() {
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
 		$(use_enable doc doxygen ) \
-		$(use_enable pbins ) \
 		$(use_enable pink ) \
 		$(use_enable ruby-bindings ruby ) \
 		$(useq ruby-bindings && useq doc && echo --enable-ruby-doc ) \
@@ -93,6 +99,7 @@ src_configure() {
 		$(use_enable visibility ) \
 		$(use_enable xml ) \
 		$(use_enable search-index ) \
+		$(use_enable pbins ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
 		--with-repositories=${repositories} \
 		--with-clients=${clients} \
@@ -114,7 +121,6 @@ src_install() {
 
 	if use zsh-completion ; then
 		insinto /usr/share/zsh/site-functions
-		doins zsh-completion/_paludis_packages
 		doins zsh-completion/_cave
 	fi
 }
@@ -151,3 +157,4 @@ pkg_postinst() {
 		elog "    eselect package-manager set paludis"
 	fi
 }
+
