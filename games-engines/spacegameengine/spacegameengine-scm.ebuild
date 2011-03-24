@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 audio_null +bullet +camera cegui +config +console +devil
-examples +fontbitmap +fonttext +iconv +linedrawer md3
+examples +fontbitmap +fonttext +iconv +line_drawer md3
 +openal +opengl +parse +png +shader +sprite +systems
 test +texture +time +truetype +viewport +vorbis +wave +x11input"
 
@@ -80,7 +80,7 @@ src_configure() {
 		$(cmake-utils_use_enable fontbitmap)
 		$(cmake-utils_use_enable fonttext)
 		$(cmake-utils_use_enable iconv)
-		$(cmake-utils_use_enable linedrawer)
+		$(cmake-utils_use_enable line_drawer)
 		$(cmake-utils_use_enable md3)
 		$(cmake-utils_use_enable openal)
 		$(cmake-utils_use_enable opengl)
