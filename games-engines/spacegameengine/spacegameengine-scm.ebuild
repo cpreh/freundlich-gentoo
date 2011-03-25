@@ -22,7 +22,7 @@ test +texture +time +truetype +viewport +vorbis +wave +x11input"
 
 DEPEND="
 	=dev-cpp/fcppt-scm
-	=dev-cpp/mizuiro-scm[fcppt]
+	=dev-cpp/mizuiro-scm
 	=dev-cpp/libawl-scm
 	>=dev-libs/boost-1.46.0
 	x11-libs/libX11
