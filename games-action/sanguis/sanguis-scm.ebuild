@@ -26,3 +26,22 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
+src_unpack() {
+	git_src_unpack
+
+	S=${WORKDIR}/statechart EGIT_REPO_URI="git://github.com/freundlich/statechart.git" git_src_unpack
+}
+
+src_configure() {
+	local mycmakeargs="-D STATECHART_INCLUDE_DIR=${WORKDIR}/statechart/include"
+
+	cmake-utils_src_configure
+}
+
+src_compile() {
+	cmake-utils_src_compile
+}
+
+src_install() {
+	cmake-utils_src_install
+}
