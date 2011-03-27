@@ -1,0 +1,21 @@
+--- src/torrent/data/block.h	2011-03-27 14:49:10.000000000 +0200
++++ src/torrent/data/block.h	2011-03-27 14:49:56.000000000 +0200
+@@ -38,6 +38,7 @@
+ #define LIBTORRENT_BLOCK_H
+ 
+ #include <vector>
++#include <cstddef> // for NULL
+ #include <torrent/common.h>
+ #include <torrent/data/block_transfer.h>
+ 
+--- src/data/memory_chunk.cc	2011-03-27 14:52:57.000000000 +0200
++++ src/data/memory_chunk.cc	2011-03-27 14:53:16.000000000 +0200
+@@ -44,6 +44,8 @@
+ #include "torrent/exceptions.h"
+ #include "memory_chunk.h"
+ 
++#include <stddef.h> // for ptrdiff_t
++
+ namespace torrent {
+ 
+ uint32_t MemoryChunk::m_pagesize = getpagesize();
