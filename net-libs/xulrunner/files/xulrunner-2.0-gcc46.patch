@@ -1,0 +1,74 @@
+--- xpcom/glue/nsEnumeratorUtils.cpp.old	2011-03-27 14:59:23.000000000 +0200
++++ xpcom/glue/nsEnumeratorUtils.cpp	2011-03-27 15:00:35.000000000 +0200
+@@ -112,7 +112,7 @@ NS_IMETHODIMP EmptyEnumeratorImpl::GetNe
+     return NS_ERROR_UNEXPECTED;
+ }
+ 
+-const EmptyEnumeratorImpl EmptyEnumeratorImpl::kInstance;
++const EmptyEnumeratorImpl EmptyEnumeratorImpl::kInstance = EmptyEnumeratorImpl();
+ 
+ nsresult
+ NS_NewEmptyEnumerator(nsISimpleEnumerator** aResult)
+--- xpcom/base/nsDebugImpl.cpp.old	2011-03-27 15:02:51.000000000 +0200
++++ xpcom/base/nsDebugImpl.cpp	2011-03-27 15:03:07.000000000 +0200
+@@ -524,7 +524,7 @@ Break(const char *aMsg)
+ #endif
+ }
+ 
+-static const nsDebugImpl kImpl;
++static const nsDebugImpl kImpl = nsDebugImpl();
+ 
+ nsresult
+ nsDebugImpl::Create(nsISupports* outer, const nsIID& aIID, void* *aInstancePtr)
+--- xpcom/base/nsTraceRefcntImpl.cpp.old	2011-03-28 17:16:41.000000000 +0200
++++ xpcom/base/nsTraceRefcntImpl.cpp	2011-03-28 17:17:04.000000000 +0200
+@@ -1362,7 +1362,7 @@ nsTraceRefcntImpl::LogReleaseCOMPtr(void
+   return NS_OK;
+ }
+ 
+-static const nsTraceRefcntImpl kTraceRefcntImpl;
++static const nsTraceRefcntImpl kTraceRefcntImpl = nsTraceRefcntImpl();
+ 
+ NS_METHOD
+ nsTraceRefcntImpl::Create(nsISupports* outer, const nsIID& aIID, void* *aInstancePtr)
+--- xpcom/io/nsUnicharInputStream.cpp.old	2011-03-28 17:18:21.000000000 +0200
++++ xpcom/io/nsUnicharInputStream.cpp	2011-03-28 17:18:38.000000000 +0200
+@@ -464,4 +464,4 @@ nsSimpleUnicharStreamFactory::GetInstanc
+ }
+ 
+ const nsSimpleUnicharStreamFactory
+-nsSimpleUnicharStreamFactory::kInstance;
++nsSimpleUnicharStreamFactory::kInstance = nsSimpleUnicharStreamFactory();
+--- layout/style/nsCSSRuleProcessor.cpp.old	2011-03-28 17:42:22.000000000 +0200
++++ layout/style/nsCSSRuleProcessor.cpp	2011-03-28 17:42:46.000000000 +0200
+@@ -1505,7 +1505,7 @@ static PRBool AttrMatchesValue(const nsA
+     return PR_FALSE;
+ 
+   const nsDefaultStringComparator defaultComparator;
+-  const nsASCIICaseInsensitiveStringComparator ciComparator;
++  const nsASCIICaseInsensitiveStringComparator ciComparator = nsASCIICaseInsensitiveStringComparator();
+   const nsStringComparator& comparator =
+       (aAttrSelector->mCaseSensitive || !isHTML)
+                 ? static_cast<const nsStringComparator&>(defaultComparator)
+--- toolkit/xre/nsAppRunner.cpp.old	2011-03-28 18:00:55.000000000 +0200
++++ toolkit/xre/nsAppRunner.cpp	2011-03-28 18:01:17.000000000 +0200
+@@ -1041,7 +1041,7 @@ nsXULAppInfo::SetSubmitReports(PRBool aE
+ 
+ #endif
+ 
+-static const nsXULAppInfo kAppInfo;
++static const nsXULAppInfo kAppInfo = nsXULAppInfo();
+ static nsresult AppInfoConstructor(nsISupports* aOuter,
+                                    REFNSIID aIID, void **aResult)
+ {
+--- embedding/browser/gtk/src/EmbedPrivate.cpp.old	2011-03-28 18:03:46.000000000 +0200
++++ embedding/browser/gtk/src/EmbedPrivate.cpp	2011-03-28 18:04:05.000000000 +0200
+@@ -104,7 +104,7 @@ public:
+   NS_DECL_NSIDIRECTORYSERVICEPROVIDER2
+ };
+ 
+-static const GTKEmbedDirectoryProvider kDirectoryProvider;
++static const GTKEmbedDirectoryProvider kDirectoryProvider = GTKEmbedDirectoryProvider();
+ 
+ NS_IMPL_QUERY_INTERFACE2(GTKEmbedDirectoryProvider,
+                          nsIDirectoryServiceProvider,
