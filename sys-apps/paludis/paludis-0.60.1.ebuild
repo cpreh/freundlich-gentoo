@@ -56,9 +56,10 @@ create-paludis-user() {
 pkg_pretend() {
 	if id paludisbuild >/dev/null 2>/dev/null ; then
 		if ! groups paludisbuild | grep --quiet '\<tty\>' ; then
-			ewarn "The 'paludisbuild' user is now expected to be a member of the"
-			ewarn "'tty' group. You should add the user to this group before"
-			ewarn "upgrading Paludis."
+			eerror "The 'paludisbuild' user is now expected to be a member of the"
+			eerror "'tty' group. You should add the user to this group before"
+			eerror "upgrading Paludis."
+			die "Please add paludisbuild to tty group"
 		fi
 	fi
 }

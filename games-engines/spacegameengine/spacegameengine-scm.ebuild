@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 audio_null +bullet +camera cegui +config +console +devil
 examples +fontbitmap +fonttext +iconv +line_drawer md3
-+openal +opengl +parse +png +shader +sprite +systems
++openal +opengl +parse +png projectile +shader +sprite +systems
 test +texture +time +truetype +viewport +vorbis +wave +x11input"
 
 DEPEND="
@@ -47,6 +47,9 @@ DEPEND="
 	)
 	png? (
 		media-libs/libpng
+	)
+	projectile? (
+		sci-physics/bullet
 	)
 	truetype? (
 		media-libs/freetype
@@ -86,6 +89,7 @@ src_configure() {
 		$(cmake-utils_use_enable opengl)
 		$(cmake-utils_use_enable parse)
 		$(cmake-utils_use_enable png)
+		$(cmake-utils_use_enable projectile)
 		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
 		$(cmake-utils_use_enable systems)
