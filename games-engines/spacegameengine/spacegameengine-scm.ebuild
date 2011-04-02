@@ -15,7 +15,7 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
-audio_null +bullet +camera cegui +config +console +devil
+audio_null +camera cegui +config +console +devil
 examples +fontbitmap +fonttext +iconv +line_drawer md3
 +openal +opengl +parse +png projectile +shader +sprite +systems
 test +texture +time +truetype +viewport +vorbis +wave +x11input"
@@ -26,9 +26,6 @@ DEPEND="
 	=dev-cpp/libawl-scm
 	>=dev-libs/boost-1.46.0
 	x11-libs/libX11
-	bullet? (
-		sci-physics/bullet
-	)
 	cegui? (
 		>=dev-games/cegui-0.7.5
 	)
@@ -73,7 +70,6 @@ REQUIRED_USE="
 src_configure() {
 	local mycmakeargs="	
 		$(cmake-utils_use_enable audio_null)
-		$(cmake-utils_use_enable bullet)
 		$(cmake-utils_use_enable camera)
 		$(cmake-utils_use_enable cegui)
 		$(cmake-utils_use_enable config)
