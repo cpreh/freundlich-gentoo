@@ -10,7 +10,8 @@ DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
-IUSE="accerso appareo doc instruo pbins pink portage python-bindings ruby-bindings search-index vim-syntax visibility xml zsh-completion"
+IUSE="accerso appareo doc instruo pbins pink portage prebuilt-documentation python-bindings
+ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~sparc ~x86"
@@ -27,8 +28,10 @@ COMMON_DEPEND="
 	sys-apps/file"
 
 DEPEND="${COMMON_DEPEND}
-	app-text/asciidoc
-	app-text/xmlto
+	!prebuilt-documentation? (
+		app-text/asciidoc
+		app-text/xmlto
+	)
 	doc? (
 		|| ( >=app-doc/doxygen-1.5.3 <=app-doc/doxygen-1.5.1 )
 		media-gfx/imagemagick
@@ -101,6 +104,7 @@ src_configure() {
 		$(use_enable xml ) \
 		$(use_enable search-index ) \
 		$(use_enable pbins ) \
+		$(use_enable prebuilt-documentation ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
 		--with-repositories=${repositories} \
 		--with-clients=${clients} \
