@@ -1,6 +1,6 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-libs/libtorrent/libtorrent-0.12.6.ebuild,v 1.8 2010/12/08 02:50:00 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-libs/libtorrent/libtorrent-0.12.7.ebuild,v 1.1 2011/04/03 16:04:20 patrick Exp $
 
 EAPI=2
 inherit eutils libtool toolchain-funcs
@@ -11,7 +11,7 @@ SRC_URI="http://libtorrent.rakshasa.no/downloads/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ~arm hppa ~ia64 ppc ppc64 ~sparc x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
 IUSE="debug ipv6 ssl"
 
 RDEPEND=">=dev-libs/libsigc++-2.2.2:2
@@ -21,6 +21,7 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-gcc44.patch
+	epatch "${FILESDIR}"/download_constructor.diff
 	epatch "${FILESDIR}"/${P}-gcc46.patch
 	elibtoolize
 }
