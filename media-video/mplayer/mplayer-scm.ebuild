@@ -1,11 +1,11 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.97 2011/03/26 14:38:15 scarabeus Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/mplayer/mplayer-9999.ebuild,v 1.99 2011/04/03 10:24:10 scarabeus Exp $
 
 EAPI=4
 
-EGIT_REPO_URI="git://git.videolan.org/ffmpeg.git"
-EGIT_PROJECT="ffmpeg"
+EGIT_REPO_URI="git://git.libav.org/libav.git"
+EGIT_PROJECT="libav" # git eclass sets it to PN otherwise
 ESVN_REPO_URI="svn://svn.mplayerhq.hu/mplayer/trunk"
 
 inherit toolchain-funcs eutils flag-o-matic multilib base subversion git
@@ -452,6 +452,7 @@ src_configure() {
 	if ! use bindist; then
 			myconf+=" $(use_enable win32codecs win32dll)"
 	fi
+	myconf+=" $(use_enable win32codecs win32dll)"
 
 	################
 	# Video Output #

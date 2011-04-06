@@ -1,10 +1,9 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.5.ebuild,v 1.1 2011/03/03 22:44:50 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.5.ebuild,v 1.3 2011/04/05 21:29:52 mr_bones_ Exp $
 
-EAPI="2"
-
-inherit autotools eutils
+EAPI=4
+inherit eutils
 
 MY_P=CEGUI-${PV}
 MY_D=CEGUI-DOCS-${PV}
@@ -17,6 +16,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 -ppc ~x86"
 IUSE="bidi debug devil doc examples expat gtk irrlicht lua ogre opengl pcre python static-libs tinyxml truetype xerces-c xml zip"
+REQUIRED_USE="|| ( xml tinyxml )" # bug 362223
 
 RDEPEND="bidi? ( dev-libs/fribidi )
 	devil? ( media-libs/devil )

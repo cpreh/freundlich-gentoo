@@ -14,7 +14,7 @@ IUSE="accerso appareo doc instruo pbins pink portage prebuilt-documentation pyth
 ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 
 COMMON_DEPEND="
 	>=app-admin/eselect-1.2.13
@@ -29,7 +29,7 @@ COMMON_DEPEND="
 
 DEPEND="${COMMON_DEPEND}
 	!prebuilt-documentation? (
-		app-text/asciidoc
+		>=app-text/asciidoc-8.6.3
 		app-text/xmlto
 	)
 	doc? (
@@ -162,4 +162,3 @@ pkg_postinst() {
 		elog "    eselect package-manager set paludis"
 	fi
 }
-
