@@ -16,7 +16,7 @@ IUSE=""
 SITEFILE="50magit-gentoo.el"
 
 src_install() {
-	elisp-install ${PN} magit.{el,elc} || die
+	elisp-install ${PN} magit.{el,elc} magit-key-mode.{el,elc} magit-svn.{el,elc} magit-topgit.{el,elc} || die
 	elisp-site-file-install "${FILESDIR}/${SITEFILE}" || die
 	dodoc AUTHORS NEWS README
 }
