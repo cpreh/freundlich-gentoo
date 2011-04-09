@@ -21,7 +21,7 @@ DEPEND="
 	=dev-cpp/mizuiro-scm
 	=dev-cpp/libawl-scm
 	>=dev-libs/boost-1.45.0
-	=games-engines/spacegameengine-scm[cegui,config,fonttext,console,parse,sprite,systems,texture,time,viewport]
+	=games-engines/spacegameengine-scm[cegui,config,console,fonttext,parse,projectile,sprite,systems,texture,time,viewport]
 	>=dev-games/cegui-0.7.5
 "
 RDEPEND="${DEPEND}"
