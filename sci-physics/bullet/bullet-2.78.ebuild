@@ -17,7 +17,7 @@ IUSE="doc double-precision examples extras"
 RDEPEND="virtual/opengl
 	media-libs/freeglut"
 DEPEND="${RDEPEND}"
-PATCHES=( "${FILESDIR}/${P}"-{libdir,soversion,gcc46}.patch )
+PATCHES=( "${FILESDIR}/${P}"-soversion.patch )
 
 src_configure() {
 	mycmakeargs=(
