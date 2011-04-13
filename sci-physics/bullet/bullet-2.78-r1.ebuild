@@ -2,12 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sci-physics/bullet/bullet-2.77.ebuild,v 1.5 2011/03/22 17:10:29 bicatali Exp $
 
+RESTRICT="mirror"
+
 EAPI=2
 inherit eutils cmake-utils
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
-SRC_URI="http://bullet.googlecode.com/files/${P}.tgz"
+SRC_URI="http://bullet.googlecode.com/files/${P}-r2387.tgz"
 
 LICENSE="ZLIB"
 SLOT="0"
