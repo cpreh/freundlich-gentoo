@@ -14,7 +14,7 @@ IUSE="accerso appareo doc instruo pbins pink portage prebuilt-documentation pyth
 ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~sparc ~x86"
 
 COMMON_DEPEND="
 	>=app-admin/eselect-1.2.13
@@ -49,7 +49,7 @@ PDEPEND="
 	vim-syntax? ( >=app-editors/vim-core-7 )
 	app-admin/eselect-package-manager"
 
-PROVIDE="virtual/portage"
+PROVIDE="virtual/package-manager"
 
 create-paludis-user() {
 	enewgroup "paludisbuild"
