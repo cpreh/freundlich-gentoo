@@ -2,5 +2,3 @@
 =app-shells/fish-scm
 =dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
-=media-video/mplayer-scm
-=x11-drivers/nvidia-drivers-270.26
