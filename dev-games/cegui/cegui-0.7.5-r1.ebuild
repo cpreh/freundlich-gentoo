@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.5.ebuild,v 1.3 2011/04/05 21:29:52 mr_bones_ Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.5-r1.ebuild,v 1.1 2011/04/26 21:08:03 nyhm Exp $
 
 EAPI=4
 inherit eutils
@@ -20,7 +20,6 @@ REQUIRED_USE="|| ( xml tinyxml )" # bug 362223
 
 RDEPEND="bidi? ( dev-libs/fribidi )
 	devil? ( media-libs/devil )
-	doc? ( app-doc/doxygen )
 	expat? ( dev-libs/expat )
 	truetype? ( media-libs/freetype:2 )
 	irrlicht? ( dev-games/irrlicht )
@@ -42,7 +41,8 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 	xml? ( dev-libs/libxml2 )"
 DEPEND="${RDEPEND}
 	dev-util/pkgconfig
-	python? ( app-admin/eselect-boost )"
+	python? ( app-admin/eselect-boost )
+	doc? ( app-doc/doxygen )"
 
 S=${WORKDIR}/${MY_P}
 
@@ -84,6 +84,7 @@ src_configure() {
 		$(use_enable xerces-c) \
 		$(use_enable xml libxml) \
 		$(use_enable zip minizip-resource-provider) \
+		--enable-null-renderer \
 		--enable-tga \
 		--disable-corona \
 		--disable-dependency-tracking \
