@@ -1,0 +1,81 @@
+--- megaglest-source-3.5.0/source/glest_game/main/main.cpp	2011-04-29 13:31:12.000000000 +0200
++++ megaglest-source-3.5.0/source/glest_game/main/main.cpp	2011-04-29 13:33:28.000000000 +0200
+@@ -1956,7 +1956,23 @@ void CheckForDuplicateData() {
+     }
+ }
+ 
++#include <sys/stat.h>
++#include <sys/types.h>
++
+ int glestMain(int argc, char** argv) {
++    if (!getenv("HOME"))
++    throw runtime_error("HOME external variable is not set");
++  
++    char path[PATH_MAX];
++    snprintf(path, PATH_MAX, "%s/.megaglest", getenv("HOME"));
++    mkdir(path, 0750);
++ 
++    snprintf(path, PATH_MAX, "%s/.megaglest/screens", getenv("HOME"));
++    mkdir(path, 0750);
++    
++    if(chdir("@GENTOO_DATADIR@") != 0)
++    throw runtime_error("Cannot chdir into datadir");
++      
+ #ifdef SL_LEAK_DUMP
+ 	AllocRegistry memoryLeaks = AllocRegistry::getInstance();
+ #endif
+diff -urN megaglest-source-3.5.0_old/source/shared_lib/sources/util/leak_dumper.cpp megaglest-source-3.5.0/source/shared_lib/sources/util/leak_dumper.cpp
+--- megaglest-source-3.5.0_old/source/shared_lib/sources/util/leak_dumper.cpp	2011-04-24 23:44:06.000000000 +0400
++++ megaglest-source-3.5.0/source/shared_lib/sources/util/leak_dumper.cpp	2011-04-24 23:44:22.000000000 +0400
+@@ -43,7 +43,9 @@
+ 
+ AllocRegistry::~AllocRegistry(){
+ 
+-	dump("leak_dump.log");
++	char path[PATH_MAX];
++	snprintf(path, PATH_MAX, "%s/.megaglest/leak_dump.log", getenv("HOME"));
++	dump(path);
+ }
+ 
+ void AllocRegistry::allocate(AllocInfo info){
+diff -urN megaglest-source-3.5.0_old/source/shared_lib/sources/util/profiler.cpp megaglest-source-3.5.0/source/shared_lib/sources/util/profiler.cpp
+--- megaglest-source-3.5.0_old/source/shared_lib/sources/util/profiler.cpp	2011-04-24 23:44:06.000000000 +0400
++++ megaglest-source-3.5.0/source/shared_lib/sources/util/profiler.cpp	2011-04-24 23:44:22.000000000 +0400
+@@ -83,9 +83,11 @@
+         }
+         profileLog = userData + profileLog;
+     }
+-	FILE *f= fopen(profileLog.c_str(), "w");
++	char path[PATH_MAX];
++	snprintf(path, PATH_MAX, "%s/.magaglest/profiler.log", getenv("HOME"));
++	FILE *f= fopen(path, "w");
+ 	if(f==NULL)
+-		throw runtime_error("Can not open file: " + profileLog);
++		throw runtime_error("Can not open file: %s",path);
+ 
+ 	fprintf(f, "Profiler Results\n\n");
+ 
+diff -urN megaglest-source-3.5.0_old/source/shared_lib/sources/util/properties.cpp megaglest-source-3.5.0/source/shared_lib/sources/util/properties.cpp
+--- megaglest-source-3.5.0_old/source/shared_lib/sources/util/properties.cpp	2011-04-24 23:44:06.000000000 +0400
++++ megaglest-source-3.5.0/source/shared_lib/sources/util/properties.cpp	2011-04-24 23:44:22.000000000 +0400
+@@ -14,7 +14,8 @@
+ #include <fstream>
+ #include <stdexcept>
+ #include <cstring>
+-
++#include <limits.h>
++#include <stdlib.h>
+ #include "conversion.h"
+ #include "util.h"
+ #include "platform_common.h"
+@@ -147,7 +148,9 @@
+ void Properties::save(const string &path){
+ 	ofstream fileStream;
+ 
+-	fileStream.open(path.c_str(), ios_base::out | ios_base::trunc);
++	char str[PATH_MAX];
++	snprintf(str, PATH_MAX, "%s/.megaglest/%s", getenv("HOME"), path.c_str());
++	fileStream.open(str, ios_base::out | ios_base::trunc);
+ 
+ 	fileStream << "; === propertyMap File === \n";
+ 	fileStream << '\n';
