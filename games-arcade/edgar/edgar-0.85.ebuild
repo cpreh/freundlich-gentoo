@@ -25,6 +25,7 @@ DEPEND="${RDEPEND}"
 
 src_prepare(){
 	sed -i -e "s:\$(PREFIX)/games/:\$(PREFIX)/games/bin/:g" makefile || die "replacing install path failed"
+	sed -i -e "s/-O2//g" makefile || die "replacing -O2 failed"
 	sed -i -e "s/CFLAGS = /CFLAGS = ${CFLAGS} /g" makefile || die "replacing CFLAGS failed"
 	sed -i -e "s/LFLAGS = /LFLAGS = ${LDFLAGS} /g" makefile || die "replacing LDFLAGS failed"
 }
