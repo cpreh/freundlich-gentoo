@@ -6,7 +6,7 @@ EAPI=3
 
 inherit cmake-utils git
 
-EGIT_REPO_URI="git://github.com/Phillemann/libawl.git"
+EGIT_REPO_URI="git://github.com/pmiddend/libawl.git"
 
 DESCRIPTION="Abstract Window Library"
 HOMEPAGE=""
