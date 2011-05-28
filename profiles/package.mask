@@ -3,3 +3,4 @@
 =dev-cpp/fcppt-scm
 =dev-util/valgrind-scm
 =games-emulation/pcsxr-scm
+=media-libs/openal-scm
