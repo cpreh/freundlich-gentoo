@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=4
+EAPI=3
 
-inherit cmake-utils git
+inherit cmake-utils games git
 
 EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
 
@@ -57,18 +57,46 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-REQUIRED_USE="
-	cegui? ( time )
-	config? ( parse )
-	console? ( fonttext time )
-	fontbitmap? ( parse )
-	fonttext? ( sprite texture )
-	systems? ( config viewport )
-	x11input? ( time )
-"
+#REQUIRED_USE="
+#	cegui? ( time )
+#	config? ( parse )
+#	console? ( fonttext time )
+#	fontbitmap? ( parse )
+#	fonttext? ( sprite texture )
+#	projectile? ( line_drawer )
+#	systems? ( config viewport )
+#	x11input? ( time )
+#"
+
+check_deps() {
+	if use $1 ; then
+		for i in ${@:2} ; do
+			if ! use ${i} ; then
+				local die_message="${i} is required for $1"
+				eerror "${die_message}"
+				die "${die_message}"
+			fi
+		done
+	fi
+}
+
+pkg_setup() {
+	check_deps cegui time
+	check_deps config parse
+	check_deps console fonttext time
+	check_deps fontbitmap parse
+	check_deps fonttext sprite texture
+	check_deps projectile line_drawer
+	check_deps systems config viewport
+	check_deps x11input time
+}
 
 src_configure() {
-	local mycmakeargs="	
+	local mycmakeargs=(
+		-D CMAKE_INSTALL_PREFIX="${GAMES_PREFIX}"
+		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
+		-D INSTALL_LIBRARY_DIR=$(games_get_libdir)
+		-D INSTALL_CMAKEMODULES_DIR="/usr/share/cmake/Modules"
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
 		$(cmake-utils_use_enable cegui)
@@ -98,7 +126,17 @@ src_configure() {
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
-	"
+	)
 
 	cmake-utils_src_configure
+}
+
+src_compile() {
+	cmake-utils_src_compile
+}
+
+src_install() {
+	cmake-utils_src_install
+
+	prepgamesdirs
 }
