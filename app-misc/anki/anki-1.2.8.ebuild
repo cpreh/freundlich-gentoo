@@ -23,7 +23,7 @@ RDEPEND="dev-python/beautifulsoup
 	>=dev-python/simplejson-1.7.3
 	|| ( >=dev-python/pysqlite-2.3.0 >=dev-lang/python-2.5[sqlite] )
 	latex? ( app-text/dvipng )
-	furigana? ( dev-python/mecab-python )
+	furigana? ( app-i18n/kakasi dev-python/mecab-python )
 	graph? (
 		dev-python/numpy
 		>=dev-python/matplotlib-0.91.2
