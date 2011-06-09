@@ -38,7 +38,8 @@ DEPEND="${COMMON_DEPEND}
 		python-bindings? ( dev-python/epydoc dev-python/pygments )
 		ruby-bindings? ( dev-ruby/syntax dev-ruby/allison )
 	)
-	dev-util/pkgconfig"
+	dev-util/pkgconfig
+	dev-util/gtest[threads]"
 
 RDEPEND="${COMMON_DEPEND}
 	sys-apps/sandbox"
@@ -160,3 +161,4 @@ pkg_postinst() {
 		elog "    eselect package-manager set paludis"
 	fi
 }
+
