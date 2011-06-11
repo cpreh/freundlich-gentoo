@@ -35,6 +35,7 @@ src_unpack() {
 src_configure() {
 	local mycmakeargs=(
 		-D CMAKE_INSTALL_PREFIX="${GAMES_PREFIX}"
+		-D INSTALL_LIBRARY_DIR=$(games_get_libdir)
 		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
 		-D STATECHART_INCLUDE_DIR="${WORKDIR}"/statechart/include
 	)
