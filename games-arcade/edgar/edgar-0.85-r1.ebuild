@@ -34,6 +34,8 @@ src_install() {
 	emake DESTDIR="${D}" install || die "emake install failed"
 
 	dodoc doc/* || die "dodoc failed"
+
+	prepgamesdirs
 }
 
 pkg_postinst() {
