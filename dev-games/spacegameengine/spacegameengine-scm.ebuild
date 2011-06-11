@@ -92,10 +92,12 @@ pkg_setup() {
 }
 
 src_configure() {
+	# Libs and includes go to the normal destion (/usr)
+	# Everything else should go into the games dir (examples and media)
 	local mycmakeargs=(
-		-D CMAKE_INSTALL_PREFIX="${GAMES_PREFIX}"
 		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
-		-D INSTALL_LIBRARY_DIR=$(games_get_libdir)
+		-D INSTALL_BINARY_DIR="${GAMES_BINDIR}"
+		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
 		-D INSTALL_CMAKEMODULES_DIR="/usr/share/cmake/Modules"
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)

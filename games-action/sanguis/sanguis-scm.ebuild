@@ -21,7 +21,7 @@ DEPEND="
 	=dev-cpp/mizuiro-scm
 	=dev-cpp/libawl-scm
 	>=dev-libs/boost-1.45.0
-	=games-engines/spacegameengine-scm[cegui,config,console,fonttext,parse,projectile,sprite,systems,texture,time,viewport]
+	=dev-games/spacegameengine-scm[cegui,config,console,fonttext,parse,projectile,sprite,systems,texture,time,viewport]
 	>=dev-games/cegui-0.7.5
 "
 RDEPEND="${DEPEND}"
@@ -37,7 +37,6 @@ src_configure() {
 		-D CMAKE_INSTALL_PREFIX="${GAMES_PREFIX}"
 		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
 		-D STATECHART_INCLUDE_DIR="${WORKDIR}"/statechart/include
-		-D SGE_LIBRARY_DIR=$(games_get_libdir)
 	)
 
 	cmake-utils_src_configure
