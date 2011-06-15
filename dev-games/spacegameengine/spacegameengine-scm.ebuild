@@ -16,10 +16,10 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 +audio audio_null +camera cegui +charconv +config +console +devil
-examples +font +fontbitmap +fonttext +iconv +image +image2d +image3d +input
-+line_drawer md3 model +openal +opengl +parse +plugin +png projectile
-+renderer +shader +sprite +systems test +texture +time +truetype +viewport
-+vorbis +wave +window +x11input"
+examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
++image3d +input +line_drawer md3 model +openal +opengl +parse +plugin
++png projectile +renderer +shader +sprite +systems test +texture +time
++viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
 DEPEND="
 	=dev-cpp/fcppt-scm
@@ -32,6 +32,9 @@ DEPEND="
 	devil? (
 		media-libs/devil
 	)
+	freetype? (
+		media-libs/freetype
+	)
 	iconv? (
 		virtual/libiconv
 	)
@@ -42,15 +45,18 @@ DEPEND="
 		=dev-cpp/libawl-scm[opengl]
 		x11-libs/libX11
 		virtual/opengl
+		xf86vmode? (
+			x11-libs/libXxf86vm
+		)
+		xrandr? (
+			x11-libs/libXrandr
+		)
 	)
 	png? (
 		media-libs/libpng
 	)
 	projectile? (
 		sci-physics/bullet
-	)
-	truetype? (
-		media-libs/freetype
 	)
 	vorbis? (
 		media-libs/libvorbis
@@ -134,6 +140,7 @@ src_configure() {
 		$(cmake-utils_use_enable font)
 		$(cmake-utils_use_enable fontbitmap)
 		$(cmake-utils_use_enable fonttext)
+		$(cmake-utils_use_enable freetype)
 		$(cmake-utils_use_enable iconv)
 		$(cmake-utils_use_enable image)
 		$(cmake-utils_use_enable image2d)
@@ -155,12 +162,13 @@ src_configure() {
 		$(cmake-utils_use_enable test)
 		$(cmake-utils_use_enable texture)
 		$(cmake-utils_use_enable time)
-		$(cmake-utils_use_enable truetype)
 		$(cmake-utils_use_enable viewport)
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable window)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
+		$(cmake-utils_use_enable xrandr)
+		$(cmake-utils_use_enable xf86vmode)
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	)
 
