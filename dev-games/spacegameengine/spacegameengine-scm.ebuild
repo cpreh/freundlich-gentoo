@@ -26,7 +26,6 @@ DEPEND="
 	=dev-cpp/mizuiro-scm
 	=dev-cpp/libawl-scm
 	>=dev-libs/boost-1.46.0
-	x11-libs/libX11
 	cegui? (
 		>=dev-games/cegui-0.7.5
 	)
@@ -41,6 +40,7 @@ DEPEND="
 	)
 	opengl? (
 		=dev-cpp/libawl-scm[opengl]
+		x11-libs/libX11
 		virtual/opengl
 	)
 	png? (
@@ -54,6 +54,10 @@ DEPEND="
 	)
 	vorbis? (
 		media-libs/libvorbis
+	)
+	x11input? (
+		x11-libs/libXi
+		x11-libs/libX11
 	)
 "
 RDEPEND="${DEPEND}"
