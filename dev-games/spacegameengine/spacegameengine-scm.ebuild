@@ -122,7 +122,7 @@ pkg_setup() {
 }
 
 src_configure() {
-	# Libs and includes go to the normal destion (/usr)
+	# Libs and includes go to the normal destination (/usr)
 	# Everything else should go into the games dir (examples and media)
 	local mycmakeargs=(
 		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
