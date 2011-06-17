@@ -43,6 +43,7 @@ DEPEND="
 	)
 	opengl? (
 		=dev-cpp/libawl-scm[opengl]
+		media-libs/glew
 		x11-libs/libX11
 		virtual/opengl
 		xf86vmode? (
