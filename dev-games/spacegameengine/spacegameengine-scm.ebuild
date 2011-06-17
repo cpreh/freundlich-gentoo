@@ -87,7 +87,6 @@ pkg_setup() {
 	check_deps camera input renderer
 	check_deps cegui charconv image image2d input renderer time viewport
 	check_deps charconv plugin
-	check_deps config parse
 	check_deps console fonttext input time
 	check_deps devil image2d
 	check_deps font plugin
