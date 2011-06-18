@@ -12,13 +12,12 @@ DESCRIPTION="PCSX-Reloaded is a PlayStation Emulator based on PCSX-df 1.9, with
 support for Windows, GNU/Linux and Mac OS X as well as many bugfixes and
 improvements."
 HOMEPAGE="http://www.codeplex.com/pcsxr"
-#SRC_URI="http://supraverse.net/freundlich/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+alsa libcdio nls +opengl oss pulseaudio sdl static-libs"
-REQUIRED_USE="^^ ( alsa oss pulseaudio sdl )"
+IUSE="+alsa libcdio nls openal +opengl oss pulseaudio sdl static-libs"
+REQUIRED_USE="^^ ( alsa openal oss pulseaudio sdl )"
 
 DEPEND="
 	alsa? (
@@ -26,6 +25,9 @@ DEPEND="
 	)
 	libcdio? (
 		dev-libs/libcdio
+	)
+	openal? (
+		media-libs/openal
 	)
 	opengl? (
 		virtual/opengl
@@ -48,7 +50,7 @@ DEPEND="
 	>=x11-libs/gtk+-2
 	x11-libs/libX11
 	x11-libs/libXext
-	|| ( >=x11-libs/libXtst-1.1.0 <x11-proto/xextproto-7.1.0 )
+	>=x11-libs/libXtst-1.1.0
 	"
 RDEPEND="${DEPEND}"
 
@@ -58,6 +60,7 @@ src_prepare() {
 
 src_configure() {
 	use alsa && soundbackend="alsa"
+	use openal && soundbackend="openal"
 	use oss && soundbackend="oss"
 	use pulseaudio && soundbackend="pulseaudio"
 	use sdl && soundbackend="sdl"
