@@ -10,7 +10,7 @@ DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
 SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
 
-IUSE="accerso appareo doc instruo pbins pink portage prebuilt-documentation python-bindings
+IUSE="doc pbins pink portage prebuilt-documentation python-bindings
 ruby-bindings search-index vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
@@ -79,17 +79,6 @@ pkg_setup() {
 
 src_configure() {
 	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
-	local clients="cave"
-	local allclients="accerso appareo instruo"
-
-	for client in ${allclients} ; do
-		if use ${client} ; then
-			clients+=" ${client}"
-		fi
-	done
-
-	clients=$(echo ${clients} | tr -s \  ,)
-
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
 		$(use_enable doc doxygen ) \
@@ -106,7 +95,6 @@ src_configure() {
 		$(use_enable prebuilt-documentation ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
 		--with-repositories=${repositories} \
-		--with-clients=${clients} \
 		--with-environments=${environments} \
 		|| die "econf failed"
 }
@@ -119,8 +107,6 @@ src_install() {
 	emake DESTDIR="${D}" install || die "install failed"
 	dodoc AUTHORS README NEWS
 
-	use accerso && BASHCOMPLETION_NAME="accerso" dobashcompletion bash-completion/accerso
-	use instruo && BASHCOMPLETION_NAME="instruo" dobashcompletion bash-completion/instruo
 	BASHCOMPLETION_NAME="cave" dobashcompletion bash-completion/cave
 
 	if use zsh-completion ; then
