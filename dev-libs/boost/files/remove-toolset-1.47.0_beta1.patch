@@ -1,0 +1,11 @@
+--- boostcpp.jam	2011-06-20 19:51:56.000000000 +0200
++++ boostcpp.jam	2011-06-20 19:52:14.000000000 +0200
+@@ -122,7 +122,7 @@
+         if $(layout) = versioned
+         {
+             result = [ common.format-name
+-                <base> <toolset> <threading> <runtime> -$(BOOST_VERSION_TAG)
++                <base> <threading> <runtime> -$(BOOST_VERSION_TAG)
+                 -$(BUILD_ID)
+                 : $(name) : $(type) : $(property-set) ] ;
+         }        

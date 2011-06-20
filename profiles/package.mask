@@ -1,6 +1,8 @@
 =app-dicts/jmdict-scm
 =app-shells/fish-scm
 =dev-cpp/fcppt-scm
+=dev-libs/boost-1.47.0_beta1
+=dev-util/boost-build-1.47.0_beta1
 =dev-util/valgrind-scm
 =games-emulation/pcsxr-scm
 =media-libs/openal-scm
