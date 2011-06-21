@@ -6,4 +6,5 @@
 =dev-util/valgrind-scm
 =games-emulation/pcsxr-scm
 =media-libs/openal-scm
+=sys-devel/gcc-4.6.1_rc20110620
 =sys-devel/gcc-4.7.0_alpha20110618
