@@ -12,15 +12,15 @@ RESTRICT="strip" # cross-compilers need controlled stripping
 inherit eutils versionator libtool toolchain-funcs flag-o-matic gnuconfig multilib fixheadtails
 
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test pkg_preinst src_install pkg_postinst pkg_prerm pkg_postrm
-DESCRIPTION="Based on the ${ECLASS} eclass"
+	DESCRIPTION="Based on the ${ECLASS} eclass"
 
-FEATURES=${FEATURES/multilib-strict/}
+	FEATURES=${FEATURES/multilib-strict/}
 
-toolchain_pkg_setup() {
-	gcc_pkg_setup
-}
-toolchain_src_unpack() {
-	gcc_src_unpack
+	toolchain_pkg_setup() {
+		gcc_pkg_setup
+	}
+	toolchain_src_unpack() {
+		gcc_src_unpack
 }
 toolchain_src_compile() {
 	gcc_src_compile

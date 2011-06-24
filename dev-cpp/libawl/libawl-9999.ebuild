@@ -18,7 +18,7 @@ IUSE="opengl"
 
 DEPEND="
 	>=dev-libs/boost-1.45.0
-	=dev-cpp/fcppt-scm
+	=dev-cpp/fcppt-9999
 	opengl? ( virtual/opengl )
 "
 RDEPEND="${DEPEND}"
