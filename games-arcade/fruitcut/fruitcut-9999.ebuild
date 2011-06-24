@@ -20,6 +20,7 @@ DEPEND="
 	=dev-cpp/fcppt-9999
 	=dev-cpp/mizuiro-9999
 	=dev-cpp/libawl-9999
+	sci-physics/bullet
 	>=dev-libs/boost-1.45.0
 	=dev-games/spacegameengine-9999[audio,camera,cegui,config,console,fontbitmap,fonttext,image,image2d,input,line_drawer,parse,renderer,shader,sprite,systems,texture,time,window,viewport,model,md3]
 	>=dev-games/cegui-0.7.5
