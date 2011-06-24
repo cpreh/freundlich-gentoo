@@ -87,6 +87,8 @@ src_unpack() {
 
 	use vanilla && return 0
 
+	epatch "${FILESDIR}"/${P}-defaulted-template-dtor.patch
+
 	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env.patch
 	[[ ${CTARGET} == *-softfloat-* ]] && epatch "${FILESDIR}"/4.4.0/gcc-4.4.0-softfloat.patch
 }
