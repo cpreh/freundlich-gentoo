@@ -22,9 +22,9 @@ examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
 DEPEND="
-	=dev-cpp/fcppt-scm
-	=dev-cpp/mizuiro-scm
-	=dev-cpp/libawl-scm
+	=dev-cpp/fcppt-9999
+	=dev-cpp/mizuiro-9999
+	=dev-cpp/libawl-9999
 	>=dev-libs/boost-1.46.0
 	cegui? (
 		>=dev-games/cegui-0.7.5
@@ -42,7 +42,7 @@ DEPEND="
 		media-libs/openal
 	)
 	opengl? (
-		=dev-cpp/libawl-scm[opengl]
+		=dev-cpp/libawl-9999[opengl]
 		media-libs/glew
 		x11-libs/libX11
 		virtual/opengl

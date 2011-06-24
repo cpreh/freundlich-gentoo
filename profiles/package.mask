@@ -1,10 +1,10 @@
-=app-dicts/jmdict-scm
-=app-shells/fish-scm
-=dev-cpp/fcppt-scm
+=app-dicts/jmdict-9999
+=app-shells/fish-9999
+=dev-cpp/fcppt-9999
 =dev-libs/boost-1.47.0_beta1
 =dev-util/boost-build-1.47.0_beta1
-=dev-util/valgrind-scm
-=games-emulation/pcsxr-scm
-=media-libs/openal-scm
+=dev-util/valgrind-9999
+=games-emulation/pcsxr-9999
+=media-libs/openal-9999
 =sys-devel/gcc-4.6.1_rc20110620
 =sys-devel/gcc-4.7.0_alpha20110618
