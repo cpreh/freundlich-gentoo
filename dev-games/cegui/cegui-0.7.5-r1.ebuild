@@ -41,7 +41,7 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 	xml? ( dev-libs/libxml2 )"
 DEPEND="${RDEPEND}
 	dev-util/pkgconfig
-	sys-devel/automake-1.10*
+	=sys-devel/automake-1.10*
 	python? ( app-admin/eselect-boost )
 	doc? ( app-doc/doxygen )"
 
