@@ -6,5 +6,4 @@
 =dev-util/valgrind-9999
 =games-emulation/pcsxr-9999
 =media-libs/openal-9999
-=sys-devel/gcc-4.6.1_rc20110620
 =sys-devel/gcc-4.7.0_alpha20110625
