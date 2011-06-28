@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +audio audio_null +camera cegui +charconv +config +console +devil
 examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
-+image3d +input +line_drawer md3 model +openal +opengl +parse +plugin
++image3d +input +line_drawer md3 +openal +opengl +parse +plugin
 +png projectile +renderer +shader +sprite +systems test +texture +time
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
@@ -99,8 +99,6 @@ pkg_setup() {
 	check_deps image2d image
 	check_deps input plugin
 	check_deps line_drawer renderer
-	check_deps md3 model
-	check_deps model plugin
 	check_deps openal audio
 	check_deps opengl image2d image3d plugin renderer
 	check_deps png image2d
@@ -108,7 +106,7 @@ pkg_setup() {
 	check_deps renderer image2d image3d plugin
 	check_deps shader renderer
 	check_deps sprite renderer
-	check_deps systems audio charconv config font image2d input model renderer \
+	check_deps systems audio charconv config font image2d input renderer \
 		viewport window
 	check_deps texture image2d renderer
 	check_deps viewport window
@@ -148,7 +146,6 @@ src_configure() {
 		$(cmake-utils_use_enable input)
 		$(cmake-utils_use_enable line_drawer)
 		$(cmake-utils_use_enable md3)
-		$(cmake-utils_use_enable model)
 		$(cmake-utils_use_enable openal)
 		$(cmake-utils_use_enable opengl)
 		$(cmake-utils_use_enable parse)
