@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<herd>no-herd</herd>
+	<use>
+		<flag name='audio'>Build the audio core library</flag>
+		<flag name='audio_null'>Build the audio null plugin that doesn't do any audio output</flag>
+		<flag name='camera'>Build the camera library which provides an ingame first person camera</flag>
+		<flag name='cegui'>Build the cegui library which provides integration of input and rendering into CEGUI</flag>
+		<flag name='charconv'>Build the charconv core library</flag>
+		<flag name='config'>Build the config library which provides querying of different paths</flag>
+		<flag name='console'>Build the console library which provides an ingame console</flag>
+		<flag name='devil'>Build the devil image loader plugin which loads bmp, jpeg, png, tiff and others</flag>
+		<flag name='examples'>Build and install sge's examples</flag>
+		<flag name='font'>Build the font core library</flag>
+		<flag name='fontbitmap'>Build the fontbitmap library which loads bitmap fonts in sge's own format</flag>
+		<flag name='fonttext'>Build the fonttext library for text rendering</flag>
+		<flag name='freetype'>Build the freetype font loader plugin which loads truetype fonts</flag>
+		<flag name='iconv'>Build the iconv encoding conversion plugin</flag>
+		<flag name='image'>Build the image core library</flag>
+		<flag name='image2d'>Build the image2d core library</flag>
+		<flag name='image3d'>Build the image3d core library</flag>
+		<flag name='input'>Build the input core library</flag>
+		<flag name='line_drawer'>Build the line_drawer library which can draw a set of lines</flag>
+		<flag name='md3'>Build the md3 loader library that can do basic loading of md3 models</flag>
+		<flag name='openal'>Build OpenAL audio player plugin</flag>
+		<flag name='opengl'>Build OpenGL renderer plugin that provides most functionality of opengl-2.0 and some of 3.0</flag>
+		<flag name='parse'>Build the parse library that can be used to load and save json and ini</flag>
+		<flag name='plugin'>Build the plugin core library which provides loading of plugins</flag>
+		<flag name='png'>Build the png image loader plugin</flag>
+		<flag name='projectile'>Build the projectile library which is a 2D physics frontend for Bullet</flag>
+		<flag name='renderer'>Build the renderer core library</flag>
+		<flag name='shader'>Build the shader library which makes the procress of creating shaders easier</flag>
+		<flag name='sprite'>Build the sprite library</flag>
+		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>
+		<flag name='texture'>Build the texture library which provides atlasing of textures</flag>
+		<flag name='time'>Build the time library which provides a timer and wraps certain aspects of chrono</flag>
+		<flag name='viewport'>Build the viewport library which provides automatic managing of the viewport</flag>
+		<flag name='vorbis'>Build the vorbis audio loader library</flag>
+		<flag name='wave'>Build the wave audio loader library</flag>
+		<flag name='window'>Build the window library which wraps awl windows</flag>
+		<flag name='xf86vmode'>Enable the opengl plugin to switch resolutions using xf86vmode</flag>
+		<flag name='x11input'>Build the x11input plugin which uses XI2 to handle cursors, mice and keyboards</flag>
+		<flag name='xrandr'>Enable the opengl plugin to switch resolutions using xrandr</flag>
+	</use>
+</pkgmetadata>
+
