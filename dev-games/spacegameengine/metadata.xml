@@ -5,11 +5,11 @@
 	<use>
 		<flag name='audio'>Build the audio core library</flag>
 		<flag name='audio_null'>Build the audio null plugin that doesn't do any audio output</flag>
-		<flag name='camera'>Build the camera library which provides an ingame first person camera</flag>
-		<flag name='cegui'>Build the cegui library which provides integration of input and rendering into CEGUI</flag>
+		<flag name='camera'>Build the camera library which provides an fps-like camera</flag>
+		<flag name='cegui'>Build the cegui library which provides CEGUI integration</flag>
 		<flag name='charconv'>Build the charconv core library</flag>
-		<flag name='config'>Build the config library which provides querying of different paths</flag>
-		<flag name='console'>Build the console library which provides an ingame console</flag>
+		<flag name='config'>Build the config library which provides querying of sge's and various system paths</flag>
+		<flag name='console'>Build the console library which provides a quake-like console</flag>
 		<flag name='devil'>Build the devil image loader plugin which loads bmp, jpeg, png, tiff and others</flag>
 		<flag name='examples'>Build and install sge's examples</flag>
 		<flag name='font'>Build the font core library</flag>
@@ -30,7 +30,7 @@
 		<flag name='png'>Build the png image loader plugin</flag>
 		<flag name='projectile'>Build the projectile library which is a 2D physics frontend for Bullet</flag>
 		<flag name='renderer'>Build the renderer core library</flag>
-		<flag name='shader'>Build the shader library which makes the procress of creating shaders easier</flag>
+		<flag name='shader'>Build the shader library which makes the process of creating shaders easier</flag>
 		<flag name='sprite'>Build the sprite library</flag>
 		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>
 		<flag name='texture'>Build the texture library which provides atlasing of textures</flag>
