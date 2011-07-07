@@ -1,23 +1,11 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.6.0.ebuild,v 1.3 2011/04/13 03:35:39 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.6.1.ebuild,v 1.1 2011/07/05 05:00:10 dirtyepic Exp $
 
-RESTRICT="mirror"
-
-PATCH_VER="1.2"
+PATCH_VER="1.0"
 UCLIBC_VER="1.0"
 
 ETYPE="gcc-compiler"
-
-PATCH_GCC_VER="4.6.0"
-PIE_GCC_VER="4.6.0"
-GENTOO_PATCH_EXCLUDE="
-	46_all_sparc64-freebsd.patch
-	75_all_pr48335-4.6.1-ICE.patch
-	76_all_pr48377_4.6.1_O3-wrong-code.patch
-	77_all_pr48517_4.6.1_ICE-build_unary_op.patch
-"
-#UCLIBC_GCC_VER="4.6.0"
 
 # Hardened gcc 4 stuff
 PIE_VER="0.4.5"
