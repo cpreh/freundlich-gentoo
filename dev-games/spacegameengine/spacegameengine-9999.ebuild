@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +audio audio_null +camera cegui +charconv +config +console +devil
 examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
-+image3d +input +line_drawer md3 +openal +opengl +parse +plugin
++image3d +input +line_drawer modelmd3 modelobj +openal +opengl +parse +plugin
 +png projectile +renderer +shader +sprite +systems test +texture +time
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
@@ -145,7 +145,8 @@ src_configure() {
 		$(cmake-utils_use_enable image3d)
 		$(cmake-utils_use_enable input)
 		$(cmake-utils_use_enable line_drawer)
-		$(cmake-utils_use_enable md3)
+		$(cmake-utils_use_enable modelmd3)
+		$(cmake-utils_use_enable modelobj)
 		$(cmake-utils_use_enable openal)
 		$(cmake-utils_use_enable opengl)
 		$(cmake-utils_use_enable parse)

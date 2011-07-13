@@ -22,7 +22,7 @@ DEPEND="
 	=dev-cpp/libawl-9999
 	sci-physics/bullet
 	>=dev-libs/boost-1.45.0
-	=dev-games/spacegameengine-9999[audio,camera,cegui,config,console,fontbitmap,fonttext,image,image2d,input,line_drawer,md3,parse,renderer,shader,sprite,systems,texture,time,window,viewport]
+	=dev-games/spacegameengine-9999[audio,camera,cegui,config,console,fontbitmap,fonttext,image,image2d,input,line_drawer,modelmd3,parse,renderer,shader,sprite,systems,texture,time,window,viewport]
 	>=dev-games/cegui-0.7.5
 "
 RDEPEND="${DEPEND}"
