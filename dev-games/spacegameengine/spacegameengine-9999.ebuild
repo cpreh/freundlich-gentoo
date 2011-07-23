@@ -18,7 +18,7 @@ IUSE="
 +audio audio_null +camera cegui +charconv +config +console +devil
 examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
 +image3d +input +line_drawer modelmd3 modelobj +openal +opengl +parse +plugin
-+png projectile +renderer +shader +sprite +systems test +texture +time
++png projectile +renderer +shader +sprite +systems test +texture
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
 DEPEND="
@@ -86,9 +86,9 @@ pkg_setup() {
 	check_deps audio plugin
 	check_deps audio_null audio
 	check_deps camera input renderer
-	check_deps cegui charconv image image2d input renderer time viewport
+	check_deps cegui charconv image image2d input renderer viewport
 	check_deps charconv plugin
-	check_deps console fonttext input time
+	check_deps console fonttext input
 	check_deps devil image2d
 	check_deps font plugin
 	check_deps fontbitmap parse
@@ -112,7 +112,7 @@ pkg_setup() {
 	check_deps viewport window
 	check_deps vorbis audio
 	check_deps wave audio
-	check_deps x11input input time window
+	check_deps x11input input window
 
 	if ${exit_sge_build} ; then
 		die "Use dependencies not met"
@@ -159,7 +159,6 @@ src_configure() {
 		$(cmake-utils_use_enable systems)
 		$(cmake-utils_use_enable test)
 		$(cmake-utils_use_enable texture)
-		$(cmake-utils_use_enable time)
 		$(cmake-utils_use_enable viewport)
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable window)
