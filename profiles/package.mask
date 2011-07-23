@@ -5,4 +5,4 @@
 =games-emulation/pcsxr-9999
 =media-libs/openal-9999
 =sys-devel/gcc-4.7.0_alpha20110716
-=x11-drivers/nvidia-drivers-280.04
+=x11-drivers/nvidia-drivers-280.11
