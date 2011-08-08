@@ -28,6 +28,9 @@ DEPEND="
 	>=dev-libs/boost-1.46.0
 	cegui? (
 		>=dev-games/cegui-0.7.5
+		examples? (
+			>=dev-games/cegui-0.7.5[truetype,xml]
+		)
 	)
 	devil? (
 		media-libs/devil

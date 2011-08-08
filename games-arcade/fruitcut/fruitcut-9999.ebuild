@@ -23,7 +23,7 @@ DEPEND="
 	sci-physics/bullet
 	>=dev-libs/boost-1.45.0
 	=dev-games/spacegameengine-9999[audio,camera,cegui,config,console,fontbitmap,fonttext,image,image2d,input,line_drawer,modelmd3,parse,renderer,shader,sprite,systems,texture,window,viewport]
-	>=dev-games/cegui-0.7.5
+	>=dev-games/cegui-0.7.5[truetype,xml]
 "
 RDEPEND="${DEPEND}"
 
