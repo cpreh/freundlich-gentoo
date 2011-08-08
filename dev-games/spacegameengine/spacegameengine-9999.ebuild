@@ -4,7 +4,7 @@
 
 EAPI=3
 
-inherit cmake-utils games git
+inherit cmake-utils git games
 
 EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
 
@@ -119,6 +119,10 @@ pkg_setup() {
 	fi
 }
 
+src_unpack() {
+	git_src_unpack
+}
+
 src_configure() {
 	# Libs and includes go to the normal destination (/usr)
 	# Everything else should go into the games dir (examples and media)
@@ -180,4 +184,12 @@ src_install() {
 	cmake-utils_src_install
 
 	prepgamesdirs
+}
+
+pkg_preinst() {
+	games_pkg_preinst
+}
+
+pkg_postinst() {
+	games_pkg_postint
 }
