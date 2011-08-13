@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-4.0.ebuild,v 1.3 2011/07/23 20:41:24 spock Exp $
 
-EAPI=2
+EAPI=4
 
 inherit eutils multilib
 
