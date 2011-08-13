@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.461 2011/07/08 11:35:01 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.462 2011/08/13 03:09:40 dirtyepic Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -696,7 +696,7 @@ create_gcc_env_entry() {
 	if is_multilib ; then
 		LDPATH="${LIBPATH}"
 		for path in 32 64 ; do
-			[[ -d ${LIBPATH}/${path} ]] && LDPATH="${LDPATH}:${LIBPATH}/${path}"
+			[[ -d ${D}${LIBPATH}/${path} ]] && LDPATH="${LDPATH}:${LIBPATH}/${path}"
 		done
 	else
 		local MULTIDIR
@@ -1149,11 +1149,6 @@ gcc-compiler-configure() {
 		# enable the cld workaround until we move things to stable.
 		# by that point, the rest of the software out there should
 		# have caught up.
-		#if tc_version_is_at_least "4.3" ; then
-		#	if ! has ${ARCH} ${KEYWORDS} ; then
-		#		confgcc="${confgcc} --enable-cld"
-		#	fi
-		#fi
 
 		# Stick the python scripts in their own slotted directory
 		# bug #279252
