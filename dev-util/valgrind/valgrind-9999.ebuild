@@ -35,10 +35,6 @@ src_prepare() {
 	# Yet more local labels, this time for ppc32 & ppc64
 	epatch "${FILESDIR}"/${PN}-3.6.0-local-labels.patch
 
-	# Fix up some suppressions that were not general enough for glibc versions
-	# with more than just a major and minor number.
-	epatch "${FILESDIR}"/${PN}-3.4.1-glibc-2.10.1.patch
-
 	# Regenerate autotools files
 	eautoreconf
 }
