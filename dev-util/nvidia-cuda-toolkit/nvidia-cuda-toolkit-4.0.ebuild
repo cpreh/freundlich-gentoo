@@ -32,7 +32,7 @@ RDEPEND="${DEPEND}
 	profiler? ( x86? (
 		x11-libs/qt-gui
 		x11-libs/qt-core
-		x11-libs/qt-assistant
+		x11-libs/qt-assistant[compat]
 		x11-libs/qt-sql[sqlite] )
 		media-libs/libpng:1.2
 	)
