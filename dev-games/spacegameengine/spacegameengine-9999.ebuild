@@ -17,9 +17,10 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +audio audio_null +camera cegui +charconv +config +console +devil
 examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
-+image3d +input +line_drawer modelmd3 modelobj +openal +opengl +parse +plugin
-+png projectile +renderer +shader +sprite +systems test +texture
-+viewport +vorbis +wave +window xf86vmode +x11input xrandr"
++image3d +input +line_drawer modelmd3 modelobj +openal opencl +opengl
++parse +plugin +png projectile +renderer +rendereropengl
++shader +sprite +systems test
++texture +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
 DEPEND="
 	=dev-cpp/fcppt-9999
@@ -43,6 +44,9 @@ DEPEND="
 	)
 	openal? (
 		media-libs/openal
+	)
+	opencl? (
+		dev-util/nvidia-cuda-sdk[opencl]
 	)
 	opengl? (
 		=dev-cpp/libawl-9999[opengl]
@@ -103,7 +107,8 @@ pkg_setup() {
 	check_deps input plugin
 	check_deps line_drawer renderer
 	check_deps openal audio
-	check_deps opengl image2d image3d plugin renderer
+	check_deps opencl rendereropengl
+	check_deps opengl image2d image3d plugin renderer rendereropengl
 	check_deps png image2d
 	check_deps projectile line_drawer
 	check_deps renderer image2d image3d plugin
@@ -155,12 +160,14 @@ src_configure() {
 		$(cmake-utils_use_enable modelmd3)
 		$(cmake-utils_use_enable modelobj)
 		$(cmake-utils_use_enable openal)
+		$(cmake-utils_use_enable opencl)
 		$(cmake-utils_use_enable opengl)
 		$(cmake-utils_use_enable parse)
 		$(cmake-utils_use_enable plugin)
 		$(cmake-utils_use_enable png)
 		$(cmake-utils_use_enable projectile)
 		$(cmake-utils_use_enable renderer)
+		$(cmake-utils_use_enable rendereropengl)
 		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
 		$(cmake-utils_use_enable systems)

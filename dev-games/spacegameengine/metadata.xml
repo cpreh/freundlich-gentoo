@@ -24,12 +24,14 @@
 		<flag name='line_drawer'>Build the line_drawer library which can draw a set of lines</flag>
 		<flag name='md3'>Build the md3 loader library that can do basic loading of md3 models</flag>
 		<flag name='openal'>Build OpenAL audio player plugin</flag>
+		<flag name='opencl'>Build OpenCL library</flag>
 		<flag name='opengl'>Build OpenGL renderer plugin that provides most functionality of opengl-2.0 and some of 3.0</flag>
 		<flag name='parse'>Build the parse library that can be used to load and save json and ini</flag>
 		<flag name='plugin'>Build the plugin core library which provides loading of plugins</flag>
 		<flag name='png'>Build the png image loader plugin</flag>
 		<flag name='projectile'>Build the projectile library which is a 2D physics frontend for Bullet</flag>
 		<flag name='renderer'>Build the renderer core library</flag>
+		<flag name='rendereropengl'>Build the renderer opengl bindings library</flag>
 		<flag name='shader'>Build the shader library which makes the process of creating shaders easier</flag>
 		<flag name='sprite'>Build the sprite library</flag>
 		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>
