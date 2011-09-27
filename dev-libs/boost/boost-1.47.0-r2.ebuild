@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.46.1-r1.ebuild,v 1.2 2011/08/28 13:18:30 maekke Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.47.0.ebuild,v 1.1 2011/09/26 11:02:02 hwoarang Exp $
 
 EAPI="2"
 
@@ -15,7 +15,7 @@ LICENSE="Boost-1.0"
 SLOT="$(get_version_component_range 1-2)"
 IUSE="debug doc +eselect icu mpi python static-libs test tools"
 
-KEYWORDS="~alpha amd64 arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc x86 ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 
 RDEPEND="icu? ( >=dev-libs/icu-3.3 )
 	mpi? ( || ( sys-cluster/openmpi[cxx] sys-cluster/mpich2[cxx,threads] ) )
@@ -24,12 +24,12 @@ RDEPEND="icu? ( >=dev-libs/icu-3.3 )
 	!!<=dev-libs/boost-1.35.0-r2
 	>=app-admin/eselect-boost-0.3"
 DEPEND="${RDEPEND}
-	dev-util/boost-build:${SLOT}"
+	>=dev-util/boost-build-${PV}-r1:${SLOT}"
 
 S="${WORKDIR}/${MY_P}"
 
 MAJOR_PV=$(replace_all_version_separators _ ${SLOT})
-BJAM="bjam-${MAJOR_PV}"
+BJAM="b2-${MAJOR_PV}"
 
 # Usage:
 # _add_line <line-to-add> <profile>
@@ -158,8 +158,8 @@ __EOF__
 		LIBRARY_TARGETS="*.a *$(get_libname)"
 	else
 		LINK_OPTS="link=shared"
-		#there is no dynamicly linked version of libboost_test_exec_monitor
-		LIBRARY_TARGETS="libboost_test_exec_monitor*.a *$(get_libname)"
+		#there is no dynamicly linked version of libboost_test_exec_monitor and libboost_exception
+		LIBRARY_TARGETS="libboost_test_exec_monitor*.a libboost_exception*.a *$(get_libname)"
 	fi
 }
 
