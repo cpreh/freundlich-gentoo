@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.469 2011/09/22 23:08:28 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.472 2011/09/27 12:14:25 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -81,14 +81,10 @@ STDCXX_INCDIR=${TOOLCHAIN_STDCXX_INCDIR:-${LIBPATH}/include/g++-v${GCC_BRANCH_VE
 
 
 #---->> SLOT+IUSE logic <<----
-IUSE="multislot nptl test"
-
-if tc_version_is_at_least 3 ; then
-	IUSE+=" vanilla"
-fi
+IUSE="build multislot nls nptl test vanilla"
 
 if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
-	IUSE+=" altivec build fortran nls nocxx"
+	IUSE+=" altivec fortran nocxx"
 	[[ -n ${PIE_VER} ]] && IUSE+=" nopie"
 	[[ -n ${PP_VER}	 ]] && IUSE+=" nossp"
 	[[ -n ${SPECS_VER} ]] && IUSE+=" nossp"
@@ -121,6 +117,44 @@ else
 fi
 #----<< SLOT+IUSE logic >>----
 
+#---->> DEPEND <<----
+
+RDEPEND="sys-libs/zlib
+	!build? (
+		nls? ( sys-devel/gettext )
+	)"
+if tc_version_is_at_least 3 ; then
+	RDEPEND+=" virtual/libiconv"
+fi
+if tc_version_is_at_least 4 ; then
+	RDEPEND+=" >=dev-libs/gmp-4.2.1 >=dev-libs/mpfr-2.3.2"
+	if tc_version_is_at_least 4.5 ; then
+		RDEPEND+=" >=dev-libs/mpc-0.8.1"
+	fi
+fi
+if has graphite ${IUSE} ; then
+	RDEPEND+="
+	    graphite? (
+	        >=dev-libs/cloog-ppl-0.15.10
+	        >=dev-libs/ppl-0.10
+	    )"
+fi
+
+DEPEND="${RDEPEND}
+	>=sys-apps/texinfo-4.8
+	>=sys-devel/bison-1.875
+	>=sys-devel/flex-2.5.4
+	test? (
+		>=dev-util/dejagnu-1.4.4
+		>=sys-devel/autogen-5.5.4
+	)"
+if tc_version_is_at_least 4.2 && has gcj ${IUSE} ; then
+	DEPEND+=" gcj? ( app-arch/zip app-arch/unzip )"
+fi
+
+PDEPEND=">=sys-devel/gcc-config-1.4"
+
+#----<< DEPEND >>----
 
 #---->> S + SRC_URI essentials <<----
 
@@ -720,25 +754,21 @@ copy_minispecs_gcc_specs() {
 
 #---->> pkg_* <<----
 toolchain_pkg_setup() {
-	[[ -z ${ETYPE} ]] && die "Your ebuild needs to set the ETYPE variable"
-
-	if [[ ${ETYPE} == "gcc-compiler" ]] ; then
-		# Setup variables which would normally be in the profile
-		if is_crosscompile ; then
-			multilib_env ${CTARGET}
-			if ! is_multilib ; then
-				MULTILIB_ABIS=${DEFAULT_ABI}
-			fi
+	# Setup variables which would normally be in the profile
+	if is_crosscompile ; then
+		multilib_env ${CTARGET}
+		if ! is_multilib ; then
+			MULTILIB_ABIS=${DEFAULT_ABI}
 		fi
+	fi
 
-		# we dont want to use the installed compiler's specs to build gcc!
-		unset GCC_SPECS
+	# we dont want to use the installed compiler's specs to build gcc!
+	unset GCC_SPECS
 
-		if use nocxx ; then
-			use go && ewarn 'Go requires a C++ compiler, disabled due to USE="nocxx"'
-			use objc++ && ewarn 'Obj-C++ requires a C++ compiler, disabled due to USE="nocxx"'
-			use gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="nocxx"'
-		fi
+	if use nocxx ; then
+		use go && ewarn 'Go requires a C++ compiler, disabled due to USE="nocxx"'
+		use objc++ && ewarn 'Obj-C++ requires a C++ compiler, disabled due to USE="nocxx"'
+		use gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="nocxx"'
 	fi
 
 	want_libssp && libc_has_ssp && \
@@ -848,36 +878,6 @@ toolchain_pkg_postrm() {
 
 #---->> src_* <<----
 
-# generic GCC src_unpack, to be called from the ebuild's src_unpack.
-# BIG NOTE regarding hardened support: ebuilds with support for hardened are
-# expected to export the following variable:
-#
-#	HARDENED_GCC_WORKS
-#			This variable should be set to the archs on which hardened should
-#			be allowed. For example: HARDENED_GCC_WORKS="x86 sparc amd64"
-#			This allows for additional archs to be supported by hardened when
-#			ready.
-#
-# Travis Tilley <lv@gentoo.org> (03 Sep 2004)
-#
-gcc-compiler_src_unpack() {
-	# fail if using pie patches, building hardened, and glibc doesnt have
-	# the necessary support
-	want_pie && use hardened && glibc_have_pie
-
-	if use hardened ; then
-		einfo "updating configuration to build hardened GCC"
-		make_gcc_hard || die "failed to make gcc hard"
-	fi
-
-	if is_libffi ; then
-		# move the libffi target out of gcj and into all
-		sed -i \
-			-e '/^libgcj=/s:target-libffi::' \
-			-e '/^target_lib/s:=":="target-libffi :' \
-			"${S}"/configure || die
-	fi
-}
 guess_patch_type_in_dir() {
 	[[ -n $(ls "$1"/*.bz2 2>/dev/null) ]] \
 		&& EPATCH_SUFFIX="patch.bz2" \
@@ -945,7 +945,22 @@ toolchain_src_unpack() {
 	do_gcc_PIE_patches
 	epatch_user
 
-	${ETYPE}_src_unpack || die "failed to ${ETYPE}_src_unpack"
+	# fail if using pie patches, building hardened, and glibc doesnt have
+	# the necessary support
+	want_pie && use hardened && glibc_have_pie
+
+	if use hardened ; then
+		einfo "updating configuration to build hardened GCC"
+		make_gcc_hard || die "failed to make gcc hard"
+	fi
+
+	if is_libffi ; then
+		# move the libffi target out of gcj and into all
+		sed -i \
+			-e '/^libgcj=/s:target-libffi::' \
+			-e '/^target_lib/s:=":="target-libffi :' \
+			"${S}"/configure || die
+	fi
 
 	# protoize don't build on FreeBSD, skip it
 	## removed in 4.5, bug #270558 --de.
@@ -1299,9 +1314,7 @@ gcc_do_configure() {
 		--disable-werror \
 		--enable-secureplt"
 
-	# etype specific configuration
-	einfo "running ${ETYPE}-configure"
-	${ETYPE}-configure || die
+	gcc-compiler-configure || die
 
 	# if not specified, assume we are building for a target that only
 	# requires C support
@@ -1591,6 +1604,10 @@ toolchain_src_compile() {
 	einfo "CFLAGS=\"${CFLAGS}\""
 	einfo "CXXFLAGS=\"${CXXFLAGS}\""
 
+	# Force internal zip based jar script to avoid random
+	# issues with 3rd party jar implementations.  #384291
+	export JAR=no
+
 	# For hardened gcc 4.3 piepatchset to build the hardened specs
 	# file (build.specs) to use when building gcc.
 	if ! tc_version_is_at_least 4.4 && want_minispecs ; then
@@ -1618,7 +1635,7 @@ toolchain_src_compile() {
 
 	# Do not create multiple specs files for PIE+SSP if boundschecking is in
 	# USE, as we disable PIE+SSP when it is.
-	if [[ ${ETYPE} == "gcc-compiler" ]] && want_split_specs && ! want_minispecs; then
+	if want_split_specs && ! want_minispecs; then
 		split_out_specs_files || die "failed to split out specs"
 	fi
 
