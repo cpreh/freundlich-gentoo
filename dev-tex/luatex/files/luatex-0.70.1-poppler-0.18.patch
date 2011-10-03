@@ -1,0 +1,131 @@
+Make luatex compile against poppler 0.18.0.
+
+API which has been removed from poppler will be removed from the LUA
+bindings as well.  Replacement API isn't added by this patch, but should be
+added when this patch or its equivalent is applied to the main luatex
+sources, in order to officially support that new API.
+
+2011-09-30 Martin von Gagern
+
+References:
+http://cgit.freedesktop.org/poppler/poppler/commit/?id=664865a2ddca9c20
+http://cgit.freedesktop.org/poppler/poppler/commit/?id=2bf82f27bd9c8f97
+http://cgit.freedesktop.org/poppler/poppler/commit/?id=04dfb2c984b3c994
+https://bugs.gentoo.org/384875
+
+Index: luatex-beta-0.70.1/source/texk/web2c/luatexdir/lua/lepdflib.cc
+===================================================================
+--- luatex-beta-0.70.1.orig/source/texk/web2c/luatexdir/lua/lepdflib.cc
++++ luatex-beta-0.70.1/source/texk/web2c/luatexdir/lua/lepdflib.cc
+@@ -23,6 +23,7 @@ static const char _svn_version[] =
+     "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.70.1/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
+ 
+ #include "image/epdf.h"
++#include <poppler/glib/poppler-features.h>
+ 
+ // define DEBUG
+ 
+@@ -89,7 +90,10 @@ new_poppler_userdata(AnnotBorder);
+ new_poppler_userdata(Annots);
+ new_poppler_userdata(Array);
+ new_poppler_userdata(Catalog);
++#if POPPLER_MAJOR_VERSION == 0 && (POPPLER_MINOR_VERSION < 17 || \
++    ( POPPLER_MINOR_VERSION == 17 && POPPLER_MICRO_VERSION < 2))
+ new_poppler_userdata(EmbFile);
++#endif
+ new_poppler_userdata(Dict);
+ //new_poppler_userdata(GooString);
+ new_poppler_userdata(LinkDest);
+@@ -393,7 +397,11 @@ static int m_Annot__gc(lua_State * L)
+     printf("\n===== Annot GC ===== uin=<%p>\n", uin);
+ #endif
+     if (uin->atype == ALLOC_LEPDF)
++#if POPPLER_MAJOR_VERSION == 0 && POPPLER_MINOR_VERSION < 17
+         delete(Annot *) uin->d;
++#else
++        ((Annot *) uin->d)->decRefCnt();
++#endif
+     return 0;
+ }
+ 
+@@ -410,6 +418,8 @@ static const struct luaL_Reg Annot_m[] =
+ //**********************************************************************
+ // AnnotBorderStyle
+ 
++#if POPPLER_MAJOR_VERSION == 0 && POPPLER_MINOR_VERSION < 17
++
+ m_poppler_get_DOUBLE(AnnotBorderStyle, getWidth);
+ 
+ m_poppler__tostring(AnnotBorderStyle);
+@@ -435,6 +445,8 @@ static const struct luaL_Reg AnnotBorder
+     {NULL, NULL}                // sentinel
+ };
+ 
++#endif
++
+ //**********************************************************************
+ // Annots
+ 
+@@ -684,6 +696,8 @@ static int m_Catalog_findDest(lua_State
+ m_poppler_get_poppler(Catalog, Object, getDests);
+ m_poppler_get_INT(Catalog, numEmbeddedFiles);
+ 
++#if POPPLER_MAJOR_VERSION == 0 && (POPPLER_MINOR_VERSION < 17 || \
++    ( POPPLER_MINOR_VERSION == 17 && POPPLER_MICRO_VERSION < 2))
+ static int m_Catalog_embeddedFile(lua_State * L)
+ {
+     EmbFile *ef;
+@@ -707,6 +721,7 @@ static int m_Catalog_embeddedFile(lua_St
+         lua_pushnil(L);
+     return 1;
+ }
++#endif
+ 
+ m_poppler_get_INT(Catalog, numJS);
+ 
+@@ -749,7 +764,9 @@ static const struct luaL_Reg Catalog_m[]
+     {"findDest", m_Catalog_findDest},
+     {"getDests", m_Catalog_getDests},
+     {"numEmbeddedFiles", m_Catalog_numEmbeddedFiles},
++#if POPPLER_MAJOR_VERSION == 0 && POPPLER_MINOR_VERSION < 17
+     {"embeddedFile", m_Catalog_embeddedFile},
++#endif
+     {"numJS", m_Catalog_numJS},
+     {"getJS", m_Catalog_getJS},
+     {"getOutline", m_Catalog_getOutline},
+@@ -761,6 +778,9 @@ static const struct luaL_Reg Catalog_m[]
+ //**********************************************************************
+ // EmbFile
+ 
++#if POPPLER_MAJOR_VERSION == 0 && (POPPLER_MINOR_VERSION < 17 || \
++    ( POPPLER_MINOR_VERSION == 17 && POPPLER_MICRO_VERSION < 2))
++
+ m_poppler_get_GOOSTRING(EmbFile, name);
+ m_poppler_get_GOOSTRING(EmbFile, description);
+ m_poppler_get_INT(EmbFile, size);
+@@ -801,6 +821,8 @@ static const struct luaL_Reg EmbFile_m[]
+     {NULL, NULL}                // sentinel
+ };
+ 
++#endif
++
+ //**********************************************************************
+ // Dict
+ 
+@@ -2683,11 +2705,16 @@ int luaopen_epdf(lua_State * L)
+ {
+     register_meta(Annot);
+     // TODO register_meta(AnnotBorder);
++#if POPPLER_MAJOR_VERSION == 0 && POPPLER_MINOR_VERSION < 17
+     register_meta(AnnotBorderStyle);
++#endif
+     register_meta(Annots);
+     register_meta(Array);
+     register_meta(Catalog);
++#if POPPLER_MAJOR_VERSION == 0 && (POPPLER_MINOR_VERSION < 17 || \
++    ( POPPLER_MINOR_VERSION == 17 && POPPLER_MICRO_VERSION < 2))
+     register_meta(EmbFile);
++#endif
+     register_meta(Dict);
+     register_meta(GooString);
+     register_meta(LinkDest);
