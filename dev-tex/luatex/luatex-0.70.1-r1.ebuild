@@ -30,7 +30,7 @@ PRELIBS="libs/obsdcompat"
 #kpathsea_extraconf="--disable-shared --disable-largefile"
 
 src_prepare() {
-	epatch "${FILESDIR}"/"${P}"-poppler-0.18.patch
+	has_version '>=app-text/poppler-0.18.0:0' && epatch "${FILESDIR}"/"${P}"-poppler-0.18.patch
 
 	S="${S}/build-aux" elibtoolize --shallow
 }
