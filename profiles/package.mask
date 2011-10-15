@@ -1,7 +1,6 @@
 =app-dicts/jmdict-9999
 =app-shells/fish-9999
 =dev-cpp/fcppt-9999
-=dev-util/valgrind-9999
 =games-emulation/pcsxr-9999
 =games-strategy/hedgewars-9999
 =media-libs/openal-9999
