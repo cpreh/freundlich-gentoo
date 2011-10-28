@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.473 2011/10/17 19:10:58 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.475 2011/10/26 23:27:16 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -87,7 +87,6 @@ if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
 	IUSE+=" altivec fortran nocxx"
 	[[ -n ${PIE_VER} ]] && IUSE+=" nopie"
 	[[ -n ${PP_VER}	 ]] && IUSE+=" nossp"
-	[[ -n ${SPECS_VER} ]] && IUSE+=" nossp"
 	[[ -n ${HTB_VER} ]] && IUSE+=" boundschecking"
 	[[ -n ${D_VER}	 ]] && IUSE+=" d"
 
@@ -766,9 +765,9 @@ toolchain_pkg_setup() {
 	unset GCC_SPECS
 
 	if use nocxx ; then
-		huse go && ewarn 'Go requires a C++ compiler, disabled due to USE="nocxx"'
-		huse objc++ && ewarn 'Obj-C++ requires a C++ compiler, disabled due to USE="nocxx"'
-		huse gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="nocxx"'
+		use_if_iuse go && ewarn 'Go requires a C++ compiler, disabled due to USE="nocxx"'
+		use_if_iuse objc++ && ewarn 'Obj-C++ requires a C++ compiler, disabled due to USE="nocxx"'
+		use_if_iuse gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="nocxx"'
 	fi
 
 	want_libssp && libc_has_ssp && \
@@ -2350,11 +2349,6 @@ is_multilib() {
 	use multilib
 }
 
-huse() {
-	has $1 ${IUSE} || return 1
-	use $1
-}
-
 is_cxx() {
 	gcc-lang-supported 'c++' || return 1
 	! use nocxx
@@ -2362,7 +2356,7 @@ is_cxx() {
 
 is_d() {
 	gcc-lang-supported d || return 1
-	huse d
+	use_if_iuse d
 }
 
 is_f77() {
@@ -2382,26 +2376,26 @@ is_fortran() {
 
 is_gcj() {
 	gcc-lang-supported java || return 1
-	! use nocxx && huse gcj
+	! use nocxx && use_if_iuse gcj
 }
 
 is_go() {
 	gcc-lang-supported go || return 1
-	! use nocxx && huse go
+	! use nocxx && use_if_iuse go
 }
 
 is_libffi() {
-	huse libffi
+	use_if_iuse libffi
 }
 
 is_objc() {
 	gcc-lang-supported objc || return 1
-	huse objc
+	use_if_iuse objc
 }
 
 is_objcxx() {
 	gcc-lang-supported 'obj-c++' || return 1
-	! use nocxx && huse objc++
+	! use nocxx && use_if_iuse objc++
 }
 
 is_ada() {
