@@ -77,7 +77,7 @@ RDEPEND="
 DEPEND+="
 	${RDEPEND}
 	doc? (
-		app-doc/doxygen
+		>=app-doc/doxygen-1.7.5
 	)
 "
 
