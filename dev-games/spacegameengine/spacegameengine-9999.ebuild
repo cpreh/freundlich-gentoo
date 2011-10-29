@@ -15,14 +15,14 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
-+audio audio_null +camera cegui +charconv +config +console +devil
++audio audio_null +camera cegui +charconv +config +console +devil doc
 examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
 +image3d +input +line_drawer modelmd3 modelobj +openal opencl +opengl
 +parse +plugin +png projectile +renderer +rendereropengl
 +shader +sprite +systems test
 +texture +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
-DEPEND="
+RDEPEND="
 	=dev-cpp/fcppt-9999
 	=dev-cpp/mizuiro-9999
 	=dev-cpp/libawl-9999
@@ -74,7 +74,12 @@ DEPEND="
 		x11-libs/libX11
 	)
 "
-RDEPEND="${DEPEND}"
+DEPEND+="
+	${RDEPEND}
+	doc? (
+		app-doc/doxygen
+	)
+"
 
 exit_sge_build=false
 
