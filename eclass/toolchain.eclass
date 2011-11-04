@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.475 2011/10/26 23:27:16 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.477 2011/10/31 01:12:33 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -86,9 +86,9 @@ IUSE="build multislot nls nptl test vanilla"
 if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
 	IUSE+=" altivec fortran nocxx"
 	[[ -n ${PIE_VER} ]] && IUSE+=" nopie"
-	[[ -n ${PP_VER}	 ]] && IUSE+=" nossp"
 	[[ -n ${HTB_VER} ]] && IUSE+=" boundschecking"
-	[[ -n ${D_VER}	 ]] && IUSE+=" d"
+	[[ -n ${D_VER}   ]] && IUSE+=" d"
+	[[ -n ${PP_VER}${SPECS_VER} ]] && IUSE+=" nossp"
 
 	if tc_version_is_at_least 3 ; then
 		IUSE+=" bootstrap doc gcj gtk hardened libffi multilib objc"
@@ -97,10 +97,7 @@ if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
 		tc_version_is_at_least "4.1" && IUSE+=" objc++"
 		tc_version_is_at_least "4.2" && IUSE+=" openmp"
 		tc_version_is_at_least "4.3" && IUSE+=" fixed-point"
-		if tc_version_is_at_least "4.4" ; then
-			IUSE+=" graphite"
-			[[ -n ${SPECS_VER} ]] && IUSE+=" nossp"
-		fi
+		tc_version_is_at_least "4.4" && IUSE+=" graphite"
 		[[ ${GCC_BRANCH_VER} == 4.5 ]] && IUSE+=" lto"
 		tc_version_is_at_least "4.6" && IUSE+=" go"
 	fi
@@ -1294,8 +1291,11 @@ gcc_do_configure() {
 	# LTO support was added in 4.5, which depends upon elfutils.  This allows
 	# users to enable that option, and pull in the additional library.  In 4.6,
 	# the dependency is no longer required.
-	[[ ${GCC_BRANCH_VER} == 4.5 ]] && confgcc+=" $(use_enable lto)"
-	[[ ${GCC_BRANCH_VER} > 4.5 ]] && confgcc+=" --enable-lto"
+	if tc_version_is_at_least "4.6" ; then
+		confgcc+=" --enable-lto"
+	elif tc_version_is_at_least "4.5" ; then
+		confgcc+=" $(use_enable lto)"
+	fi
 
 	[[ $(tc-is-softfloat) == "yes" ]] && confgcc+=" --with-float=soft"
 	[[ $(tc-is-hardfloat) == "yes" ]] && confgcc+=" --with-float=hard"
