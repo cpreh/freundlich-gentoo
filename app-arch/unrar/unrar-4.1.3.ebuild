@@ -4,6 +4,8 @@
 
 EAPI=2
 
+RESTRICT="mirror"
+
 inherit eutils toolchain-funcs flag-o-matic
 
 MY_PN=${PN}src
