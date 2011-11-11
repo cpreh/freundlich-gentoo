@@ -12,7 +12,7 @@ DESCRIPTION="PCSX-Reloaded is a PlayStation Emulator based on PCSX-df 1.9, with
 support for Windows, GNU/Linux and Mac OS X as well as many bugfixes and
 improvements."
 HOMEPAGE="http://www.codeplex.com/pcsxr"
-SRC_URI="http://supraverse.net/freundlich/${P}.tar.bz2"
+SRC_URI="http://fcppt.net/download/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"

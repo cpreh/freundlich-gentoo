@@ -9,7 +9,7 @@ inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="http://redmine.supraverse.net/projects/fcppt"
-SRC_URI="http://supraverse.net/freundlich/${P}.tar.bz2"
+SRC_URI="http://fcppt.net/download/${P}.tar.bz2"
 
 LICENSE="Boost-1.0"
 SLOT="0"
