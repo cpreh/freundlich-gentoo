@@ -9,18 +9,16 @@ inherit cmake-utils git games
 EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
 
 DESCRIPTION="An easy to use game engine written in C++"
-HOMEPAGE="http://redmine.supraverse.net/projects/show/sge"
+HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="
-+audio audio_null +camera cegui +charconv +config +console +devil doc
-examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d
-+image3d +input +line_drawer modelmd3 modelobj +openal opencl +opengl
-+parse +plugin +png projectile +renderer +rendereropengl
-+shader +sprite +systems test
-+texture +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
+IUSE="+audio audio_null +camera cegui +charconv +config +console +devil doc
+examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d +image3d
++input +line_drawer modelmd3 modelobj +openal opencl +opengl +parse +plugin +png
+projectile +renderer +rendereropengl +shader +sprite +systems test +texture
++viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
 RDEPEND="
 	=dev-cpp/fcppt-9999
@@ -74,10 +72,14 @@ RDEPEND="
 		x11-libs/libX11
 	)
 "
+#for doxygen formulas, 'latex', 'dvips' and 'gs' are needed
 DEPEND+="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5
+		app-text/dvipsk
+		app-text/ghostscript-gpl
+		dev-texlive/texlive-latex
 	)
 "
 
@@ -143,6 +145,7 @@ src_configure() {
 		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
 		-D INSTALL_BINARY_DIR="${GAMES_BINDIR}"
 		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
+		-D INSTALL_DOC_DIR_BASE="/usr/share/doc"
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
@@ -151,6 +154,7 @@ src_configure() {
 		$(cmake-utils_use_enable config)
 		$(cmake-utils_use_enable console)
 		$(cmake-utils_use_enable devil)
+		$(cmake-utils_use_enable doc)
 		$(cmake-utils_use_enable examples)
 		$(cmake-utils_use_enable font)
 		$(cmake-utils_use_enable fontbitmap)
@@ -192,11 +196,19 @@ src_configure() {
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	local ARGS="all"
+
+	use doc && ARGS+=" doc"
+
+	# don't quote ARGS!
+	cmake-utils_src_compile $ARGS
 }
 
 src_install() {
 	cmake-utils_src_install
+
+	# remove empty directories because doxygen creates them
+	find "${D}" -type d -empty -delete || die
 
 	prepgamesdirs
 }
@@ -206,5 +218,5 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	games_pkg_postint
+	games_pkg_postinst
 }
