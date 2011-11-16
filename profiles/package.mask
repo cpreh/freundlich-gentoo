@@ -1,8 +1,6 @@
 =app-dicts/jmdict-9999
 =app-shells/fish-9999
 =dev-cpp/fcppt-9999
-=dev-libs/boost-1.48.0_beta1
-=dev-util/boost-build-1.48.0_beta1
 =games-emulation/pcsxr-9999
 =games-strategy/hedgewars-9999
 =media-libs/openal-9999
