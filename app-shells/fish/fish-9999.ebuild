@@ -1,8 +1,8 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-shells/fish/fish-1.23.1-r1.ebuild,v 1.2 2011/07/07 10:41:38 polynomial-c Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-shells/fish/fish-1.23.1-r2.ebuild,v 1.1 2011/11/12 12:18:03 xmw Exp $
 
-EAPI="3"
+EAPI="4"
 
 inherit base autotools eutils git
 
