@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.479 2011/11/14 17:40:06 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.481 2011/11/21 01:43:44 dirtyepic Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -777,7 +777,7 @@ toolchain_pkg_setup() {
 	# we dont want to use the installed compiler's specs to build gcc!
 	unset GCC_SPECS
 
-	if ! use cxx ; then
+	if ! is_cxx ; then
 		use_if_iuse go && ewarn 'Go requires a C++ compiler, disabled due to USE="-cxx"'
 		use_if_iuse objc++ && ewarn 'Obj-C++ requires a C++ compiler, disabled due to USE="-cxx"'
 		use_if_iuse gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="-cxx"'
@@ -934,7 +934,7 @@ toolchain_src_unpack() {
 
 	[[ -z ${UCLIBC_VER} ]] && [[ ${CTARGET} == *-uclibc* ]] && die "Sorry, this version does not support uClibc"
 
-	gcc_quick_unpack
+	[[ -z ${GCC_SVN} ]] && gcc_quick_unpack
 	exclude_gcc_patches
 
 	cd "${S}"
@@ -996,7 +996,7 @@ toolchain_src_unpack() {
 
 	gcc_version_patch
 	if [[ ${GCCMAJOR}.${GCCMINOR} > 4.0 ]] ; then
-		if [[ -n ${SNAPSHOT} || -n ${PRERELEASE} ]] ; then
+		if [[ -n ${SNAPSHOT} || -n ${PRERELEASE} || -n ${GCC_SVN} ]] ; then
 			echo ${PV/_/-} > "${S}"/gcc/BASE-VER
 		fi
 	fi
@@ -1252,10 +1252,12 @@ gcc_do_configure() {
 	local confgcc
 
 	# Sanity check for USE=nocxx -> USE=cxx migration
-	if (use cxx && use nocxx) || (use !cxx && use !nocxx) ; then
-		eerror "We are migrating USE=nocxx to USE=cxx, but your USE settings do not make"
-		eerror "sense.  Please make sure these two flags line up logically in your setup."
-		die "USE='cxx nocxx' and USE='-cxx -nocxx' make no sense"
+	if in_iuse cxx && in_iuse nocxx ; then
+		if (use cxx && use nocxx) || (use !cxx && use !nocxx) ; then
+			eerror "We are migrating USE=nocxx to USE=cxx, but your USE settings do not make"
+			eerror "sense.  Please make sure these two flags line up logically in your setup."
+			die "USE='cxx nocxx' and USE='-cxx -nocxx' make no sense"
+		fi
 	fi
 
 	# Set configuration based on path variables
