@@ -777,7 +777,7 @@ toolchain_pkg_setup() {
 	# we dont want to use the installed compiler's specs to build gcc!
 	unset GCC_SPECS
 
-	if ! is_cxx ; then
+	if ! use_if_iuse cxx ; then
 		use_if_iuse go && ewarn 'Go requires a C++ compiler, disabled due to USE="-cxx"'
 		use_if_iuse objc++ && ewarn 'Obj-C++ requires a C++ compiler, disabled due to USE="-cxx"'
 		use_if_iuse gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="-cxx"'
