@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.483 2011/11/30 23:53:57 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.487 2011/12/03 02:06:31 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -499,11 +499,6 @@ want_pie() {
 }
 want_ssp() { _want_stuff PP_VER !nossp ; }
 
-# SPLIT_SPECS are deprecated for >=GCC 4.4
-want_split_specs() {
-	tc_version_is_at_least 4.4 && return 1
-	[[ ${SPLIT_SPECS} == "true" ]] && want_pie
-}
 want_minispecs() {
 	if tc_version_is_at_least 4.3.2 && use hardened ; then
 		if ! want_pie ; then
@@ -610,52 +605,6 @@ make_gcc_hard() {
 
 	# rebrand to make bug reports easier
 	BRANDING_GCC_PKGVERSION=${BRANDING_GCC_PKGVERSION/Gentoo/Gentoo Hardened}
-}
-
-# now we generate different spec files so that the user can select a compiler
-# that enforces certain features in gcc itself and so we don't have to worry
-# about a certain package ignoring CFLAGS/LDFLAGS
-_create_specs_file() {
-	# Usage: _create_specs_file <USE flag> <specs name> <CFLAGS>
-	local uflag=$1 name=$2 flags=${*:3}
-	ebegin "Creating a ${name} gcc specs file"
-	pushd "${WORKDIR}"/build/gcc > /dev/null
-	if [[ -z ${uflag} ]] || use ${uflag} ; then
-		# backup the compiler first
-		cp Makefile Makefile.orig
-		sed -i -e '/^HARD_CFLAGS/s:=.*:='"${flags}"':' Makefile
-		mv xgcc xgcc.foo
-		mv gcc.o gcc.o.foo
-		emake -s xgcc
-		$(XGCC) -dumpspecs > "${WORKDIR}"/build/${name}.specs
-		# restore everything to normal
-		mv gcc.o.foo gcc.o
-		mv xgcc.foo xgcc
-		mv Makefile.orig Makefile
-	else
-		$(XGCC) -dumpspecs > "${WORKDIR}"/build/${name}.specs
-	fi
-	popd > /dev/null
-	eend $([[ -s ${WORKDIR}/build/${name}.specs ]] ; echo $?)
-}
-create_vanilla_specs_file()			 { _create_specs_file hardened vanilla ; }
-create_hardened_specs_file()		 { _create_specs_file !hardened hardened  ${gcc_common_hard} -DEFAULT_PIE_SSP ; }
-create_hardenednossp_specs_file()	 { _create_specs_file "" hardenednossp	  ${gcc_common_hard} -DEFAULT_PIE ; }
-create_hardenednopie_specs_file()	 { _create_specs_file "" hardenednopie	  ${gcc_common_hard} -DEFAULT_SSP ; }
-create_hardenednopiessp_specs_file() { _create_specs_file "" hardenednopiessp ${gcc_common_hard} ; }
-
-split_out_specs_files() {
-	local s spec_list="hardenednopiessp vanilla"
-	if hardened_gcc_works ; then
-		spec_list="${spec_list} hardened hardenednossp hardenednopie"
-	elif hardened_gcc_works pie ; then
-		spec_list="${spec_list} hardenednossp"
-	elif hardened_gcc_works ssp ; then
-		spec_list="${spec_list} hardenednopie"
-	fi
-	for s in ${spec_list} ; do
-		create_${s}_specs_file || return 1
-	done
 }
 
 create_gcc_env_entry() {
@@ -982,15 +931,6 @@ toolchain_src_unpack() {
 			"${S}"/libstdc++-v3/python/Makefile.in || die
 	fi
 
-	# protoize don't build on FreeBSD, skip it
-	## removed in 4.5, bug #270558 --de.
-	if [[ ${GCCMAJOR}.${GCCMINOR} < 4.5 ]]; then
-		if ! is_crosscompile && ! use elibc_FreeBSD ; then
-			# enable protoize / unprotoize
-			sed -i -e '/^LANGUAGES =/s:$: proto:' "${S}"/gcc/Makefile.in
-		fi
-	fi
-
 	# No idea when this first started being fixed, but let's go with 4.3.x for now
 	if ! tc_version_is_at_least 4.3 ; then
 		fix_files=""
@@ -1003,14 +943,14 @@ toolchain_src_unpack() {
 	setup_multilib_osdirnames
 
 	gcc_version_patch
-	if [[ ${GCCMAJOR}.${GCCMINOR} > 4.0 ]] ; then
+	if tc_version_is_at_least 4.1 ; then
 		if [[ -n ${SNAPSHOT} || -n ${PRERELEASE} || -n ${GCC_SVN} ]] ; then
 			echo ${PV/_/-} > "${S}"/gcc/BASE-VER
 		fi
 	fi
 
 	# >= gcc-4.3 doesn't bundle ecj.jar, so copy it
-	if [[ ${GCCMAJOR}.${GCCMINOR} > 4.2 ]] && use gcj ; then
+	if tc_version_is_at_least 4.3 && use gcj ; then
 		if tc_version_is_at_least "4.5" ; then
 			einfo "Copying ecj-4.5.jar"
 			cp -pPR "${DISTDIR}/ecj-4.5.jar" "${S}/ecj.jar" || die
@@ -1029,9 +969,7 @@ toolchain_src_unpack() {
 
 	# In gcc 3.3.x and 3.4.x, rename the java bins to gcc-specific names
 	# in line with gcc-4.
-	if [[ ${GCCMAJOR} == 3 ]] &&
-	   [[ ${GCCMINOR} -ge 3 ]]
-	then
+	if tc_version_is_at_least 3.3 && ! tc_version_is_at_least 4.0 ; then
 		do_gcc_rename_java_bins
 	fi
 
@@ -1379,9 +1317,7 @@ gcc_do_configure() {
 			fi
 		fi
 
-		if [[ ${GCCMAJOR}.${GCCMINOR} > 4.1 ]] ; then
-			confgcc+=" --disable-bootstrap"
-		fi
+		tc_version_is_at_least 4.2 && confgcc+=" --disable-bootstrap"
 	else
 		if tc-is-static-only ; then
 			confgcc+=" --disable-shared"
@@ -1401,7 +1337,7 @@ gcc_do_configure() {
 	*-uclibc*)
 		confgcc+=" --disable-__cxa_atexit --enable-target-optspace $(use_enable nptl tls)"
 		[[ ${GCCMAJOR}.${GCCMINOR} == 3.3 ]] && confgcc+=" --enable-sjlj-exceptions"
-		if tc_version_is_at_least 3.4 && [[ ${GCCMAJOR}.${GCCMINOR} < 4.3 ]] ; then
+		if tc_version_is_at_least 3.4 && ! tc_version_is_at_least 4.3 ; then
 			confgcc+=" --enable-clocale=uclibc"
 		fi
 		;;
@@ -1419,13 +1355,13 @@ gcc_do_configure() {
 		confgcc+=" --enable-__cxa_atexit"
 		;;
 	esac
-	[[ ${GCCMAJOR}.${GCCMINOR} < 3.4 ]] && confgcc+=" --disable-libunwind-exceptions"
+	tc_version_is_at_least 3.4 || confgcc+=" --disable-libunwind-exceptions"
 
 	# create a sparc*linux*-{gcc,g++} that can handle -m32 and -m64 (biarch)
 	if [[ ${CTARGET} == sparc*linux* ]] \
 		&& is_multilib \
 		&& ! is_crosscompile \
-		&& [[ ${GCCMAJOR}.${GCCMINOR} > 4.2 ]]
+		&& tc_version_is_at_least 4.3
 	then
 		confgcc+=" --enable-targets=all"
 	fi
@@ -1665,12 +1601,6 @@ toolchain_src_compile() {
 	einfo "Compiling ${PN} ..."
 	gcc_do_make ${GCC_MAKE_TARGET}
 
-	# Do not create multiple specs files for PIE+SSP if boundschecking is in
-	# USE, as we disable PIE+SSP when it is.
-	if want_split_specs && ! want_minispecs; then
-		split_out_specs_files || die "failed to split out specs"
-	fi
-
 	popd > /dev/null
 }
 
@@ -1712,22 +1642,6 @@ toolchain_src_install() {
 	dodir /etc/env.d/gcc
 	create_gcc_env_entry
 
-	if want_split_specs ; then
-		if use hardened ; then
-			create_gcc_env_entry vanilla
-		fi
-		! use hardened && hardened_gcc_works && create_gcc_env_entry hardened
-		if hardened_gcc_works || hardened_gcc_works pie ; then
-			create_gcc_env_entry hardenednossp
-		fi
-		if hardened_gcc_works || hardened_gcc_works ssp ; then
-			create_gcc_env_entry hardenednopie
-		fi
-		create_gcc_env_entry hardenednopiessp
-
-		insinto ${LIBPATH}
-		doins "${WORKDIR}"/build/*.specs || die "failed to install specs"
-	fi
 	# Setup the gcc_env_entry for hardened gcc 4 with minispecs
 	if want_minispecs ; then
 		copy_minispecs_gcc_specs
@@ -1788,7 +1702,7 @@ toolchain_src_install() {
 		rm -rf "${D}"/usr/share/{man,info}
 		rm -rf "${D}"${DATAPATH}/{man,info}
 	else
-		local cxx_mandir=${WORKDIR}/build/${CTARGET}/libstdc++-v3/docs/doxygen/man
+		local cxx_mandir=$(find "${WORKDIR}/build/${CTARGET}/libstdc++-v3" -name man)
 		if [[ -d ${cxx_mandir} ]] ; then
 			# clean bogus manpages #113902
 			find "${cxx_mandir}" -name '*_build_*' -exec rm {} \;
@@ -2022,24 +1936,12 @@ gcc_quick_unpack() {
 #
 #	GENTOO_PATCH_EXCLUDE
 #			List of filenames, relative to ${WORKDIR}/patch/
-#
-#	PIEPATCH_EXCLUDE
-#			List of filenames, relative to ${WORKDIR}/piepatch/
-#
-# Travis Tilley <lv@gentoo.org> (03 Sep 2004)
-#
 exclude_gcc_patches() {
 	local i
 	for i in ${GENTOO_PATCH_EXCLUDE} ; do
 		if [[ -f ${WORKDIR}/patch/${i} ]] ; then
 			einfo "Excluding patch ${i}"
 			rm -f "${WORKDIR}"/patch/${i} || die "failed to delete ${i}"
-		fi
-	done
-	for i in ${PIEPATCH_EXCLUDE} ; do
-		if [[ -f ${WORKDIR}/piepatch/${i} ]] ; then
-			einfo "Excluding piepatch ${i}"
-			rm -f "${WORKDIR}"/piepatch/${i} || die "failed to delete ${i}"
 		fi
 	done
 }
@@ -2378,7 +2280,7 @@ fix_libtool_libdir_paths() {
 }
 
 is_multilib() {
-	[[ ${GCCMAJOR} < 3 ]] && return 1
+	tc_version_is_at_least 3 || return 1
 	use multilib
 }
 
