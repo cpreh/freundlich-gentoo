@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.489 2011/12/03 20:45:45 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.493 2011/12/04 22:59:31 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -265,14 +265,6 @@ S=$(gcc_get_s_dir)
 #			for an older gcc version with a new gcc, make sure you set
 #			HTB_GCC_VER to that version of gcc.
 #
-#	MAN_VER
-#			The version of gcc for which we will download manpages. This will
-#			default to ${GCC_RELEASE_VER}, but we may not want to pre-generate man pages
-#			for prerelease test ebuilds for example. This allows you to
-#			continue using pre-generated manpages from the last stable release.
-#			If set to "none", this will prevent the downloading of manpages,
-#			which is useful for individual library targets.
-#
 gentoo_urls() {
 	local devspace="HTTP~lv/GCC/URI HTTP~eradicator/gcc/URI HTTP~vapier/dist/URI
 	HTTP~halcy0n/patches/URI HTTP~zorry/patches/gcc/URI HTTP~dirtyepic/dist/URI"
@@ -317,11 +309,6 @@ get_gcc_src_uri() {
 	# uclibc lovin
 	[[ -n ${UCLIBC_VER} ]] && \
 		GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${UCLIBC_GCC_VER}-uclibc-patches-${UCLIBC_VER}.tar.bz2)"
-
-	# PERL cannot be present at bootstrap, and is used to build the man pages.
-	# So... lets include some pre-generated ones, shall we?
-	[[ -n ${MAN_VER} ]] && \
-		GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${MAN_VER}-manpages.tar.bz2)"
 
 	# various gentoo patches
 	[[ -n ${PATCH_VER} ]] && \
@@ -516,17 +503,6 @@ want_minispecs() {
 		return 0
 	fi
 	return 1
-}
-# This function checks whether or not glibc has the support required to build
-# Position Independant Executables with gcc.
-glibc_have_pie() {
-	if [[ ! -f ${ROOT}/usr/$(get_libdir)/Scrt1.o ]] ; then
-		echo
-		ewarn "Your glibc does not have support for pie, the file Scrt1.o is missing"
-		ewarn "Please update your glibc to a proper version or disable hardened"
-		echo
-		return 1
-	fi
 }
 
 # This function determines whether or not libc has been patched with stack
@@ -904,10 +880,6 @@ toolchain_src_unpack() {
 	do_gcc_SSP_patches
 	do_gcc_PIE_patches
 	epatch_user
-
-	# fail if using pie patches, building hardened, and glibc doesnt have
-	# the necessary support
-	want_pie && use hardened && glibc_have_pie
 
 	if use hardened ; then
 		einfo "updating configuration to build hardened GCC"
@@ -1584,10 +1556,6 @@ toolchain_src_compile() {
 	mkdir -p "${WORKDIR}"/build
 	pushd "${WORKDIR}"/build > /dev/null
 
-	# Install our pre generated manpages if we do not have perl ...
-	[[ ! -x /usr/bin/perl ]] && [[ -n ${MAN_VER} ]] && \
-		unpack gcc-${MAN_VER}-manpages.tar.bz2
-
 	einfo "Configuring ${PN} ..."
 	gcc_do_configure
 
@@ -1784,16 +1752,18 @@ gcc_slot_java() {
 		rm -rf "${D}"${PREFIX}/lib*/security
 	fi
 
-	# Move libgcj.spec to compiler-specific directories
-	[[ -f ${D}${PREFIX}/lib/libgcj.spec ]] && \
-		mv -f "${D}"${PREFIX}/lib/libgcj.spec "${D}"${LIBPATH}/libgcj.spec
+	# Move random gcj files to compiler-specific directories
+	for x in libgcj.spec logging.properties ; do
+		x="${D}${PREFIX}/lib/${x}"
+		[[ -f ${x} ]] && mv -f "${x}" "${D}"${LIBPATH}/
+	done
 
-	# SLOT up libgcj.pc (and let gcc-config worry about links)
-	local libgcj=$(find "${D}"${PREFIX}/lib/pkgconfig/ -name 'libgcj*.pc')
-	if [[ -n ${libgcj} ]] ; then
-		sed -i "/^libdir=/s:=.*:=${LIBPATH}:" "${libgcj}"
-		mv "${libgcj}" "${D}"/usr/lib/pkgconfig/libgcj-${GCC_PV}.pc || die
-	fi
+	# SLOT up libgcj.pc if it's available (and let gcc-config worry about links)
+	for x in "${D}"${PREFIX}/lib*/pkgconfig/libgcj*.pc ; do
+		[[ -f ${x} ]] || continue
+		sed -i "/^libdir=/s:=.*:=${LIBPATH}:" "${x}"
+		mv "${x}" "${D}"/usr/lib/pkgconfig/libgcj-${GCC_PV}.pc || die
+	done
 
 	# Rename jar because it could clash with Kaffe's jar if this gcc is
 	# primary compiler (aka don't have the -<version> extension)
@@ -2201,17 +2171,15 @@ setup_multilib_osdirnames() {
 }
 
 disable_multilib_libjava() {
-	if is_gcj ; then
-		# We dont want a multilib libjava, so lets use this hack taken from fedora
-		pushd "${S}" > /dev/null
-		sed -i -e 's/^all: all-redirect/ifeq (\$(MULTISUBDIR),)\nall: all-redirect\nelse\nall:\n\techo Multilib libjava build disabled\nendif/' libjava/Makefile.in
-		sed -i -e 's/^install: install-redirect/ifeq (\$(MULTISUBDIR),)\ninstall: install-redirect\nelse\ninstall:\n\techo Multilib libjava install disabled\nendif/' libjava/Makefile.in
-		sed -i -e 's/^check: check-redirect/ifeq (\$(MULTISUBDIR),)\ncheck: check-redirect\nelse\ncheck:\n\techo Multilib libjava check disabled\nendif/' libjava/Makefile.in
-		sed -i -e 's/^all: all-recursive/ifeq (\$(MULTISUBDIR),)\nall: all-recursive\nelse\nall:\n\techo Multilib libjava build disabled\nendif/' libjava/Makefile.in
-		sed -i -e 's/^install: install-recursive/ifeq (\$(MULTISUBDIR),)\ninstall: install-recursive\nelse\ninstall:\n\techo Multilib libjava install disabled\nendif/' libjava/Makefile.in
-		sed -i -e 's/^check: check-recursive/ifeq (\$(MULTISUBDIR),)\ncheck: check-recursive\nelse\ncheck:\n\techo Multilib libjava check disabled\nendif/' libjava/Makefile.in
-		popd > /dev/null
-	fi
+	# We dont want a multilib libjava, so lets use this hack taken from fedora
+	sed -i -r \
+		-e 's/^((all:) all-redirect)/ifeq (\$(MULTISUBDIR),)\n\1\nelse\n\2\n\techo Multilib libjava disabled\nendif/' \
+		-e 's/^((install:) install-redirect)/ifeq (\$(MULTISUBDIR),)\n\1\nelse\n\2\n\techo Multilib libjava disabled\nendif/' \
+		-e 's/^((check:) check-redirect)/ifeq (\$(MULTISUBDIR),)\n\1\nelse\n\2\n\techo Multilib libjava disabled\nendif/' \
+		-e 's/^((all:) all-recursive)/ifeq (\$(MULTISUBDIR),)\n\1\nelse\n\2\n\techo Multilib libjava disabled\nendif/' \
+		-e 's/^((install:) install-recursive)/ifeq (\$(MULTISUBDIR),)\n\1\nelse\n\2\n\techo Multilib libjava disabled\nendif/' \
+		-e 's/^((check:) check-recursive)/ifeq (\$(MULTISUBDIR),)\n\1\nelse\n\2\n\techo Multilib libjava disabled\nendif/' \
+		"${S}"/libjava/Makefile.in || die
 }
 
 # make sure the libtool archives have libdir set to where they actually
