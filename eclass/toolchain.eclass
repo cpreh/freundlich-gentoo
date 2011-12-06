@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.493 2011/12/04 22:59:31 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain.eclass,v 1.502 2011/12/06 05:22:24 vapier Exp $
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 
@@ -88,13 +88,13 @@ if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
 	[[ -n ${PIE_VER} ]] && IUSE+=" nopie"
 	[[ -n ${HTB_VER} ]] && IUSE+=" boundschecking"
 	[[ -n ${D_VER}   ]] && IUSE+=" d"
-	[[ -n ${PP_VER}${SPECS_VER} ]] && IUSE+=" nossp"
+	[[ -n ${SPECS_VER} ]] && IUSE+=" nossp"
 
 	if tc_version_is_at_least 3 ; then
 		IUSE+=" bootstrap doc gcj gtk hardened libffi multilib objc"
 
 		tc_version_is_at_least "4.0" && IUSE+=" objc-gc mudflap"
-		tc_version_is_at_least "4.1" && IUSE+=" objc++"
+		tc_version_is_at_least "4.1" && IUSE+=" libssp objc++"
 		tc_version_is_at_least "4.2" && IUSE+=" openmp"
 		tc_version_is_at_least "4.3" && IUSE+=" fixed-point"
 		tc_version_is_at_least "4.4" && IUSE+=" graphite"
@@ -170,20 +170,17 @@ PDEPEND=">=sys-devel/gcc-config-1.4"
 
 #---->> S + SRC_URI essentials <<----
 
-# This function sets the source directory depending on whether we're using
+# Set the source directory depending on whether we're using
 # a prerelease, snapshot, or release tarball.
-gcc_get_s_dir() {
-	local GCC_S
+S=$(
 	if [[ -n ${PRERELEASE} ]] ; then
-		GCC_S=${WORKDIR}/gcc-${PRERELEASE}
+		echo ${WORKDIR}/gcc-${PRERELEASE}
 	elif [[ -n ${SNAPSHOT} ]] ; then
-		GCC_S=${WORKDIR}/gcc-${SNAPSHOT}
+		echo ${WORKDIR}/gcc-${SNAPSHOT}
 	else
-		GCC_S=${WORKDIR}/gcc-${GCC_RELEASE_VER}
+		echo ${WORKDIR}/gcc-${GCC_RELEASE_VER}
 	fi
-	echo "${GCC_S}"
-}
-S=$(gcc_get_s_dir)
+)
 
 # This function handles the basics of setting the SRC_URI for a gcc ebuild.
 # To use, set SRC_URI with:
@@ -216,18 +213,15 @@ S=$(gcc_get_s_dir)
 #
 #	PIE_VER
 #	PIE_GCC_VER
-#	obsoleted: PIE_CORE
 #			These variables control patching in various updates for the logic
 #			controlling Position Independant Executables. PIE_VER is expected
-#			to be the version of this patch, PIE_GCC_VER the gcc version of
-#			the patch, and PIE_CORE (obsoleted) the actual filename of the patch.
+#			to be the version of this patch, and PIE_GCC_VER the gcc version of
+#			the patch:
 #			An example:
 #					PIE_VER="8.7.6.5"
 #					PIE_GCC_VER="3.4.0"
 #			The resulting filename of this tarball will be:
 #			gcc-${PIE_GCC_VER:-${GCC_RELEASE_VER}}-piepatches-v${PIE_VER}.tar.bz2
-#				old syntax (do not define PIE_CORE anymore):
-#					PIE_CORE="gcc-3.4.0-piepatches-v${PIE_VER}.tar.bz2"
 #
 #	SPECS_VER
 #	SPECS_GCC_VER
@@ -240,23 +234,6 @@ S=$(gcc_get_s_dir)
 #					SPECS_GCC_VER="3.4.0"
 #			The resulting filename of this tarball will be:
 #			gcc-${SPECS_GCC_VER:-${GCC_RELEASE_VER}}-specs-${SPECS_VER}.tar.bz2
-#
-#	PP_VER
-#	PP_GCC_VER
-#	obsoleted: PP_FVER
-#			These variables control patching in stack smashing protection
-#			support. They both control the version of ProPolice to download.
-#
-#		PP_VER / PP_GCC_VER
-#			Used to roll our own custom tarballs of ssp.
-#		PP_FVER / PP_VER
-#			Used for mirroring ssp straight from IBM.
-#			PP_VER sets the version of the directory in which to find the
-#			patch, and PP_FVER sets the version of the patch itself. For
-#			example:
-#					PP_VER="3_4"
-#					PP_FVER="${PP_VER//_/.}-2"
-#			would download gcc3_4/protector-3.4-2.tar.gz
 #
 #	HTB_VER
 #	HTB_GCC_VER
@@ -275,7 +252,6 @@ get_gcc_src_uri() {
 	export PATCH_GCC_VER=${PATCH_GCC_VER:-${GCC_RELEASE_VER}}
 	export UCLIBC_GCC_VER=${UCLIBC_GCC_VER:-${PATCH_GCC_VER}}
 	export PIE_GCC_VER=${PIE_GCC_VER:-${GCC_RELEASE_VER}}
-	export PP_GCC_VER=${PP_GCC_VER:-${GCC_RELEASE_VER}}
 	export HTB_GCC_VER=${HTB_GCC_VER:-${GCC_RELEASE_VER}}
 	export SPECS_GCC_VER=${SPECS_GCC_VER:-${GCC_RELEASE_VER}}
 
@@ -290,62 +266,39 @@ get_gcc_src_uri() {
 		ftp://sources.redhat.com/pub/gcc/releases/gcc-${GCC_PV}/gcc-${GCC_RELEASE_VER}.tar.bz2"
 		# we want all branch updates to be against the main release
 		[[ -n ${BRANCH_UPDATE} ]] && \
-			GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${GCC_RELEASE_VER}-branch-update-${BRANCH_UPDATE}.patch.bz2)"
+			GCC_SRC_URI+=" $(gentoo_urls gcc-${GCC_RELEASE_VER}-branch-update-${BRANCH_UPDATE}.patch.bz2)"
 	fi
 
-	# propolice aka stack smashing protection
-	if [[ -n ${PP_VER} ]] ; then
-		if [[ -n ${PP_FVER} ]] ; then
-			GCC_SRC_URI="${GCC_SRC_URI}
-				!nossp? (
-					http://www.research.ibm.com/trl/projects/security/ssp/gcc${PP_VER}/protector-${PP_FVER}.tar.gz
-					$(gentoo_urls protector-${PP_FVER}.tar.gz)
-				)"
-		else
-			GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${PP_GCC_VER}-ssp-${PP_VER}.tar.bz2)"
-		fi
-	fi
-
-	# uclibc lovin
-	[[ -n ${UCLIBC_VER} ]] && \
-		GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${UCLIBC_GCC_VER}-uclibc-patches-${UCLIBC_VER}.tar.bz2)"
-
-	# various gentoo patches
-	[[ -n ${PATCH_VER} ]] && \
-		GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${PATCH_GCC_VER}-patches-${PATCH_VER}.tar.bz2)"
+	[[ -n ${UCLIBC_VER} ]] && GCC_SRC_URI+=" $(gentoo_urls gcc-${UCLIBC_GCC_VER}-uclibc-patches-${UCLIBC_VER}.tar.bz2)"
+	[[ -n ${PATCH_VER} ]] && GCC_SRC_URI+=" $(gentoo_urls gcc-${PATCH_GCC_VER}-patches-${PATCH_VER}.tar.bz2)"
 
 	# strawberry pie, Cappuccino and a Gauloises (it's a good thing)
 	[[ -n ${PIE_VER} ]] && \
 		PIE_CORE=${PIE_CORE:-gcc-${PIE_GCC_VER}-piepatches-v${PIE_VER}.tar.bz2} && \
-		GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls ${PIE_CORE})"
+		GCC_SRC_URI+=" $(gentoo_urls ${PIE_CORE})"
 
 	# gcc minispec for the hardened gcc 4 compiler
-	[[ -n ${SPECS_VER} ]] && \
-		GCC_SRC_URI="${GCC_SRC_URI} $(gentoo_urls gcc-${SPECS_GCC_VER}-specs-${SPECS_VER}.tar.bz2)"
+	[[ -n ${SPECS_VER} ]] && GCC_SRC_URI+=" $(gentoo_urls gcc-${SPECS_GCC_VER}-specs-${SPECS_VER}.tar.bz2)"
 
 	# gcc bounds checking patch
 	if [[ -n ${HTB_VER} ]] ; then
 		local HTBFILE="bounds-checking-gcc-${HTB_GCC_VER}-${HTB_VER}.patch.bz2"
-		GCC_SRC_URI="${GCC_SRC_URI}
+		GCC_SRC_URI+="
 			boundschecking? (
 				mirror://sourceforge/boundschecking/${HTBFILE}
 				$(gentoo_urls ${HTBFILE})
 			)"
 	fi
 
-	# support for the D language
-	[[ -n ${D_VER} ]] && \
-		GCC_SRC_URI="${GCC_SRC_URI} d? ( mirror://sourceforge/dgcc/gdc-${D_VER}-src.tar.bz2 )"
+	[[ -n ${D_VER} ]] && GCC_SRC_URI+=" d? ( mirror://sourceforge/dgcc/gdc-${D_VER}-src.tar.bz2 )"
 
 	# >= gcc-4.3 uses ecj.jar and we only add gcj as a use flag under certain
 	# conditions
 	if [[ ${PN} != "kgcc64" && ${PN} != gcc-* ]] ; then
 		if tc_version_is_at_least "4.5" ; then
-			GCC_SRC_URI="${GCC_SRC_URI}
-			gcj? ( ftp://sourceware.org/pub/java/ecj-4.5.jar )"
+			GCC_SRC_URI+=" gcj? ( ftp://sourceware.org/pub/java/ecj-4.5.jar )"
 		elif tc_version_is_at_least "4.3" ; then
-			GCC_SRC_URI="${GCC_SRC_URI}
-			gcj? ( ftp://sourceware.org/pub/java/ecj-4.3.jar )"
+			GCC_SRC_URI+=" gcj? ( ftp://sourceware.org/pub/java/ecj-4.3.jar )"
 		fi
 	fi
 
@@ -378,24 +331,14 @@ hardened_gcc_works() {
 		[[ ${CTARGET} == *-freebsd* ]] && return 1
 
 		want_pie || return 1
-		tc_version_is_at_least 4.3.2 && use nopie && return 1
-		hardened_gcc_is_stable pie && return 0
-		if has "~$(tc-arch)" ${ACCEPT_KEYWORDS} ; then
-			hardened_gcc_check_unsupported pie && return 1
-			ewarn "Allowing pie-by-default for an unstable arch ($(tc-arch))"
-			return 0
-		fi
-		return 1
+		use_if_iuse nopie && return 1
+		hardened_gcc_is_stable pie
+		return $?
 	elif [[ $1 == "ssp" ]] ; then
-		[[ -n ${PP_VER} ]] || [[ -n ${SPECS_VER} ]] || return 1
-		tc_version_is_at_least 4.3.2 && use nossp && return 1
-		hardened_gcc_is_stable ssp && return 0
-		if has "~$(tc-arch)" ${ACCEPT_KEYWORDS} ; then
-			hardened_gcc_check_unsupported ssp && return 1
-			ewarn "Allowing ssp-by-default for an unstable arch ($(tc-arch))"
-			return 0
-		fi
-		return 1
+		[[ -n ${SPECS_VER} ]] || return 1
+		use_if_iuse nossp && return 1
+		hardened_gcc_is_stable ssp
+		return $?
 	else
 		# laziness ;)
 		hardened_gcc_works pie || return 1
@@ -405,21 +348,18 @@ hardened_gcc_works() {
 }
 
 hardened_gcc_is_stable() {
+	local tocheck
 	if [[ $1 == "pie" ]] ; then
-		# HARDENED_* variables are deprecated and here for compatibility
-		local tocheck="${HARDENED_PIE_WORKS} ${HARDENED_GCC_WORKS}"
 		if [[ ${CTARGET} == *-uclibc* ]] ; then
-			tocheck="${tocheck} ${PIE_UCLIBC_STABLE}"
+			tocheck=${PIE_UCLIBC_STABLE}
 		else
-			tocheck="${tocheck} ${PIE_GLIBC_STABLE}"
+			tocheck=${PIE_GLIBC_STABLE}
 		fi
 	elif [[ $1 == "ssp" ]] ; then
-		# ditto
-		local tocheck="${HARDENED_SSP_WORKS} ${HARDENED_GCC_WORKS}"
 		if [[ ${CTARGET} == *-uclibc* ]] ; then
-			tocheck="${tocheck} ${SSP_UCLIBC_STABLE}"
+			tocheck=${SSP_UCLIBC_STABLE}
 		else
-			tocheck="${tocheck} ${SSP_STABLE}"
+			tocheck=${SSP_STABLE}
 		fi
 	else
 		die "hardened_gcc_stable needs to be called with pie or ssp"
@@ -427,48 +367,6 @@ hardened_gcc_is_stable() {
 
 	has $(tc-arch) ${tocheck} && return 0
 	return 1
-}
-
-hardened_gcc_check_unsupported() {
-	local tocheck=""
-	# if a variable is unset, we assume that all archs are unsupported. since
-	# this function is never called if hardened_gcc_is_stable returns true,
-	# this shouldn't cause problems... however, allowing this logic to work
-	# even with the variables unset will break older ebuilds that dont use them.
-	if [[ $1 == "pie" ]] ; then
-		if [[ ${CTARGET} == *-uclibc* ]] ; then
-			[[ -z ${PIE_UCLIBC_UNSUPPORTED} ]] && return 0
-			tocheck="${tocheck} ${PIE_UCLIBC_UNSUPPORTED}"
-		else
-			[[ -z ${PIE_GLIBC_UNSUPPORTED} ]] && return 0
-			tocheck="${tocheck} ${PIE_GLIBC_UNSUPPORTED}"
-		fi
-	elif [[ $1 == "ssp" ]] ; then
-		if [[ ${CTARGET} == *-uclibc* ]] ; then
-			[[ -z ${SSP_UCLIBC_UNSUPPORTED} ]] && return 0
-			tocheck="${tocheck} ${SSP_UCLIBC_UNSUPPORTED}"
-		else
-			[[ -z ${SSP_UNSUPPORTED} ]] && return 0
-			tocheck="${tocheck} ${SSP_UNSUPPORTED}"
-		fi
-	else
-		die "hardened_gcc_check_unsupported needs to be called with pie or ssp"
-	fi
-
-	has $(tc-arch) ${tocheck} && return 0
-	return 1
-}
-
-has_libssp() {
-	[[ -e /$(get_libdir)/libssp.so ]] && return 0
-	return 1
-}
-
-want_libssp() {
-	[[ ${GCC_LIBSSP_SUPPORT} == "true" ]] || return 1
-	has_libssp || return 1
-	[[ -n ${PP_VER} ]] || return 1
-	return 0
 }
 
 _want_stuff() {
@@ -484,7 +382,6 @@ want_pie() {
 	tc_version_is_at_least 4.3.2 && return 1
 	_want_stuff PIE_VER !nopie
 }
-want_ssp() { _want_stuff PP_VER !nossp ; }
 
 want_minispecs() {
 	if tc_version_is_at_least 4.3.2 && use hardened ; then
@@ -494,7 +391,7 @@ want_minispecs() {
 			ewarn "You will not get hardened features if you have the vanilla USE-flag."
 		elif use nopie && use nossp ; then
 			ewarn "You will not get hardened features if you have the nopie and nossp USE-flag."
-		elif ! hardened_gcc_works pie && ! hardened_gcc_works ssp && ! use nopie ; then
+		elif ! hardened_gcc_works ; then
 			ewarn "Your $(tc-arch) arch is not supported."
 		else
 			return 0
@@ -503,39 +400,6 @@ want_minispecs() {
 		return 0
 	fi
 	return 1
-}
-
-# This function determines whether or not libc has been patched with stack
-# smashing protection support.
-libc_has_ssp() {
-	[[ ${ROOT} != "/" ]] && return 0
-
-	# lib hacks taken from sandbox configure
-	echo 'int main(){}' > "${T}"/libctest.c
-	LC_ALL=C gcc "${T}"/libctest.c -lc -o libctest -Wl,-verbose &> "${T}"/libctest.log || return 1
-	local libc_file=$(awk '/attempt to open/ { if (($4 ~ /\/libc\.so/) && ($5 == "succeeded")) LIBC = $4; }; END {print LIBC}' "${T}"/libctest.log)
-
-	[[ -z ${libc_file} ]] && die "Unable to find a libc !?"
-
-	# Check for gcc-4.x style ssp support
-	if	[[ -n $(readelf -s "${libc_file}" 2>/dev/null | \
-				grep 'FUNC.*GLOBAL.*__stack_chk_fail') ]]
-	then
-		return 0
-	else
-		# Check for gcc-3.x style ssp support
-		if	[[ -n $(readelf -s "${libc_file}" 2>/dev/null | \
-					grep 'OBJECT.*GLOBAL.*__guard') ]] && \
-			[[ -n $(readelf -s "${libc_file}" 2>/dev/null | \
-					grep 'FUNC.*GLOBAL.*__stack_smash_handler') ]]
-		then
-			return 0
-		elif is_crosscompile ; then
-			die "'${libc_file}' was detected w/out ssp, that sucks (a lot)"
-		else
-			return 1
-		fi
-	fi
 }
 
 # This is to make sure we don't accidentally try to enable support for a
@@ -553,31 +417,32 @@ gcc-lang-supported() {
 
 #---->> specs + env.d logic <<----
 
-# defaults to enable for all hardened toolchains
-gcc_common_hard="-DEFAULT_RELRO -DEFAULT_BIND_NOW"
-
 # configure to build with the hardened GCC specs as the default
 make_gcc_hard() {
+	# defaults to enable for all hardened toolchains
+	local gcc_hard_flags="-DEFAULT_RELRO -DEFAULT_BIND_NOW"
+
 	if hardened_gcc_works ; then
 		einfo "Updating gcc to use automatic PIE + SSP building ..."
-		sed -e "s|^HARD_CFLAGS = |HARD_CFLAGS = -DEFAULT_PIE_SSP ${gcc_common_hard} |" \
-			-i "${S}"/gcc/Makefile.in || die "Failed to update gcc!"
+		gcc_hard_flags+=" -DEFAULT_PIE_SSP"
 	elif hardened_gcc_works pie ; then
 		einfo "Updating gcc to use automatic PIE building ..."
 		ewarn "SSP has not been enabled by default"
-		sed -e "s|^HARD_CFLAGS = |HARD_CFLAGS = -DEFAULT_PIE ${gcc_common_hard} |" \
-			-i "${S}"/gcc/Makefile.in || die "Failed to update gcc!"
+		gcc_hard_flags+=" -DEFAULT_PIE"
 	elif hardened_gcc_works ssp ; then
 		einfo "Updating gcc to use automatic SSP building ..."
 		ewarn "PIE has not been enabled by default"
-		sed -e "s|^HARD_CFLAGS = |HARD_CFLAGS = -DEFAULT_SSP ${gcc_common_hard} |" \
-			-i "${S}"/gcc/Makefile.in || die "Failed to update gcc!"
+		gcc_hard_flags+=" -DEFAULT_SSP"
 	else
 		# do nothing if hardened isnt supported, but dont die either
 		ewarn "hardened is not supported for this arch in this gcc version"
 		ebeep
 		return 0
 	fi
+
+	sed -i \
+		-e "/^HARD_CFLAGS = /s|=|= ${gcc_hard_flags} |" \
+		"${S}"/gcc/Makefile.in || die
 
 	# rebrand to make bug reports easier
 	BRANDING_GCC_PKGVERSION=${BRANDING_GCC_PKGVERSION/Gentoo/Gentoo Hardened}
@@ -708,8 +573,6 @@ toolchain_pkg_setup() {
 		use_if_iuse gcj && ewarn 'GCJ requires a C++ compiler, disabled due to USE="-cxx"'
 	fi
 
-	want_libssp && libc_has_ssp && \
-		die "libssp cannot be used with a glibc that has been patched to provide ssp symbols"
 	want_minispecs
 
 	unset LANGUAGES #265283
@@ -877,14 +740,10 @@ toolchain_src_unpack() {
 		fi
 	fi
 	do_gcc_HTB_patches
-	do_gcc_SSP_patches
 	do_gcc_PIE_patches
 	epatch_user
 
-	if use hardened ; then
-		einfo "updating configuration to build hardened GCC"
-		make_gcc_hard || die "failed to make gcc hard"
-	fi
+	use hardened && make_gcc_hard
 
 	if is_libffi ; then
 		# move the libffi target out of gcj and into all
@@ -1008,7 +867,7 @@ gcc-compiler-configure() {
 			confgcc+=" --disable-libmudflap"
 		fi
 
-		if want_libssp ; then
+		if use_if_iuse libssp ; then
 			confgcc+=" --enable-libssp"
 		else
 			export gcc_cv_libc_provides_ssp=yes
@@ -1126,45 +985,34 @@ gcc-compiler-configure() {
 			;;
 	esac
 
-	GCC_LANG="c"
-	is_cxx && GCC_LANG="${GCC_LANG},c++"
-	is_d   && GCC_LANG="${GCC_LANG},d"
-	is_gcj && GCC_LANG="${GCC_LANG},java"
-	is_go  && GCC_LANG="${GCC_LANG},go"
+	local GCC_LANG="c"
+	is_cxx && GCC_LANG+=",c++"
+	is_d   && GCC_LANG+=",d"
+	is_gcj && GCC_LANG+=",java"
+	is_go  && GCC_LANG+=",go"
 	if is_objc || is_objcxx ; then
-		GCC_LANG="${GCC_LANG},objc"
+		GCC_LANG+=",objc"
 		if tc_version_is_at_least "4.0" ; then
 			use objc-gc && confgcc+=" --enable-objc-gc"
 		fi
-		is_objcxx && GCC_LANG="${GCC_LANG},obj-c++"
+		is_objcxx && GCC_LANG+=",obj-c++"
 	fi
-	is_treelang && GCC_LANG="${GCC_LANG},treelang"
+	is_treelang && GCC_LANG+=",treelang"
 
 	# fortran support just got sillier! the lang value can be f77 for
 	# fortran77, f95 for fortran95, or just plain old fortran for the
 	# currently supported standard depending on gcc version.
-	is_fortran && GCC_LANG="${GCC_LANG},fortran"
-	is_f77 && GCC_LANG="${GCC_LANG},f77"
-	is_f95 && GCC_LANG="${GCC_LANG},f95"
+	is_fortran && GCC_LANG+=",fortran"
+	is_f77 && GCC_LANG+=",f77"
+	is_f95 && GCC_LANG+=",f95"
 
 	# We do NOT want 'ADA support' in here!
-	# is_ada && GCC_LANG="${GCC_LANG},ada"
+	# is_ada && GCC_LANG+=",ada"
 
 	einfo "configuring for GCC_LANG: ${GCC_LANG}"
+	confgcc+=" --enable-languages=${GCC_LANG}"
 }
 
-# Other than the variables described for gcc_setup_variables, the following
-# will alter tha behavior of gcc_do_configure:
-#
-#	CTARGET
-#	CBUILD
-#			Enable building for a target that differs from CHOST
-#
-#	GCC_LANG
-#			Enable support for ${GCC_LANG} languages. defaults to just "c"
-#
-# Travis Tilley <lv@gentoo.org> (04 Sep 2004)
-#
 gcc_do_configure() {
 	local confgcc
 
@@ -1256,11 +1104,6 @@ gcc_do_configure() {
 		--enable-secureplt"
 
 	gcc-compiler-configure || die
-
-	# if not specified, assume we are building for a target that only
-	# requires C support
-	GCC_LANG=${GCC_LANG:-c}
-	confgcc+=" --enable-languages=${GCC_LANG}"
 
 	if is_crosscompile ; then
 		# When building a stage1 cross-compiler (just C compiler), we have to
@@ -1833,7 +1676,6 @@ gcc_quick_unpack() {
 	export PATCH_GCC_VER=${PATCH_GCC_VER:-${GCC_RELEASE_VER}}
 	export UCLIBC_GCC_VER=${UCLIBC_GCC_VER:-${PATCH_GCC_VER}}
 	export PIE_GCC_VER=${PIE_GCC_VER:-${GCC_RELEASE_VER}}
-	export PP_GCC_VER=${PP_GCC_VER:-${GCC_RELEASE_VER}}
 	export HTB_GCC_VER=${HTB_GCC_VER:-${GCC_RELEASE_VER}}
 	export SPECS_GCC_VER=${SPECS_GCC_VER:-${GCC_RELEASE_VER}}
 
@@ -1874,17 +1716,6 @@ gcc_quick_unpack() {
 	[[ -n ${UCLIBC_VER} ]] && \
 		unpack gcc-${UCLIBC_GCC_VER}-uclibc-patches-${UCLIBC_VER}.tar.bz2
 
-	if want_ssp ; then
-		if [[ -n ${PP_FVER} ]] ; then
-			# The gcc 3.4 propolice versions are meant to be unpacked to ${S}
-			pushd "${S}" > /dev/null
-			unpack protector-${PP_FVER}.tar.gz
-			popd > /dev/null
-		else
-			unpack gcc-${PP_GCC_VER}-ssp-${PP_VER}.tar.bz2
-		fi
-	fi
-
 	if want_pie ; then
 		if [[ -n ${PIE_CORE} ]] ; then
 			unpack ${PIE_CORE}
@@ -1907,90 +1738,6 @@ do_gcc_HTB_patches() {
 	# modify the bounds checking patch with a regression patch
 	epatch "${WORKDIR}/bounds-checking-gcc-${HTB_GCC_VER}-${HTB_VER}.patch"
 	BRANDING_GCC_PKGVERSION="${BRANDING_GCC_PKGVERSION}, HTB-${HTB_GCC_VER}-${HTB_VER}"
-}
-
-# patch in ProPolice Stack Smashing protection
-do_gcc_SSP_patches() {
-	# PARISC has no love ... it's our stack :(
-	if [[ $(tc-arch) == "hppa" ]] || ! want_ssp ; then
-		return 0
-	fi
-
-	local ssppatch
-	local sspdocs
-
-	if [[ -n ${PP_FVER} ]] ; then
-		# Etoh keeps changing where files are and what the patch is named
-		if tc_version_is_at_least 3.4.1 ; then
-			# >3.4.1 uses version in patch name, and also includes docs
-			ssppatch="${S}/gcc_${PP_VER}.dif"
-			sspdocs="yes"
-		elif tc_version_is_at_least 3.4.0 ; then
-			# >3.4 put files where they belong and 3_4 uses old patch name
-			ssppatch="${S}/protector.dif"
-			sspdocs="no"
-		elif tc_version_is_at_least 3.2.3 ; then
-			# earlier versions have no directory structure or docs
-			mv "${S}"/protector.{c,h} "${S}"/gcc
-			ssppatch="${S}/protector.dif"
-			sspdocs="no"
-		fi
-	else
-		# Just start packaging the damn thing ourselves
-		mv "${WORKDIR}"/ssp/protector.{c,h} "${S}"/gcc/
-		ssppatch=${WORKDIR}/ssp/gcc-${PP_GCC_VER}-ssp.patch
-		# allow boundschecking and ssp to get along
-		(want_boundschecking && [[ -e ${WORKDIR}/ssp/htb-ssp.patch ]]) \
-			&& patch -s "${ssppatch}" "${WORKDIR}"/ssp/htb-ssp.patch
-	fi
-
-	[[ -z ${ssppatch} ]] && die "Sorry, SSP is not supported in this version"
-	epatch ${ssppatch}
-
-	if [[ ${PN} == "gcc" && ${sspdocs} == "no" ]] ; then
-		epatch "${GCC_FILESDIR}"/pro-police-docs.patch
-	fi
-
-	# Don't build crtbegin/end with ssp
-	sed -e 's|^CRTSTUFF_CFLAGS = |CRTSTUFF_CFLAGS = -fno-stack-protector |'\
-		-i gcc/Makefile.in || die "Failed to update crtstuff!"
-
-	# if gcc in a stage3 defaults to ssp, is version 3.4.0 and a stage1 is built
-	# the build fails building timevar.o w/:
-	# cc1: stack smashing attack in function ix86_split_to_parts()
-	if use build && tc_version_is_at_least 3.4.0 ; then
-		if gcc -dumpspecs | grep -q "fno-stack-protector:" ; then
-			epatch "${GCC_FILESDIR}"/3.4.0/gcc-3.4.0-cc1-no-stack-protector.patch
-		fi
-	fi
-
-	BRANDING_GCC_PKGVERSION="${BRANDING_GCC_PKGVERSION}, ssp-${PP_FVER:-${PP_GCC_VER}-${PP_VER}}"
-	if want_libssp ; then
-		update_gcc_for_libssp
-	else
-		update_gcc_for_libc_ssp
-	fi
-
-	# Don't build libgcc with ssp
-	sed -e 's|^\(LIBGCC2_CFLAGS.*\)$|\1 -fno-stack-protector|' \
-		-i gcc/Makefile.in || die "Failed to update gcc!"
-}
-
-# If glibc or uclibc has been patched to provide the necessary symbols itself,
-# then lets use those for SSP instead of libgcc.
-update_gcc_for_libc_ssp() {
-	if libc_has_ssp ; then
-		einfo "Updating gcc to use SSP from libc ..."
-		sed -e 's|^\(LIBGCC2_CFLAGS.*\)$|\1 -D_LIBC_PROVIDES_SSP_|' \
-			-i "${S}"/gcc/Makefile.in || die "Failed to update gcc!"
-	fi
-}
-
-# a split out non-libc non-libgcc ssp requires additional spec logic changes
-update_gcc_for_libssp() {
-	einfo "Updating gcc to use SSP from libssp..."
-	sed -e 's|^\(INTERNAL_CFLAGS.*\)$|\1 -D_LIBSSP_PROVIDES_SSP_|' \
-		-i "${S}"/gcc/Makefile.in || die "Failed to update gcc!"
 }
 
 # do various updates to PIE logic
