@@ -86,6 +86,7 @@ pkg_setup() {
 src_prepare() {
 	epatch "${FILESDIR}/remove-toolset-1.47.0.patch"
 	epatch "${FILESDIR}/${PN}-1.47.0-exceptions.patch"
+	epatch "${FILESDIR}/${P}-gcc-4.7-threads.patch"
 }
 
 src_configure() {
