@@ -13,9 +13,9 @@ HOMEPAGE="http://www.mendeley.com/"
 
 # Version 1.0.1 downloaded from mendeley.com is NOT version 1.0.1 but version 1.0!
 # SRC_URI="${HOMEPAGE}/downloads/linux/${P}-${LNXARCH}.tar.bz2"
-SRC_URI_BASE="https://s3.amazonaws.com/mendeley-desktop-download/linux/${P}-"
-SRC_URI_x86="${SRC_URI_BASE}linux-i486.tar.bz2?u=122622&x=${P}-linux-i486.tar.bz2 -> ${P}-linux-i486.tar.bz2"
-SRC_URI_amd64="${SRC_URI_BASE}linux-x86_64.tar.bz2?u=122622&x=${P}-linux-x86_64.tar.bz2 -> ${P}-linux-x86_64.tar.bz2"
+SRC_URI_BASE="http://download.mendeley.com/linux/${P}-"
+SRC_URI_x86="${SRC_URI_BASE}linux-i486.tar.bz2 -> ${P}-linux-i486.tar.bz2"
+SRC_URI_amd64="${SRC_URI_BASE}linux-x86_64.tar.bz2 -> ${P}-linux-x86_64.tar.bz2"
 SRC_URI="x86? ( ${SRC_URI_x86} )
 	amd64? ( ${SRC_URI_amd64} )"
 
@@ -72,6 +72,10 @@ src_install() {
 	mv "bin" "${D}${MENDELEY_INSTALL_DIR}"
 	mv "lib" "${D}${MENDELEY_INSTALL_DIR}"
 	mv "share/${PN}" "${D}${MENDELEY_INSTALL_DIR}/share"
+	# We have to create /opt explicitly or we get a warning. dodir seems like
+	# the right thing to do (since app-text/acroread does it, too) 
+	#   - pimiddy
+	dodir /opt/bin || die "Creating directory failed."
 	dosym "${MENDELEY_INSTALL_DIR}/bin/${PN}" "/opt/bin/${PN}"
 }
 
