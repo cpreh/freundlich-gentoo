@@ -3,4 +3,4 @@
 =dev-cpp/fcppt-9999
 =games-emulation/pcsxr-9999
 =games-strategy/hedgewars-9999
-~sys-devel/gcc-4.7.0_alpha20111231
+~sys-devel/gcc-4.7.0_alpha20120107
