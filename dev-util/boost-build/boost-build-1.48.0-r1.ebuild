@@ -1,9 +1,8 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/boost-build/boost-build-1.47.0.ebuild,v 1.1 2011/09/26 11:01:51 hwoarang Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/boost-build/boost-build-1.48.0.ebuild,v 1.1 2012/01/08 10:43:10 hwoarang Exp $
 
 EAPI="2"
-RESTRICt="mirror"
 
 inherit eutils flag-o-matic toolchain-funcs versionator
 
@@ -53,7 +52,7 @@ src_prepare() {
 }
 
 src_compile() {
-	cd "${S}"/engine
+	cd engine
 	local toolset
 
 	if [[ ${CHOST} == *-darwin* ]] ; then
