@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.5-r1.ebuild,v 1.6 2011/11/09 06:56:24 mr_bones_ Exp $
 
+RESTRICT="mirror"
 EAPI=4
 inherit eutils
 
@@ -40,20 +41,12 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 	xml? ( dev-libs/libxml2 )"
 DEPEND="${RDEPEND}
 	dev-util/pkgconfig
-	=sys-devel/automake-1.10*
 	python? ( app-admin/eselect-boost )
 	doc? ( app-doc/doxygen )"
 
 S=${WORKDIR}/${MY_P}
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-tinyxml.patch
-	epatch "${FILESDIR}"/${P}-fix-python-detection.patch
-	epatch "${FILESDIR}"/${P}-fix-string-includes.patch
-
-	# build with newer zlib (bug #389863)
-	sed -i -e '74i#define OF(x) x' cegui/src/minizip/unzip.h || die
-	sed -i -e '125i#define OF(x) x' cegui/src/minizip/ioapi.h || die
 	if use examples ; then
 		cp -r Samples Samples.clean
 		rm -f $(find Samples.clean -name 'Makefile*')
@@ -65,8 +58,6 @@ src_configure() {
 	local pythonoptions=""
 	use python && \
 		pythonoptions="--with-boost-python=$(eselect boost show | tail -1 | sed s/\ \ boost-//g)"
-
-	./bootstrap || die "bootstrap failed"
 
 	econf \
 		--disable-ogre-renderer \
