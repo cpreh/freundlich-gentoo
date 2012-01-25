@@ -1,10 +1,8 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.5-r1.ebuild,v 1.6 2011/11/09 06:56:24 mr_bones_ Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.6.ebuild,v 1.1 2012/01/25 01:01:51 tristan Exp $
 
-RESTRICT="mirror"
 EAPI=4
-inherit eutils
 
 MY_P=CEGUI-${PV}
 MY_D=CEGUI-DOCS-${PV}
@@ -15,9 +13,9 @@ SRC_URI="mirror://sourceforge/crayzedsgui/${MY_P}.tar.gz
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 -ppc x86"
+KEYWORDS="~amd64 -ppc ~x86"
 IUSE="bidi debug devil doc examples expat gtk irrlicht lua opengl pcre python static-libs tinyxml truetype xerces-c xml zip"
-REQUIRED_USE="|| ( xml tinyxml )" # bug 362223
+REQUIRED_USE="|| ( expat tinyxml xerces-c xml )" # bug 362223
 
 RDEPEND="bidi? ( dev-libs/fribidi )
 	devil? ( media-libs/devil )
@@ -80,9 +78,12 @@ src_configure() {
 		$(use_enable xml libxml) \
 		$(use_enable zip minizip-resource-provider) \
 		--enable-null-renderer \
+		--enable-stb \
 		--enable-tga \
 		--disable-corona \
 		--disable-dependency-tracking \
+		--disable-freeimage \
+		--disable-rapidxml \
 		--disable-samples \
 		--disable-silly \
 		$(use_with gtk gtk2) \
