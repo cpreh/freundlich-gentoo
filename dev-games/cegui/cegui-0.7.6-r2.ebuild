@@ -4,6 +4,8 @@
 
 EAPI=4
 
+inherit autotools eutils
+
 MY_P=CEGUI-${PV}
 MY_D=CEGUI-DOCS-${PV}
 DESCRIPTION="Crazy Eddie's GUI System"
@@ -45,9 +47,17 @@ DEPEND="${RDEPEND}
 S=${WORKDIR}/${MY_P}
 
 src_prepare() {
+	if use python ; then
+		epatch "${FILESDIR}"/"${P}"-fix-python-includedir.patch
+	fi
+
 	if use examples ; then
 		cp -r Samples Samples.clean
 		rm -f $(find Samples.clean -name 'Makefile*')
+	fi
+
+	if use python ; then
+		eautoreconf
 	fi
 }
 
