@@ -3,4 +3,4 @@
 ~dev-libs/boost-1.49.0_beta1
 ~dev-util/boost-build-1.49.0_beta1
 =games-emulation/pcsxr-9999
-~sys-devel/gcc-4.7.0_alpha20120121
+~sys-devel/gcc-4.7.0_alpha20120128
