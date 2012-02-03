@@ -3,8 +3,9 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.6.ebuild,v 1.1 2012/01/25 01:01:51 tristan Exp $
 
 EAPI=4
+PYTHON_DEPEND="2"
 
-inherit autotools eutils
+inherit autotools eutils python
 
 MY_P=CEGUI-${PV}
 MY_D=CEGUI-DOCS-${PV}
@@ -35,7 +36,7 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 		media-libs/glew
 	)
 	pcre? ( dev-libs/libpcre )
-	python? ( dev-libs/boost[python] )
+	python? ( >=dev-libs/boost-1.48.0[python] )
 	tinyxml? ( dev-libs/tinyxml )
 	xerces-c? ( dev-libs/xerces-c )
 	xml? ( dev-libs/libxml2 )"
@@ -44,7 +45,14 @@ DEPEND="${RDEPEND}
 	python? ( app-admin/eselect-boost )
 	doc? ( app-doc/doxygen )"
 
-S=${WORKDIR}/${MY_P}
+S="${WORKDIR}/${MY_P}"
+
+pkg_setup() {
+	if use python ; then
+		python_set_active_version 2
+		python_pkg_setup
+	fi
+}
 
 src_prepare() {
 	if use python ; then
@@ -65,7 +73,7 @@ src_configure() {
 	# ogre-1.6.5 needs older cegui (bug #387103)
 	local pythonoptions=""
 	use python && \
-		pythonoptions="--with-boost-python=$(eselect boost show | tail -1 | sed s/\ \ boost-//g)"
+		pythonoptions="--with-boost-python=${PYTHON_ABI}-$(eselect boost show | tail -1 | sed s/\ \ boost-//g)"
 
 	econf \
 		--disable-ogre-renderer \
