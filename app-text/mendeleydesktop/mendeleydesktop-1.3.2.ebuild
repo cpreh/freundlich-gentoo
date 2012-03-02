@@ -36,7 +36,7 @@ src_unpack() {
 	unpack "${A}"
 	# Ok, this is sort of a hack. mendeley comes in two versions which
 	# create two different directories when unpacked. However, the archive(s)
-	# should contain exactly _one_ directory. 
+	# should contain exactly _one_ directory.
 	# We make sure of that first by finding all direct subdirectories of
 	# $WORKDIR and counting them. find outputs the $WORKDIR first, so there's a
 	# '2' instead of a '1'
@@ -73,7 +73,7 @@ src_install() {
 	mv "lib" "${D}${MENDELEY_INSTALL_DIR}"
 	mv "share/${PN}" "${D}${MENDELEY_INSTALL_DIR}/share"
 	# We have to create /opt explicitly or we get a warning. dodir seems like
-	# the right thing to do (since app-text/acroread does it, too) 
+	# the right thing to do (since app-text/acroread does it, too)
 	#   - pimiddy
 	dodir /opt/bin || die "Creating directory failed."
 	dosym "${MENDELEY_INSTALL_DIR}/bin/${PN}" "/opt/bin/${PN}"
