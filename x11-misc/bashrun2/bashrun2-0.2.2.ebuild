@@ -17,10 +17,7 @@ IUSE=""
 
 DEPEND="x11-libs/libX11
 		x11-proto/xproto
-		sys-apps/sed
 		>=app-shells/bash-4.1
-		sys-apps/grep
 		sys-libs/ncurses
-		sys-process/procps
 		x11-terms/xterm"
 RDEPEND="${DEPEND}"
