@@ -1,8 +1,8 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.6.ebuild,v 1.1 2012/01/25 01:01:51 tristan Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-games/cegui/cegui-0.7.6-r1.ebuild,v 1.1 2012/03/03 21:25:22 vapier Exp $
 
-EAPI=4
+EAPI="4"
 PYTHON_DEPEND="2"
 
 inherit autotools eutils python
@@ -17,7 +17,7 @@ SRC_URI="mirror://sourceforge/crayzedsgui/${MY_P}.tar.gz
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 -ppc ~x86"
-IUSE="bidi debug devil doc examples expat gtk irrlicht lua opengl pcre python static-libs tinyxml truetype xerces-c xml zip"
+IUSE="bidi debug devil doc examples expat gtk irrlicht lua ogre opengl pcre python static-libs tinyxml truetype xerces-c xml zip"
 REQUIRED_USE="|| ( expat tinyxml xerces-c xml )" # bug 362223
 
 RDEPEND="bidi? ( dev-libs/fribidi )
@@ -29,6 +29,7 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 		dev-lang/lua
 		dev-lua/toluapp
 	)
+	ogre? ( >=dev-games/ogre-1.7 )
 	opengl? (
 		virtual/opengl
 		virtual/glu
@@ -39,7 +40,8 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 	python? ( >=dev-libs/boost-1.48.0[python] )
 	tinyxml? ( dev-libs/tinyxml )
 	xerces-c? ( dev-libs/xerces-c )
-	xml? ( dev-libs/libxml2 )"
+	xml? ( dev-libs/libxml2 )
+	zip? ( sys-libs/zlib[minizip] )"
 DEPEND="${RDEPEND}
 	dev-util/pkgconfig
 	python? ( app-admin/eselect-boost )
@@ -59,6 +61,20 @@ src_prepare() {
 		epatch "${FILESDIR}"/"${P}"-fix-python-includedir.patch
 	fi
 
+	# use minizip from zlib rather than local code
+	if use zip ; then
+		sed -i \
+			-e '/CEGUI_BUILD_MINIZIP_RESOURCE_PROVIDER_TRUE/{
+					s:minizip/ioapi.cpp minizip/unzip.cpp::;
+					s:libCEGUIBase@cegui_bsfx@_la-ioapi.lo::;
+					s:libCEGUIBase@cegui_bsfx@_la-unzip.lo::
+				}' \
+			-e '/^ZLIB_LIBS/s:=.*:= -lminizip:' \
+			cegui/src/Makefile.in || die
+	fi
+
+	rm -rf cegui/src/minizip
+
 	if use examples ; then
 		cp -r Samples Samples.clean
 		rm -f $(find Samples.clean -name 'Makefile*')
@@ -76,7 +92,6 @@ src_configure() {
 		pythonoptions="--with-boost-python=${PYTHON_ABI}-$(eselect boost show | tail -1 | sed s/\ \ boost-//g)"
 
 	econf \
-		--disable-ogre-renderer \
 		$(use_enable bidi bidirectional-text) \
 		$(use_enable debug) \
 		$(use_enable devil) \
@@ -87,6 +102,7 @@ src_configure() {
 		$(use_enable lua lua-module) \
 		$(use_enable lua toluacegui) \
 		--enable-external-toluapp \
+		$(use_enable ogre ogre-renderer) \
 		$(use_enable opengl opengl-renderer) \
 		--enable-external-glew \
 		$(use_enable pcre) \
@@ -112,7 +128,7 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die
+	default
 
 	# remove .la files
 	use static-libs || rm -f "${D}"/usr/*/*.la
