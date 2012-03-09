@@ -15,8 +15,8 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+audio audio_null +camera cegui +charconv +config +console +devil doc
-examples +font +fontbitmap +fonttext +freetype +iconv +image +image2d +image3d
-+input +line_drawer modelmd3 modelobj +openal opencl +opengl +parse +plugin +png
+examples +font +fontbitmap +fonttext +freetype +image +image2d +image3d +input
++line_drawer modelmd3 modelobj +openal opencl +opengl +parse +plugin +png
 projectile +renderer +rendereropengl +shader +sprite +systems test +texture
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
@@ -31,14 +31,14 @@ RDEPEND="
 			>=dev-games/cegui-0.7.5[truetype,xml]
 		)
 	)
+	charconv? (
+		virtual/libiconv
+	)
 	devil? (
 		media-libs/devil
 	)
 	freetype? (
 		media-libs/freetype
-	)
-	iconv? (
-		virtual/libiconv
 	)
 	openal? (
 		media-libs/openal
@@ -101,14 +101,12 @@ pkg_setup() {
 	check_deps audio_null audio
 	check_deps camera input renderer
 	check_deps cegui charconv image image2d input renderer viewport
-	check_deps charconv plugin
 	check_deps console fonttext input
 	check_deps devil image2d
 	check_deps font plugin
 	check_deps fontbitmap parse
 	check_deps fonttext sprite texture
 	check_deps freetype charconv font image2d
-	check_deps iconv charconv
 	check_deps image2d image plugin
 	check_deps image2d image
 	check_deps input plugin
@@ -146,6 +144,7 @@ src_configure() {
 		-D INSTALL_BINARY_DIR="${GAMES_BINDIR}"
 		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
 		-D INSTALL_DOC_DIR_BASE="/usr/share/doc"
+		-D CHARCONV_BACKEND="iconv"
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
@@ -160,7 +159,6 @@ src_configure() {
 		$(cmake-utils_use_enable fontbitmap)
 		$(cmake-utils_use_enable fonttext)
 		$(cmake-utils_use_enable freetype)
-		$(cmake-utils_use_enable iconv)
 		$(cmake-utils_use_enable image)
 		$(cmake-utils_use_enable image2d)
 		$(cmake-utils_use_enable image3d)
