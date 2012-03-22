@@ -2,10 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.6.2.ebuild,v 1.2 2011/11/09 19:22:57 vapier Exp $
 
-
+RESTRICT="mirror"
 # Hardened gcc 4 stuff
 # arch/libc configurations known to be stable with {PIE,SSP}-by-default
-I_PROMISE_TO_SUPPLY_PATCHES_WITH_BUGS="1"
 PIE_GLIBC_STABLE="x86 amd64 ppc ppc64 arm ia64"
 PIE_UCLIBC_STABLE="x86 arm amd64 ppc ppc64"
 SSP_STABLE="amd64 x86 ppc ppc64 arm"
