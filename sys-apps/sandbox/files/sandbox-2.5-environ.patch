@@ -1,0 +1,13 @@
+--- src/environ.c	2010-08-16 04:02:32.000000000 +0200
++++ src/environ.c	2012-03-22 17:56:58.730641365 +0100
+@@ -318,8 +318,8 @@
+ 	sb_setenv(&new_environ, ENV_SANDBOX_ACTIVE, SANDBOX_ACTIVE);
+ 
+ 	/* Now add the rest */
+-	env_ptr = environ;
+-	while (NULL != *env_ptr) {
++	env_ptr = __environ;
++	while (NULL != env_ptr && NULL != *env_ptr) {
+ 		if ((1 == have_ld_preload) &&
+ 		    (strstr(*env_ptr, LD_PRELOAD_EQ) == *env_ptr))
+ 			/* If LD_PRELOAD was set, and this is it in the original
