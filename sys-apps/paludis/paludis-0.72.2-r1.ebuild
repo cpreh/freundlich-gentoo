@@ -4,7 +4,7 @@
 
 EAPI="3"
 
-inherit bash-completion eutils
+inherit bash-completion eutils autotools
 
 DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.pioto.org/"
@@ -75,6 +75,13 @@ pkg_setup() {
 		eerror "'cave' to upgrade."
 		die "Can't use 'paludis' to upgrade Paludis"
 	fi
+}
+
+src_prepare() {
+	epatch "${FILESDIR}"/${P}-gcc47-fixes-upstream.patch
+	epatch "${FILESDIR}"/${P}-gcc47-fixes-own.patch
+
+	eautoreconf
 }
 
 src_configure() {
