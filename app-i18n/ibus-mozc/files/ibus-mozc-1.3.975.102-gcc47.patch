@@ -1,0 +1,19 @@
+--- storage/lru_cache.h.old	2012-03-24 13:30:11.236554327 +0100
++++ storage/lru_cache.h	2012-03-24 13:30:24.311151048 +0100
+@@ -33,6 +33,7 @@
+ #include <map>
+ #include <list>
+ #include <string>
++#include <cstring>
+ 
+ #include "base/base.h"
+ 
+@@ -280,7 +281,7 @@
+     block_count_(0),
+     block_capacity_(0),
+     max_elements_(max_elements) {
+-  memset(blocks_, 0, sizeof(blocks_));
++  std::memset(blocks_, 0, sizeof(blocks_));
+   table_ = new Table;
+   CHECK(table_);
+   if (max_elements_ <= 128) {
