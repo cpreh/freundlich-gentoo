@@ -1,0 +1,42 @@
+--- ipc/chromium/src/base/file_util.cc	2012-03-24 14:15:32.430707918 +0100
++++ ipc/chromium/src/base/file_util.cc	2012-03-24 14:18:11.996740563 +0100
+@@ -8,7 +8,7 @@
+ #include <io.h>
+ #endif
+ #include <stdio.h>
+-#if defined(ANDROID)
++#if defined(ANDROID) || defined(OS_POSIX)
+ #include <unistd.h>
+ #endif
+ 
+--- ipc/chromium/src/base/message_pump_libevent.cc	2012-03-24 14:23:34.717694789 +0100
++++ ipc/chromium/src/base/message_pump_libevent.cc	2012-03-24 14:24:25.724105327 +0100
+@@ -6,6 +6,7 @@
+ 
+ #include <errno.h>
+ #include <fcntl.h>
++#include <unistd.h>
+ 
+ #include "eintr_wrapper.h"
+ #include "base/logging.h"
+--- ipc/chromium/src/base/file_util_linux.cc	2012-03-24 14:26:50.920602544 +0100
++++ ipc/chromium/src/base/file_util_linux.cc	2012-03-24 14:27:05.933146929 +0100
+@@ -5,6 +5,7 @@
+ #include "base/file_util.h"
+ 
+ #include <fcntl.h>
++#include <unistd.h>
+ 
+ #include <string>
+ #include <vector>
+--- ipc/chromium/src/base/time_posix.cc	2012-03-24 14:31:54.697178276 +0100
++++ ipc/chromium/src/base/time_posix.cc	2012-03-24 14:35:20.718781907 +0100
+@@ -164,7 +164,7 @@
+   // With numer and denom = 1 (the expected case), the 64-bit absolute time
+   // reported in nanoseconds is enough to last nearly 585 years.
+ 
+-#elif defined(__OpenBSD__) || defined(OS_POSIX) && \
++#elif defined(__OpenBSD__) || defined(OS_POSIX) || \
+       defined(_POSIX_MONOTONIC_CLOCK) && _POSIX_MONOTONIC_CLOCK >= 0
+ 
+   struct timespec ts;
