@@ -1,0 +1,25 @@
+--- dix/getevents.c	2012-03-25 17:56:57.567538524 +0200
++++ dix/getevents.c	2012-03-25 17:57:52.934760799 +0200
+@@ -1310,17 +1310,18 @@
+ 
+         transformAbsolute(pDev, &mask);
+         clipAbsolute(pDev, &mask);
++        if ((flags & POINTER_NORAW) == 0)
++            set_raw_valuators(raw, &mask, raw->valuators.data);
+     } else {
+         if (flags & POINTER_ACCELERATE)
+             accelPointer(pDev, &mask, ms);
++        if ((flags & POINTER_NORAW) == 0)
++            set_raw_valuators(raw, &mask, raw->valuators.data);
++
+         moveRelative(pDev, &mask);
+     }
+ 
+     /* valuators are in device coordinate system in absolute coordinates */
+-
+-    if ((flags & POINTER_NORAW) == 0)
+-        set_raw_valuators(raw, &mask, raw->valuators.data);
+-
+     scale_to_desktop(pDev, &mask, &devx, &devy, &screenx, &screeny);
+     scr = positionSprite(pDev, (flags & POINTER_ABSOLUTE) ? Absolute : Relative,
+                          &mask, &devx, &devy, &screenx, &screeny);
