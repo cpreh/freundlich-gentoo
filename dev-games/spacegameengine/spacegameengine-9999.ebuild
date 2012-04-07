@@ -14,9 +14,9 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+audio audio_null +camera cegui +charconv +config +console +devil doc
-examples +font +fontbitmap +fonttext +freetype +image +image2d +image3d +input
-+line_drawer modelmd3 modelobj +openal opencl +opengl +parse +plugin +png
+IUSE="+alda +audio audio_null +camera cegui +charconv +config +console +devil
+doc examples +font +fontbitmap +fonttext +freetype +image +image2d +image3d
++input +line_drawer modelmd3 modelobj +openal opencl +opengl +parse +plugin +png
 projectile +renderer +rendereropengl +shader +sprite +systems test +texture
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
@@ -145,6 +145,7 @@ src_configure() {
 		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
 		-D INSTALL_DOC_DIR_BASE="/usr/share/doc"
 		-D CHARCONV_BACKEND="iconv"
+		$(cmake-utils_use_enable alda)
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
