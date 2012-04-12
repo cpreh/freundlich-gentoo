@@ -27,7 +27,7 @@ fi
 # Changeset for alpha snapshot
 CHANGESET="e56ecd8b3a68"
 # Patch version
-PATCH="${PN}-11.0-patches-0.4"
+PATCH="${PN}-12.0-patches-0.1"
 # Upstream ftp release URI that's used by mozlinguas.eclass
 # We don't use the http mirror because it deletes old tarballs.
 MOZ_FTP_URI="ftp://ftp.mozilla.org/pub/${PN}/releases/"
@@ -137,17 +137,6 @@ src_unpack() {
 
 src_prepare() {
 	# Apply our patches
-	EPATCH_EXCLUDE="5004_use_yarr_instead_of_pcre_on_unsupported_platforms.patch \
-		5005_require_libvpx-1.0.0.patch \
-		5008_block_opengl_1_drivers_explicitly.patch \
-		5011_block_nouveau_3d_driver.patch \
-		5012_allow_nouveau_driver_with_mesa_8.0.1.patch \
-		5013_define_G_VARIANT_TYPE_STRING_ARRAY_for_older_glib.patch \
-		5014_revert_621446.patch \
-		6000_dont_require_16_bytes_alignment_for_VMFrame_on_sparc.patch \
-		6003_avoid_invalid_conversions.patch \
-		6004_fix_alsa_webm_support.patch \
-		6005_only_build_sps_on_supported_platforms.patch"
 	EPATCH_SUFFIX="patch" \
 	EPATCH_FORCE="yes" \
 	epatch "${WORKDIR}/firefox"
