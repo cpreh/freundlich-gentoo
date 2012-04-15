@@ -4,11 +4,11 @@
 
 EAPI="4"
 
-inherit cmake-utils git
+inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="http://redmine.supraverse.net/projects/fcppt"
-EGIT_REPO_URI="git://github.com/freundlich/fcppt.git"
+SRC_URI="http://fcppt.org/downloads/${P}.tar.bz2"
 
 LICENSE="Boost-1.0"
 SLOT="0"
