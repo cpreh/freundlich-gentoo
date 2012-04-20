@@ -14,19 +14,10 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="opengl"
+IUSE=""
 
 DEPEND="
-	>=dev-libs/boost-1.45.0
+	>=dev-libs/boost-1.47.0
 	=dev-cpp/fcppt-9999
-	opengl? ( virtual/opengl )
 "
 RDEPEND="${DEPEND}"
-
-src_configure() {
-	local mycmakeargs="
-		$(cmake-utils_use_enable opengl)
-	"
-
-	cmake-utils_src_configure
-}

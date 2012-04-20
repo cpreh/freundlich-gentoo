@@ -21,9 +21,9 @@ projectile +renderer +rendereropengl +shader +sprite +systems test +texture
 +viewport +vorbis +wave +window xf86vmode +x11input xrandr"
 
 RDEPEND="
-	=dev-cpp/fcppt-9999
-	=dev-cpp/mizuiro-9999
-	=dev-cpp/libawl-9999
+	~dev-cpp/fcppt-9999
+	~dev-cpp/mizuiro-9999
+	~dev-cpp/libawl-9999
 	>=dev-libs/boost-1.47.0
 	cegui? (
 		>=dev-games/cegui-0.7.5
@@ -47,7 +47,6 @@ RDEPEND="
 		dev-util/nvidia-cuda-sdk[opencl]
 	)
 	opengl? (
-		=dev-cpp/libawl-9999[opengl]
 		media-libs/glew
 		x11-libs/libX11
 		virtual/opengl
