@@ -1,14 +1,12 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.6.2.ebuild,v 1.9 2012/03/15 20:21:44 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.6.3.ebuild,v 1.1 2012/04/28 00:57:23 dirtyepic Exp $
 
-PATCH_VER="1.4"
-PATCH_GCC_VER="4.6.2"
+PATCH_VER="1.0"
 UCLIBC_VER="1.0"
 
 # Hardened gcc 4 stuff
-PIE_VER="0.5.0"
-PIE_GCC_VER="4.6.2"
+PIE_VER="0.5.1"
 SPECS_VER="0.2.0"
 SPECS_GCC_VER="4.4.3"
 # arch/libc configurations known to be stable with {PIE,SSP}-by-default
@@ -37,10 +35,6 @@ if [[ ${CATEGORY} != cross-* ]] ; then
 fi
 
 src_unpack() {
-	EPATCH_EXCLUDE+=" 74_all_gcc46_cloog-dl.patch
-	75_all_arm_4.7.0_strict-volatile-bitfields.patch
-	77_all_pr51106_4.6.3_ice-move_insn.patch"
-
 	if has_version '<sys-libs/glibc-2.12' ; then
 		ewarn "Your host glibc is too old; disabling automatic fortify."
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
