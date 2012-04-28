@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
+RESTRICT="mirror"
 EAPI="3"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
@@ -140,7 +141,7 @@ src_prepare() {
 	EPATCH_SUFFIX="patch" \
 	EPATCH_FORCE="yes" \
 	epatch "${WORKDIR}/firefox"
-	epatch "${FILESDIR}"/${P}-gcc47.patch
+	epatch "${FILESDIR}"/${PN}-12.0_beta4-gcc47.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	epatch_user
@@ -202,7 +203,7 @@ src_configure() {
 	mozconfig_annotate '' --enable-safe-browsing
 	mozconfig_annotate '' --with-system-png
 	mozconfig_annotate '' --enable-system-ffi
-	mozconfig_annotate 'Missing fetures' --disable-system-cairo
+	mozconfig_annotate 'Missing features' --disable-system-cairo
 
 	# Other ff-specific settings
 	mozconfig_annotate '' --with-default-mozilla-five-home=${MOZILLA_FIVE_HOME}
