@@ -1,8 +1,7 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/www-client/firefox/firefox-12.0.ebuild,v 1.1 2012/04/30 06:43:36 polynomial-c Exp $
 
-RESTRICT="mirror"
 EAPI="3"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
