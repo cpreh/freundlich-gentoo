@@ -38,7 +38,7 @@ DEPEND="${COMMON_DEPEND}
 		python-bindings? ( dev-python/epydoc dev-python/pygments )
 		ruby-bindings? ( dev-ruby/syntax dev-ruby/allison )
 	)
-	dev-util/pkgconfig
+	virtual/pkgconfig
 	dev-cpp/gtest[threads]"
 
 RDEPEND="${COMMON_DEPEND}
