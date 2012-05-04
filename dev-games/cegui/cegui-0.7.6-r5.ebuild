@@ -43,7 +43,7 @@ RDEPEND="bidi? ( dev-libs/fribidi )
 	xml? ( dev-libs/libxml2 )
 	zip? ( sys-libs/zlib[minizip] )"
 DEPEND="${RDEPEND}
-	dev-util/pkgconfig
+	virtual/pkgconfig
 	python? ( app-admin/eselect-boost )
 	doc? ( app-doc/doxygen )"
 
