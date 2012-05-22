@@ -326,8 +326,12 @@ src_install() {
 	# Without methodjit and tracejit there's no conflict with PaX
 	if use jit; then
 		# Required in order to use plugins and even run firefox on hardened.
-		pax-mark m "${ED}"${MOZILLA_FIVE_HOME}/{firefox,firefox-bin,plugin-container}
+		pax-mark m "${ED}"${MOZILLA_FIVE_HOME}/{firefox,firefox-bin}
 	fi
+
+	# Plugin-container needs to be pax-marked for hardened to ensure plugins such as flash
+	# continue to work as expected.
+	pax-mark m "${ED}"${MOZILLA_FIVE_HOME}/plugin-container
 
 	# Plugins dir
 	share_plugins_dir
