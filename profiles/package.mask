@@ -6,4 +6,4 @@
 ~games-emulation/pcsxr-9999
 ~sys-devel/gcc-4.7.0
 ~sys-devel/gcc-4.7.1_rc20120606
-~sys-devel/gcc-4.8.0_alpha20120603
+~sys-devel/gcc-4.8.0_alpha20120610
