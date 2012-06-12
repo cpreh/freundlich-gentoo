@@ -55,6 +55,8 @@ src_unpack() {
 
 	toolchain_src_unpack
 
+	epatch "${FILESDIR}/${P}-pr53599.patch"
+
 	use vanilla && return 0
 
 	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env.patch
