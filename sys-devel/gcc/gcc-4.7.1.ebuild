@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.7.0.ebuild,v 1.4 2012/06/03 22:59:41 vapier Exp $
 
-I_PROMISE_TO_SUPPLY_PATCHES_WITH_BUGS=1
 RESTRICT="mirror"
 PATCH_VER="1.1"
 UCLIBC_VER="1.0"
@@ -54,8 +53,6 @@ src_unpack() {
 	fi
 
 	toolchain_src_unpack
-
-	epatch "${FILESDIR}/${P}-pr53599.patch"
 
 	use vanilla && return 0
 
