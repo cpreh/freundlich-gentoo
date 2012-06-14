@@ -26,7 +26,7 @@ src_prepare() {
 		-e "s:-shared:& -Wl,-soname -Wl,libunrar$(get_libname ${PV%.*.*}):" \
 		makefile.unix || die
 
-	if !use vanilla ; then
+	if ! use vanilla ; then
 		epatch "${FILESDIR}"/${PN}-interactivity.patch
 	fi
 }
