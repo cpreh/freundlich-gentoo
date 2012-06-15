@@ -1,14 +1,11 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.7.0.ebuild,v 1.4 2012/06/03 22:59:41 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.7.1.ebuild,v 1.1 2012/06/15 00:28:33 dirtyepic Exp $
 
-RESTRICT="mirror"
-PATCH_VER="1.1"
+PATCH_VER="1.0"
 UCLIBC_VER="1.0"
 
 # Hardened gcc 4 stuff
-PATCH_GCC_VER="4.7.0"
-PIE_GCC_VER="4.7.0"
 PIE_VER="0.5.3"
 SPECS_VER="0.2.0"
 SPECS_GCC_VER="4.4.3"
@@ -39,8 +36,6 @@ if [[ ${CATEGORY} != cross-* ]] ; then
 fi
 
 src_unpack() {
-	EPATCH_EXCLUDE+=" 80_all_gcc-4.7-x32-ILP32.patch"
-
 	if has_version '<sys-libs/glibc-2.12' ; then
 		ewarn "Your host glibc is too old; disabling automatic fortify."
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
