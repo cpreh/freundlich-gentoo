@@ -7,8 +7,8 @@ EAPI="3"
 inherit bash-completion eutils autotools
 
 DESCRIPTION="paludis, the other package mangler"
-HOMEPAGE="http://paludis.pioto.org/"
-SRC_URI="http://paludis.pioto.org/download/${P}.tar.bz2"
+HOMEPAGE="http://paludis.exherbo.org/"
+SRC_URI="http://paludis.exherbo.org/download/${P}.tar.bz2"
 
 IUSE="doc pbins pink portage prebuilt-documentation python-bindings
 ruby-bindings search-index vim-syntax visibility xml zsh-completion"
@@ -24,7 +24,7 @@ COMMON_DEPEND="
 	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	xml? ( >=dev-libs/libxml2-2.6 )
 	search-index? ( dev-db/sqlite:3 )
-	pbins? ( >=app-arch/libarchive-2.8.4[-xattr] )
+	pbins? ( >=app-arch/libarchive-3.0.4[-xattr] )
 	sys-apps/file"
 
 DEPEND="${COMMON_DEPEND}
@@ -36,7 +36,7 @@ DEPEND="${COMMON_DEPEND}
 		|| ( >=app-doc/doxygen-1.5.3 <=app-doc/doxygen-1.5.1 )
 		media-gfx/imagemagick
 		python-bindings? ( dev-python/epydoc dev-python/pygments )
-		ruby-bindings? ( dev-ruby/syntax dev-ruby/allison )
+		ruby-bindings? ( dev-ruby/syntax )
 	)
 	virtual/pkgconfig
 	dev-cpp/gtest[threads]"
