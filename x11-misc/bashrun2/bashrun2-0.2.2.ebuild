@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-inherit base
+EAPI="4"
 
-EAPI=4
+inherit base
 
 DESCRIPTION="a powerful application launcher by running a specialized bash session"
 HOMEPAGE="http://code.google.com/p/bashrun2/"

@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-util/boost-build/boost-build-1.49.0.ebuild,v 1.2 2012/04/28 02:58:31 aballier Exp $
 
-RESTRICT="mirror"
 EAPI="4"
+RESTRICT="mirror"
 PYTHON_DEPEND="python? *"
 
 inherit eutils flag-o-matic python toolchain-funcs versionator
