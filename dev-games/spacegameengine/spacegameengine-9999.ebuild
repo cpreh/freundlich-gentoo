@@ -14,22 +14,19 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+alda +audio audio_null +camera cegui +charconv +config +console +devil
-doc examples +font +fontbitmap +fonttext +freetype +image +image2d +image3d
-+input +line_drawer modelmd3 modelobj +openal opencl +opengl +parse +plugin +png
-projectile +renderer +rendereropengl +shader +sprite +systems test +texture
-+viewport +vorbis +wave +window xf86vmode +x11input xrandr"
+IUSE="+alda +audio audio_null +camera +charconv +cg +config +console +devil doc
+examples evdev +font +fontbitmap +fonttext +freetype +image +image2d +image3d
++input +line_drawer +log +media modelmd3 modelobj +openal opencl +opengl +parse
++plugin +png projectile +renderer +rendereropengl +sprite +systems test +texture
++timer +viewport +vorbis +wave +window +x11input +xrandr"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
 	~dev-cpp/mizuiro-9999
 	~dev-cpp/libawl-9999
 	>=dev-libs/boost-1.47.0
-	cegui? (
-		>=dev-games/cegui-0.7.5
-		examples? (
-			>=dev-games/cegui-0.7.5[truetype,xml]
-		)
+	cg? (
+		>=media-gfx/nvidia-cg-toolkit-3
 	)
 	charconv? (
 		virtual/libiconv
@@ -50,9 +47,6 @@ RDEPEND="
 		media-libs/glew
 		x11-libs/libX11
 		virtual/opengl
-		xf86vmode? (
-			x11-libs/libXxf86vm
-		)
 		xrandr? (
 			x11-libs/libXrandr
 		)
@@ -96,35 +90,37 @@ check_deps() {
 }
 
 pkg_setup() {
-	check_deps audio plugin
-	check_deps audio_null audio
-	check_deps camera input renderer
-	check_deps cegui charconv image image2d input renderer viewport
-	check_deps console fonttext input
-	check_deps devil image2d
+	check_deps audio log media plugin
+	check_deps audio_null audio plugin
+	check_deps camera input renderer viewport
+	#check_deps cegui charconv image image2d input renderer viewport
+	check_deps console fonttext input sprite
+	check_deps devil image image2d log plugin
+	check_deps evdev input log plugin window
 	check_deps font plugin
-	check_deps fontbitmap parse
-	check_deps fonttext sprite texture
-	check_deps freetype charconv font image2d
-	check_deps image2d image plugin
-	check_deps image2d image
+	check_deps fontbitmap font image2d log parse
+	check_deps fonttext font image image2d renderer sprite texture
+	check_deps freetype charconv font image2d log plugin
+	check_deps image2d image media plugin
+	check_deps image3d image
 	check_deps input plugin
-	check_deps line_drawer renderer
-	check_deps openal audio
-	check_deps opencl rendereropengl
-	check_deps opengl image2d image3d plugin renderer rendereropengl
-	check_deps png image2d
-	check_deps projectile line_drawer
-	check_deps renderer image2d image3d plugin
-	check_deps shader renderer
-	check_deps sprite renderer
-	check_deps systems audio charconv config font image2d input renderer \
+	check_deps line_drawer image renderer
+	check_deps media log
+	check_deps modelmd3 log
+	check_deps openal audio log plugin
+	check_deps opencl image image2d log renderer rendereropengl
+	check_deps opengl image image2d image3d log plugin renderer rendereropengl
+	check_deps png image image2d log plugin
+	check_deps projectile image line_drawer log renderer
+	check_deps renderer image image2d image3d log plugin
+	check_deps sprite image renderer
+	check_deps systems audio charconv config font image2d input log renderer \
 		viewport window
-	check_deps texture image2d renderer
-	check_deps viewport window
-	check_deps vorbis audio
-	check_deps wave audio
-	check_deps x11input input window
+	check_deps texture image2d log renderer
+	check_deps viewport renderer window
+	check_deps vorbis audio log plugin
+	check_deps wave audio plugin
+	check_deps x11input input log plugin window
 
 	if ${exit_sge_build} ; then
 		die "Use dependencies not met"
@@ -148,13 +144,14 @@ src_configure() {
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
-		$(cmake-utils_use_enable cegui)
+		$(cmake-utils_use_enable cg)
 		$(cmake-utils_use_enable charconv)
 		$(cmake-utils_use_enable config)
 		$(cmake-utils_use_enable console)
 		$(cmake-utils_use_enable devil)
 		$(cmake-utils_use_enable doc)
 		$(cmake-utils_use_enable examples)
+		$(cmake-utils_use_enable evdev)
 		$(cmake-utils_use_enable font)
 		$(cmake-utils_use_enable fontbitmap)
 		$(cmake-utils_use_enable fonttext)
@@ -164,6 +161,8 @@ src_configure() {
 		$(cmake-utils_use_enable image3d)
 		$(cmake-utils_use_enable input)
 		$(cmake-utils_use_enable line_drawer)
+		$(cmake-utils_use_enable log)
+		$(cmake-utils_use_enable media)
 		$(cmake-utils_use_enable modelmd3)
 		$(cmake-utils_use_enable modelobj)
 		$(cmake-utils_use_enable openal)
@@ -175,18 +174,17 @@ src_configure() {
 		$(cmake-utils_use_enable projectile)
 		$(cmake-utils_use_enable renderer)
 		$(cmake-utils_use_enable rendereropengl)
-		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
 		$(cmake-utils_use_enable systems)
 		$(cmake-utils_use_enable test)
 		$(cmake-utils_use_enable texture)
+		$(cmake-utils_use_enable timer)
 		$(cmake-utils_use_enable viewport)
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable window)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
 		$(cmake-utils_use_enable xrandr)
-		$(cmake-utils_use_enable xf86vmode)
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	)
 
