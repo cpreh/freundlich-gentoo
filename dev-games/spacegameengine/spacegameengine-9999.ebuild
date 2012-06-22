@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=3
+EAPI="4"
 
 inherit cmake-utils git games
 
@@ -76,56 +76,37 @@ DEPEND+="
 	)
 "
 
-exit_sge_build=false
-
-check_deps() {
-	if use $1 ; then
-		for i in ${@:2} ; do
-			if ! use ${i} ; then
-				eerror "${i} is required for $1"
-				exit_sge_build=true
-			fi
-		done
-	fi
-}
-
-pkg_setup() {
-	check_deps audio log media plugin
-	check_deps audio_null audio plugin
-	check_deps camera input renderer viewport
-	#check_deps cegui charconv image image2d input renderer viewport
-	check_deps console fonttext input sprite
-	check_deps devil image image2d log plugin
-	check_deps evdev input log plugin window
-	check_deps font plugin
-	check_deps fontbitmap font image2d log parse
-	check_deps fonttext font image image2d renderer sprite texture
-	check_deps freetype charconv font image2d log plugin
-	check_deps image2d image media plugin
-	check_deps image3d image
-	check_deps input plugin
-	check_deps line_drawer image renderer
-	check_deps media log
-	check_deps modelmd3 log
-	check_deps openal audio log plugin
-	check_deps opencl image image2d log renderer rendereropengl
-	check_deps opengl image image2d image3d log plugin renderer rendereropengl
-	check_deps png image image2d log plugin
-	check_deps projectile image line_drawer log renderer
-	check_deps renderer image image2d image3d log plugin
-	check_deps sprite image renderer
-	check_deps systems audio charconv config font image2d input log renderer \
-		viewport window
-	check_deps texture image2d log renderer
-	check_deps viewport renderer window
-	check_deps vorbis audio log plugin
-	check_deps wave audio plugin
-	check_deps x11input input log plugin window
-
-	if ${exit_sge_build} ; then
-		die "Use dependencies not met"
-	fi
-}
+REQUIRED_USE="
+	audio? ( log media plugin )
+	audio_null? ( audio plugin )
+	camera? ( input renderer viewport )
+	console? ( fonttext input sprite )
+	devil? ( image image2d log plugin )
+	evdev? ( input log plugin window )
+	font? ( plugin )
+	fontbitmap? ( font image2d log parse )
+	fonttext? ( font image image2d renderer sprite texture )
+	freetype? ( charconv font image2d log plugin )
+	image2d? ( image media plugin )
+	image3d? ( image )
+	input? ( plugin )
+	line_drawer? ( image renderer )
+	media? ( log )
+	modelmd3? ( log )
+	openal? ( audio log plugin )
+	opencl? ( image image2d log renderer rendereropengl )
+	opengl? ( image image2d image3d log plugin renderer rendereropengl )
+	png? ( image image2d log plugin )
+	projectile? ( image line_drawer log renderer )
+	renderer? ( image image2d image3d log plugin )
+	sprite? ( image renderer )
+	systems? ( audio charconv config font image2d input log renderer viewport window )
+	texture? ( image2d log renderer )
+	viewport? ( renderer window )
+	vorbis? ( audio log plugin )
+	wave? ( audio plugin )
+	x11input? ( input log plugin window )
+"
 
 src_unpack() {
 	git_src_unpack
