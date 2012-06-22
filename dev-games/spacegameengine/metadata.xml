@@ -3,26 +3,30 @@
 <pkgmetadata>
 <herd>no-herd</herd>
 	<use>
+		<flag name='alda'>Build the alda serialization library</flag>
 		<flag name='audio'>Build the audio core library</flag>
 		<flag name='audio_null'>Build the audio null plugin that doesn't do any audio output</flag>
 		<flag name='camera'>Build the camera library which provides an fps-like camera</flag>
-		<flag name='cegui'>Build the cegui library which provides CEGUI integration</flag>
+		<flag name='cg'>Build the cg library which provides Cg bindings for the renderer</flag>
 		<flag name='charconv'>Build the charconv core library</flag>
 		<flag name='config'>Build the config library which provides querying of sge's and various system paths</flag>
 		<flag name='console'>Build the console library which provides a quake-like console</flag>
 		<flag name='devil'>Build the devil image loader plugin which loads bmp, jpeg, png, tiff and others</flag>
 		<flag name='examples'>Build and install sge's examples</flag>
+		<flag name='evdev'>Build evdev plugin which handles joysticks and gamepads using /dev/input/event*</flag>
 		<flag name='font'>Build the font core library</flag>
 		<flag name='fontbitmap'>Build the fontbitmap library which loads bitmap fonts in sge's own format</flag>
 		<flag name='fonttext'>Build the fonttext library for text rendering</flag>
 		<flag name='freetype'>Build the freetype font loader plugin which loads truetype fonts</flag>
-		<flag name='iconv'>Build the iconv encoding conversion plugin</flag>
 		<flag name='image'>Build the image core library</flag>
 		<flag name='image2d'>Build the image2d core library</flag>
 		<flag name='image3d'>Build the image3d core library</flag>
 		<flag name='input'>Build the input core library</flag>
 		<flag name='line_drawer'>Build the line_drawer library which can draw a set of lines</flag>
-		<flag name='md3'>Build the md3 loader library that can do basic loading of md3 models</flag>
+		<flag name='log'>Build the log core library</flag>
+		<flag name='media'>Build the media core library</flag>
+		<flag name='modelmd3'>Build the md3 loader library that can do basic loading of md3 models</flag>
+		<flag name='modelobj'>Build the obj loader library that can do basic loading of obj models</flag>
 		<flag name='openal'>Build OpenAL audio player plugin</flag>
 		<flag name='opencl'>Build OpenCL library</flag>
 		<flag name='opengl'>Build OpenGL renderer plugin that provides most functionality of opengl-2.0 and some of 3.0</flag>
@@ -36,12 +40,11 @@
 		<flag name='sprite'>Build the sprite library</flag>
 		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>
 		<flag name='texture'>Build the texture library which provides atlasing of textures</flag>
-		<flag name='time'>Build the time library which provides a timer and wraps certain aspects of chrono</flag>
+		<flag name='timer'>Build the timer library which provides timer wrappers around chrono</flag>
 		<flag name='viewport'>Build the viewport library which provides automatic managing of the viewport</flag>
 		<flag name='vorbis'>Build the vorbis audio loader library</flag>
 		<flag name='wave'>Build the wave audio loader library</flag>
 		<flag name='window'>Build the window library which wraps awl windows</flag>
-		<flag name='xf86vmode'>Enable the opengl plugin to switch resolutions using xf86vmode</flag>
 		<flag name='x11input'>Build the x11input plugin which uses XI2 to handle cursors, mice and keyboards</flag>
 		<flag name='xrandr'>Enable the opengl plugin to switch resolutions using xrandr</flag>
 	</use>
