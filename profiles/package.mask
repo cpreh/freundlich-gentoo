@@ -5,4 +5,4 @@
 ~dev-util/boost-build-1.50.0_beta1
 ~games-emulation/pcsxr-9999
 ~sys-devel/gcc-4.7.1
-~sys-devel/gcc-4.8.0_alpha20120617
+~sys-devel/gcc-4.8.0_alpha20120624
