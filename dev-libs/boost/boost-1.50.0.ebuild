@@ -10,11 +10,11 @@ RESTRICT_PYTHON_ABIS="*-jython *-pypy-*"
 
 inherit check-reqs flag-o-matic multilib python toolchain-funcs versionator
 
-MY_P=${PN}_$(replace_all_version_separators _ $(get_version_component_range 1-3))
+MY_P=${PN}_$(replace_all_version_separators _)
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
-SRC_URI="http://boost.cowic.de/rc/${MY_P}.tar.bz2 -> ${P}.tar.bz2"
+SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
 
 LICENSE="Boost-1.0"
 SLOT="$(get_version_component_range 1-2)"
