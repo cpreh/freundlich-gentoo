@@ -4,7 +4,7 @@
 
 EAPI="3"
 
-inherit bash-completion eutils autotools
+inherit bash-completion eutils
 
 DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.exherbo.org/"
