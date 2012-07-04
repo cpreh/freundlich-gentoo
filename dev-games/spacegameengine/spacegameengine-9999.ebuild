@@ -14,17 +14,20 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+alda +audio audio_null +camera +charconv +cg +config +console +devil doc
-examples evdev +font +fontbitmap +fonttext +freetype +image +image2d +image3d
-+input +line_drawer +log +media modelmd3 modelobj +openal opencl +opengl +parse
-+plugin +png projectile +renderer +rendereropengl +sprite +systems test +texture
-+timer +viewport +vorbis +wave +window +x11input +xrandr"
+IUSE="+alda +audio audio_null +camera +charconv cegui +cg +config +console
++devil doc examples evdev +font +fontbitmap +fonttext +freetype +image +image2d
++image3d +input +line_drawer +log +media modelmd3 modelobj +openal opencl
++opengl +parse +plugin +png projectile +renderer +rendereropengl +sprite
++systems test +texture +timer +viewport +vorbis +wave +window +x11input +xrandr"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
 	~dev-cpp/mizuiro-9999
 	~dev-cpp/libawl-9999
 	>=dev-libs/boost-1.47.0
+	cegui? (
+		dev-games/cegui:0
+	)
 	cg? (
 		>=media-gfx/nvidia-cg-toolkit-3
 	)
@@ -80,6 +83,7 @@ REQUIRED_USE="
 	audio? ( log media plugin )
 	audio_null? ( audio plugin )
 	camera? ( input renderer viewport )
+	cegui? ( charconv image image2d input log renderer viewport )
 	console? ( fonttext input sprite )
 	devil? ( image image2d log plugin )
 	evdev? ( input log plugin window )
@@ -125,6 +129,7 @@ src_configure() {
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
+		$(cmake-utils_use_enable cegui)
 		$(cmake-utils_use_enable cg)
 		$(cmake-utils_use_enable charconv)
 		$(cmake-utils_use_enable config)
