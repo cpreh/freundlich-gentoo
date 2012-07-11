@@ -26,7 +26,7 @@ RDEPEND="
 	~dev-cpp/libawl-9999
 	>=dev-libs/boost-1.47.0
 	cegui? (
-		dev-games/cegui:0
+		dev-games/cegui:1
 	)
 	cg? (
 		>=media-gfx/nvidia-cg-toolkit-3
