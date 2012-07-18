@@ -4,7 +4,7 @@
 
 EAPI=4
 
-inherit git
+inherit git-2
 
 EGIT_REPO_URI="git://github.com/freundlich/jmdict"
 
@@ -20,7 +20,3 @@ RDEPEND=">=dev-db/sqlite-3
 DEPEND="${RDEPEND}
         sys-devel/make"
 PDEPEND="app-dicts/jmdict-data"
-
-src_compile() {
-	default_src_compile
-}
