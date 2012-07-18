@@ -7,7 +7,7 @@ EAPI="4"
 inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
-HOMEPAGE="http://redmine.supraverse.net/projects/fcppt"
+HOMEPAGE="http://fcppt.org"
 SRC_URI="http://fcppt.org/downloads/${P}.tar.bz2"
 
 LICENSE="Boost-1.0"
@@ -18,7 +18,7 @@ IUSE="doc static-libs"
 RDEPEND="
 	>=dev-libs/boost-1.47.0
 	"
-DEPEND="
+DEPEND+="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5
@@ -29,22 +29,23 @@ DEPEND="
 "
 
 src_configure() {
-	local mycmakeargs=""
-
-	use doc && mycmakeargs+="-D ENABLE_DOC=ON"
-
-	use static-libs && mycmakeargs+=" -D ENABLE_STATIC=ON"
+	local mycmakeargs=(
+		$(cmake-utils_use_enable doc)
+		$(cmake-utils_use_enable examples)
+		$(cmake-utils_use_enable static-libs STATIC)
+		$(cmake-utils_use_enable test)
+	)
 
 	cmake-utils_src_configure
 }
 
 src_compile() {
-	local ARGS="all"
+	local ARGS=("all")
 
-	use doc && ARGS+=" doc"
+	use doc && ARGS+=("doc")
 
-	# don't quote ARGS!
-	cmake-utils_src_compile $ARGS
+	# Don't quote ARGS so we can build all targets in parallel
+	cmake-utils_src_compile ${ARGS[@]}
 }
 
 src_install() {

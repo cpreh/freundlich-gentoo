@@ -4,21 +4,21 @@
 
 EAPI="4"
 
-inherit cmake-utils git
+inherit cmake-utils git-2
 
 DESCRIPTION="Freundlich's C++ toolkit"
-HOMEPAGE="http://redmine.supraverse.net/projects/fcppt"
+HOMEPAGE="http://fcppt.org"
 EGIT_REPO_URI="git://github.com/freundlich/fcppt.git"
 
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="doc static-libs"
+IUSE="doc +examples static-libs test"
 
 RDEPEND="
 	>=dev-libs/boost-1.47.0
 	"
-DEPEND="
+DEPEND+="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5
@@ -29,27 +29,28 @@ DEPEND="
 "
 
 src_configure() {
-	local mycmakeargs=""
-
-	use doc && mycmakeargs+="-D ENABLE_DOC=ON"
-
-	use static-libs && mycmakeargs+=" -D ENABLE_STATIC=ON"
+	local mycmakeargs=(
+		$(cmake-utils_use_enable doc)
+		$(cmake-utils_use_enable examples)
+		$(cmake-utils_use_enable static-libs STATIC)
+		$(cmake-utils_use_enable test)
+	)
 
 	cmake-utils_src_configure
 }
 
 src_compile() {
-	local ARGS="all"
+	local ARGS=("all")
 
-	use doc && ARGS+=" doc"
+	use doc && ARGS+=("doc")
 
-	# don't quote ARGS!
-	cmake-utils_src_compile $ARGS
+	# Don't quote ARGS so we can build all targets in parallel
+	cmake-utils_src_compile ${ARGS[@]}
 }
 
 src_install() {
 	cmake-utils_src_install
 
-	# remove empty directories because doxygen creates them
+	# Remove empty directories because doxygen creates them
 	find "${D}" -type d -empty -delete || die
 }
