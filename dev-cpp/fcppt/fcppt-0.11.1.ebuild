@@ -13,7 +13,7 @@ SRC_URI="http://fcppt.org/downloads/${P}.tar.bz2"
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="doc static-libs"
+IUSE="doc +examples static-libs test"
 
 RDEPEND="
 	>=dev-libs/boost-1.47.0
@@ -51,6 +51,6 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 
-	# remove empty directories because doxygen creates them
+	# Remove empty directories because doxygen creates them
 	find "${D}" -type d -empty -delete || die
 }
