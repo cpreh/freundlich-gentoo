@@ -44,8 +44,7 @@ src_compile() {
 
 	use doc && ARGS+=("doc")
 
-	# Don't quote ARGS so we can build all targets in parallel
-	cmake-utils_src_compile ${ARGS[@]}
+	cmake-utils_src_compile "${ARGS[@]}"
 }
 
 src_install() {

@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+examples"
 
-DEPEND+="
+DEPEND="
 	>=dev-libs/boost-1.47.0
 	dev-cpp/fcppt
 "

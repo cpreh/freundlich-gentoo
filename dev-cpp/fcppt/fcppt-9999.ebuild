@@ -18,7 +18,7 @@ IUSE="doc +examples static-libs test"
 RDEPEND="
 	>=dev-libs/boost-1.47.0
 	"
-DEPEND+="
+DEPEND="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5
@@ -44,8 +44,7 @@ src_compile() {
 
 	use doc && ARGS+=("doc")
 
-	# Don't quote ARGS so we can build all targets in parallel
-	cmake-utils_src_compile ${ARGS[@]}
+	cmake-utils_src_compile "${ARGS[@]}"
 }
 
 src_install() {
