@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=3
+EAPI="4"
 
-inherit cmake-utils git
+inherit cmake-utils git-2
 
 EGIT_REPO_URI="git://github.com/freundlich/mizuiro.git"
 
@@ -18,7 +18,7 @@ IUSE="+fcppt"
 
 DEPEND="
 	dev-libs/boost
-	fcppt? ( >=dev-cpp/fcppt-0.3 )
+	fcppt? ( >=dev-cpp/fcppt-0.11 )
 "
 RDEPEND="${DEPEND}"
 
