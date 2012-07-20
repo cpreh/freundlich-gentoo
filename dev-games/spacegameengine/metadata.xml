@@ -25,6 +25,7 @@
 		<flag name='line_drawer'>Build the line_drawer library which can draw a set of lines</flag>
 		<flag name='log'>Build the log core library</flag>
 		<flag name='media'>Build the media core library</flag>
+		<flag name='modelmanager'>Build the model manager library</flag>
 		<flag name='modelmd3'>Build the md3 loader library that can do basic loading of md3 models</flag>
 		<flag name='modelobj'>Build the obj loader library that can do basic loading of obj models</flag>
 		<flag name='openal'>Build OpenAL audio player plugin</flag>
@@ -36,6 +37,7 @@
 		<flag name='projectile'>Build the projectile library which is a 2D physics frontend for Bullet</flag>
 		<flag name='renderer'>Build the renderer core library</flag>
 		<flag name='rendereropengl'>Build the renderer opengl bindings library</flag>
+		<flag name='resource_tree'>Build the resource tree library</flag>
 		<flag name='shader'>Build the shader library which makes the process of creating shaders easier</flag>
 		<flag name='sprite'>Build the sprite library</flag>
 		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>

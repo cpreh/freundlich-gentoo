@@ -4,7 +4,7 @@
 
 EAPI="4"
 
-inherit cmake-utils git games
+inherit cmake-utils git-2 games
 
 EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
 
@@ -16,9 +16,10 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+alda +audio audio_null +camera +charconv cegui +cg +config +console
 +devil doc examples evdev +font +fontbitmap +fonttext +freetype +image +image2d
-+image3d +input +line_drawer +log +media modelmd3 modelobj +openal opencl
-+opengl +parse +plugin +png projectile +renderer +rendereropengl +sprite
-+systems test +texture +timer +viewport +vorbis +wave +window +x11input +xrandr"
++image3d +input +line_drawer +log +media modelmanager modelmd3 modelobj +openal
+opencl +opengl +parse +plugin +png projectile +renderer +rendereropengl
+resource_tree +sprite +systems test +texture +timer +viewport +vorbis +wave
++window +x11input +xrandr"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -46,19 +47,21 @@ RDEPEND="
 	opencl? (
 		dev-util/nvidia-cuda-sdk[opencl]
 	)
-	opengl? (
-		media-libs/glew
-		x11-libs/libX11
-		virtual/opengl
-		xrandr? (
-			x11-libs/libXrandr
-		)
-	)
 	png? (
 		media-libs/libpng
 	)
 	projectile? (
 		sci-physics/bullet
+	)
+	rendereropengl? (
+		virtual/opengl
+		opengl? (
+			media-libs/glew
+			x11-libs/libX11
+			xrandr? (
+				x11-libs/libXrandr
+			)
+		)
 	)
 	vorbis? (
 		media-libs/libvorbis
@@ -69,7 +72,7 @@ RDEPEND="
 	)
 "
 #for doxygen formulas, 'latex', 'dvips' and 'gs' are needed
-DEPEND+="
+DEPEND="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5
@@ -96,6 +99,7 @@ REQUIRED_USE="
 	input? ( plugin )
 	line_drawer? ( image renderer )
 	media? ( log )
+	modelmanager? ( camera image modelobj renderer )
 	modelmd3? ( log )
 	openal? ( audio log plugin )
 	opencl? ( image image2d log renderer rendereropengl )
@@ -111,10 +115,6 @@ REQUIRED_USE="
 	wave? ( audio plugin )
 	x11input? ( input log plugin window )
 "
-
-src_unpack() {
-	git_src_unpack
-}
 
 src_configure() {
 	# Libs and includes go to the normal destination (/usr)
@@ -149,6 +149,7 @@ src_configure() {
 		$(cmake-utils_use_enable line_drawer)
 		$(cmake-utils_use_enable log)
 		$(cmake-utils_use_enable media)
+		$(cmake-utils_use_enable modelmanager)
 		$(cmake-utils_use_enable modelmd3)
 		$(cmake-utils_use_enable modelobj)
 		$(cmake-utils_use_enable openal)
@@ -160,6 +161,7 @@ src_configure() {
 		$(cmake-utils_use_enable projectile)
 		$(cmake-utils_use_enable renderer)
 		$(cmake-utils_use_enable rendereropengl)
+		$(cmake-utils_use_enable resource_tree)
 		$(cmake-utils_use_enable sprite)
 		$(cmake-utils_use_enable systems)
 		$(cmake-utils_use_enable test)
@@ -178,18 +180,17 @@ src_configure() {
 }
 
 src_compile() {
-	local ARGS="all"
+	local ARGS=("all")
 
-	use doc && ARGS+=" doc"
+	use doc && ARGS+=("doc")
 
-	# don't quote ARGS!
-	cmake-utils_src_compile $ARGS
+	cmake-utils_src_compile "${ARGS[@]}"
 }
 
 src_install() {
 	cmake-utils_src_install
 
-	# remove empty directories because doxygen creates them
+	# Remove empty directories because doxygen creates them
 	find "${D}" -type d -empty -delete || die
 
 	prepgamesdirs
