@@ -18,8 +18,8 @@ IUSE="+alda +audio audio_null +camera +charconv cegui +cg +config +console
 +devil doc examples evdev +font +fontbitmap +fonttext +freetype +image +image2d
 +image3d +input +line_drawer +log +media modelmanager modelmd3 modelobj +openal
 opencl +opengl +parse +plugin +png projectile +renderer +rendereropengl
-resource_tree +sprite +systems test +texture +timer +viewport +vorbis +wave
-+window +x11input +xrandr"
+resource_tree +shader +sprite +systems test +texture +timer +viewport +vorbis
++wave +window +x11input +xrandr"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -107,6 +107,7 @@ REQUIRED_USE="
 	png? ( image image2d log plugin )
 	projectile? ( image line_drawer log renderer )
 	renderer? ( image image2d image3d log plugin )
+	shader? ( cg renderer )
 	sprite? ( image renderer )
 	systems? ( audio charconv config font image2d input log renderer viewport window )
 	texture? ( image2d log renderer )
@@ -162,6 +163,7 @@ src_configure() {
 		$(cmake-utils_use_enable renderer)
 		$(cmake-utils_use_enable rendereropengl)
 		$(cmake-utils_use_enable resource_tree)
+		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
 		$(cmake-utils_use_enable systems)
 		$(cmake-utils_use_enable test)
