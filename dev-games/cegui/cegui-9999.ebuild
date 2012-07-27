@@ -48,7 +48,7 @@ RDEPEND="
 	xml? ( dev-libs/libxml2 )
 "
 
-DEPEND+="
+DEPEND="
 	${RDEPEND}
 "
 
@@ -92,4 +92,13 @@ src_configure() {
 	fi
 
 	cmake-utils_src_configure
+}
+
+src_install() {
+	cmake-utils_src_install
+
+	cat > "${T}/env" << EOF
+LDPATH=/usr/lib/CEGUI-9999.0
+EOF
+	newenvd "${T}/env" 99cegui
 }
