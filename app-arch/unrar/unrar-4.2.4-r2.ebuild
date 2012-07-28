@@ -15,7 +15,7 @@ SRC_URI="http://www.rarlab.com/rar/${MY_PN}-${PV}.tar.gz"
 LICENSE="unRAR"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
-IUSE="+vanilla"
+IUSE="interactivity"
 
 RDEPEND="!<=app-arch/unrar-gpl-0.0.1_p20080417"
 
@@ -27,7 +27,7 @@ src_prepare() {
 		-e "s:-shared:& -Wl,-soname -Wl,libunrar$(get_libname ${PV%.*.*}):" \
 		makefile.unix || die
 
-	if ! use vanilla ; then
+	if use interactivity ; then
 		epatch "${FILESDIR}"/${PN}-interactivity.patch
 	fi
 }
