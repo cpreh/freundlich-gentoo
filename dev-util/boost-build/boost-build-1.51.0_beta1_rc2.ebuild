@@ -8,7 +8,8 @@ PYTHON_DEPEND="python? *"
 
 inherit eutils flag-o-matic python toolchain-funcs versionator
 
-MY_PV="$(replace_all_version_separators _)_rc1"
+MY_PV="$(replace_all_version_separators _)"
+MY_DIR="$(replace_all_version_separators _ $(get_version_component_range 1-4))"
 MAJOR_PV="$(replace_all_version_separators _ $(get_version_component_range 1-2))"
 
 DESCRIPTION="A system for large project software construction, which is simple to use and powerful."
@@ -24,10 +25,10 @@ DEPEND="!<dev-libs/boost-1.34.0
 	!<=dev-util/boost-build-1.35.0-r1"
 RDEPEND="${DEPEND}"
 
-S="${WORKDIR}/boost_${MY_PV}/tools/build/v2"
+S="${WORKDIR}/boost_${MY_DIR}/tools/build/v2"
 
 src_unpack() {
-	tar xjpf "${DISTDIR}/${A}" ./boost_${MY_PV}/tools/build/v2 || die "unpacking tar failed"
+	tar xjpf "${DISTDIR}/${A}" ./boost_${MY_DIR}/tools/build/v2 || die "unpacking tar failed"
 }
 
 src_prepare() {
