@@ -1,0 +1,23 @@
+diff -Nurp opencollada-0_p864-old/COLLADAStreamWriter/include/COLLADASWAnnotation.h opencollada-0_p864/COLLADAStreamWriter/include/COLLADASWAnnotation.h
+--- opencollada-0_p864-old/COLLADAStreamWriter/include/COLLADASWAnnotation.h	2012-08-03 11:15:28.708013813 +0200
++++ opencollada-0_p864/COLLADAStreamWriter/include/COLLADASWAnnotation.h	2012-08-03 11:15:08.121014413 +0200
+@@ -219,7 +219,7 @@ namespace COLLADASW
+         void add ( 
+             const String &name, 
+             const ValueType::ColladaType &type, 
+-            const T val ) const
++            const T val )
+         {
+             openAnnotation ( name );
+             openValuesElement ( type );
+diff -Nurp opencollada-0_p864-old/common/libBuffer/include/CommonBuffer.h opencollada-0_p864/common/libBuffer/include/CommonBuffer.h
+--- opencollada-0_p864-old/common/libBuffer/include/CommonBuffer.h	2012-08-03 11:15:27.132013858 +0200
++++ opencollada-0_p864/common/libBuffer/include/CommonBuffer.h	2012-08-03 11:15:14.766014217 +0200
+@@ -12,6 +12,7 @@
+ #define __COMMON_BUFFER_H__
+ 
+ #include "CommonIBufferFlusher.h"
++#include <string.h>
+ 
+ namespace Common
+ {
