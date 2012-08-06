@@ -5,5 +5,5 @@
 ~dev-util/boost-build-1.51.0_beta1_rc2
 ~games-emulation/pcsxr-9999
 ~sys-devel/gcc-4.7.1
-~sys-devel/gcc-4.8.0_alpha20120729
+~sys-devel/gcc-4.8.0_alpha20120805
 ~media-video/guvcview-9999
