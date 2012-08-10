@@ -15,11 +15,11 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+alda +audio audio_null +camera +charconv cegui +cg +config +console
-+devil doc examples evdev +font +fontbitmap +fonttext +freetype +image +image2d
-+image3d +input +line_drawer +log +media modelmanager modelmd3 modelobj +openal
-opencl +opengl +parse +plugin +png projectile +renderer +rendereropengl
-resource_tree +shader +sprite +systems test +texture +timer +viewport +vorbis
-+wave +window +x11input +xrandr"
++devil doc examples evdev +font +fontbitmap +fontdraw graph +image +image2d
++image3d +input +line_drawer +log +media modelmd3 modelobj +openal
+opencl +opengl +pango +parse +plugin +png projectile +renderer +rendereropengl
+resource_tree rucksack scenic +shader +sprite +systems test +texture +timer
++viewport +vorbis +wave +window +x11input +xrandr"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -38,14 +38,15 @@ RDEPEND="
 	devil? (
 		media-libs/devil
 	)
-	freetype? (
-		media-libs/freetype
-	)
 	openal? (
 		media-libs/openal
 	)
 	opencl? (
 		dev-util/nvidia-cuda-sdk[opencl]
+	)
+	pango? (
+		media-libs/freetype
+		x11-libs/pango
 	)
 	png? (
 		media-libs/libpng
@@ -92,21 +93,25 @@ REQUIRED_USE="
 	evdev? ( input log plugin window )
 	font? ( plugin )
 	fontbitmap? ( font image2d log parse )
-	fonttext? ( font image image2d renderer sprite texture )
+	fontdraw? ( font image image2d renderer sprite texture )
 	freetype? ( charconv font image2d log plugin )
+	graph? ( image image2d renderer sprite texture )
 	image2d? ( image media plugin )
 	image3d? ( image )
 	input? ( plugin )
 	line_drawer? ( image renderer )
 	media? ( log )
-	modelmanager? ( camera image modelobj renderer )
 	modelmd3? ( log )
+	modelobj? ( image renderer )
 	openal? ( audio log plugin )
 	opencl? ( image image2d log renderer rendereropengl )
 	opengl? ( image image2d image3d log plugin renderer rendereropengl )
+	pango? ( charconv font image2d plugin )
 	png? ( image image2d log plugin )
 	projectile? ( image line_drawer log renderer )
 	renderer? ( image image2d image3d log plugin )
+	rucksack? ( viewport )
+	scenic? ( camera image line_drawer modelobj parse renderer viewport )
 	shader? ( cg renderer )
 	sprite? ( image renderer )
 	systems? ( audio charconv config font image2d input log renderer viewport window )
@@ -141,8 +146,8 @@ src_configure() {
 		$(cmake-utils_use_enable evdev)
 		$(cmake-utils_use_enable font)
 		$(cmake-utils_use_enable fontbitmap)
-		$(cmake-utils_use_enable fonttext)
-		$(cmake-utils_use_enable freetype)
+		$(cmake-utils_use_enable fontdraw)
+		$(cmake-utils_use_enable graph)
 		$(cmake-utils_use_enable image)
 		$(cmake-utils_use_enable image2d)
 		$(cmake-utils_use_enable image3d)
@@ -150,12 +155,12 @@ src_configure() {
 		$(cmake-utils_use_enable line_drawer)
 		$(cmake-utils_use_enable log)
 		$(cmake-utils_use_enable media)
-		$(cmake-utils_use_enable modelmanager)
 		$(cmake-utils_use_enable modelmd3)
 		$(cmake-utils_use_enable modelobj)
 		$(cmake-utils_use_enable openal)
 		$(cmake-utils_use_enable opencl)
 		$(cmake-utils_use_enable opengl)
+		$(cmake-utils_use_enable pango)
 		$(cmake-utils_use_enable parse)
 		$(cmake-utils_use_enable plugin)
 		$(cmake-utils_use_enable png)
@@ -163,6 +168,8 @@ src_configure() {
 		$(cmake-utils_use_enable renderer)
 		$(cmake-utils_use_enable rendereropengl)
 		$(cmake-utils_use_enable resource_tree)
+		$(cmake-utils_use_enable rucksack)
+		$(cmake-utils_use_enable scenic)
 		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
 		$(cmake-utils_use_enable systems)
