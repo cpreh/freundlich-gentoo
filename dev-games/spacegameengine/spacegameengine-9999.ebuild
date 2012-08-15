@@ -94,7 +94,6 @@ REQUIRED_USE="
 	font? ( plugin )
 	fontbitmap? ( font image2d log parse )
 	fontdraw? ( font image image2d renderer sprite texture )
-	freetype? ( charconv font image2d log plugin )
 	graph? ( image image2d renderer sprite texture )
 	image2d? ( image media plugin )
 	image3d? ( image )
