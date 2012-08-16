@@ -11,7 +11,7 @@ HOMEPAGE="http://paludis.exherbo.org/"
 SRC_URI="http://paludis.exherbo.org/download/${P}.tar.bz2"
 
 IUSE="doc pbins pink portage prebuilt-documentation python-bindings
-ruby-bindings search-index vim-syntax visibility xml zsh-completion"
+ruby-bindings search-index test vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~sparc ~x86"
@@ -39,7 +39,7 @@ DEPEND="${COMMON_DEPEND}
 		ruby-bindings? ( dev-ruby/syntax )
 	)
 	virtual/pkgconfig
-	dev-cpp/gtest[threads]"
+	test? ( dev-cpp/gtest[threads] )"
 
 RDEPEND="${COMMON_DEPEND}
 	sys-apps/sandbox"
@@ -91,6 +91,7 @@ src_configure() {
 		$(use_enable visibility ) \
 		$(use_enable xml ) \
 		$(use_enable search-index ) \
+		$(use_enable test gtest ) \
 		$(use_enable pbins ) \
 		$(use_enable prebuilt-documentation ) \
 		--with-vim-install-dir=/usr/share/vim/vimfiles \
