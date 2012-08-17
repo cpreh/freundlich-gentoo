@@ -11,7 +11,7 @@ RESTRICT_PYTHON_ABIS="*-jython *-pypy-*"
 inherit check-reqs flag-o-matic multilib python toolchain-funcs versionator
 
 MY_P="${PN}_$(replace_all_version_separators _)"
-MY_DIR="${PN}_$(replace_all_version_separators _ $(get_version_component_range 1-4))"
+MY_DIR="${PN}_$(replace_all_version_separators _ $(get_version_component_range 1-3))"
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"

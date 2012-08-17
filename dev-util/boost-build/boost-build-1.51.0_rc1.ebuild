@@ -9,7 +9,7 @@ PYTHON_DEPEND="python? *"
 inherit eutils flag-o-matic python toolchain-funcs versionator
 
 MY_PV="$(replace_all_version_separators _)"
-MY_DIR="$(replace_all_version_separators _ $(get_version_component_range 1-4))"
+MY_DIR="$(replace_all_version_separators _ $(get_version_component_range 1-3))"
 MAJOR_PV="$(replace_all_version_separators _ $(get_version_component_range 1-2))"
 
 DESCRIPTION="A system for large project software construction, which is simple to use and powerful."
