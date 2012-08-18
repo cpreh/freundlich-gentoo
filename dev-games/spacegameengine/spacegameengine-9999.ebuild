@@ -19,7 +19,7 @@ IUSE="+alda +audio audio_null +camera +charconv cegui +cg +config +console
 +image3d +input +line_drawer +log +media modelmd3 modelobj +openal
 opencl +opengl +pango +parse +plugin +png projectile +renderer +rendereropengl
 resource_tree rucksack scenic +shader +sprite +systems test +texture +timer
-+viewport +vorbis +wave +window +x11input +xrandr"
++viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -59,9 +59,7 @@ RDEPEND="
 		opengl? (
 			media-libs/glew
 			x11-libs/libX11
-			xrandr? (
-				x11-libs/libXrandr
-			)
+			x11-libs/libXrandr
 		)
 	)
 	vorbis? (
@@ -180,7 +178,6 @@ src_configure() {
 		$(cmake-utils_use_enable window)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
-		$(cmake-utils_use_enable xrandr)
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	)
 
