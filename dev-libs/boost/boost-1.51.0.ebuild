@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.50.0.ebuild,v 1.1 2012/07/07 18:56:41 floppym Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.50.0-r1.ebuild,v 1.1 2012/08/20 21:55:03 dev-zero Exp $
 
 EAPI="4"
 RESTRICT="mirror"
@@ -8,10 +8,9 @@ PYTHON_DEPEND="python? *"
 SUPPORT_PYTHON_ABIS="1"
 RESTRICT_PYTHON_ABIS="*-jython *-pypy-*"
 
-inherit check-reqs flag-o-matic multilib python toolchain-funcs versionator
+inherit check-reqs flag-o-matic multilib multiprocessing python toolchain-funcs versionator
 
-MY_P="${PN}_$(replace_all_version_separators _)"
-MY_DIR="${PN}_$(replace_all_version_separators _ $(get_version_component_range 1-3))"
+MY_P=${PN}_$(replace_all_version_separators _)
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
@@ -20,38 +19,20 @@ SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
 LICENSE="Boost-1.0"
 SLOT="$(get_version_component_range 1-2)"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd"
-IUSE="debug doc +eselect icu mpi python static-libs test tools"
+IUSE="debug doc icu mpi python static-libs test tools"
 
-RDEPEND="icu? ( >=dev-libs/icu-3.3 )
+RDEPEND="icu? ( >=dev-libs/icu-3.6 )
+	!icu? ( virtual/libiconv )
 	mpi? ( || ( sys-cluster/openmpi[cxx] sys-cluster/mpich2[cxx,threads] ) )
 	sys-libs/zlib
-	!!<=dev-libs/boost-1.35.0-r2
-	>=app-admin/eselect-boost-0.4"
+	!!<=dev-libs/boost-1.35.0-r2"
 DEPEND="${RDEPEND}
-	dev-util/boost-build:${SLOT}"
+	>=dev-util/boost-build-1.50.0-r2:${SLOT}"
 
-S="${WORKDIR}/${MY_DIR}"
+S="${WORKDIR}/${MY_P}"
 
 MAJOR_PV=$(replace_all_version_separators _ ${SLOT})
 BJAM="b2-${MAJOR_PV}"
-
-# Usage:
-# _add_line <line-to-add> <profile>
-# ... to add to specific profile
-# or
-# _add_line <line-to-add>
-# ... to add to all profiles for which the use flag set
-
-_add_line() {
-	if [[ -z "$2" ]]; then
-		echo "${1}" >> "${D}usr/share/boost-eselect/profiles/${SLOT}/default"
-		if use debug; then
-			echo "${1}" >> "${D}usr/share/boost-eselect/profiles/${SLOT}/debug"
-		fi
-	else
-		echo "${1}" >> "${D}usr/share/boost-eselect/profiles/${SLOT}/${2}"
-	fi
-}
 
 create_user-config.jam() {
 	local compiler compiler_version compiler_executable
@@ -75,14 +56,7 @@ create_user-config.jam() {
 		python_configuration="using python : $(python_get_version) : /usr : $(python_get_includedir) : /usr/$(get_libdir) ;"
 	fi
 
-	# The debug-symbols=none and optimization=none are not official upstream flags but a Gentoo
-	# specific patch to make sure that all our CFLAGS/CXXFLAGS/LDFLAGS are being respected.
-	# Using optimization=off would for example add "-O0" and override "-O2" set by the user.
-	# Please take a look at the boost-build ebuild for more information.
 	cat > user-config.jam << __EOF__
-variant gentoorelease : release : <optimization>none <debug-symbols>none ;
-variant gentoodebug : debug : <optimization>none ;
-
 using ${compiler} : ${compiler_version} : ${compiler_executable} : <cflags>"${CFLAGS}" <cxxflags>"${CXXFLAGS}" <linkflags>"${LDFLAGS}" ;
 ${mpi_configuration}
 ${python_configuration}
@@ -110,8 +84,7 @@ pkg_setup() {
 
 	if use debug; then
 		ewarn "The debug USE flag means that a second set of the boost libraries"
-		ewarn "will be built containing debug symbols. You'll be able to select them"
-		ewarn "using the boost-eselect module. But even though the optimization flags"
+		ewarn "will be built containing debug symbols. But even though the optimization flags"
 		ewarn "you might have set are not stripped, there will be a performance"
 		ewarn "penalty and linking other packages against the debug version"
 		ewarn "of boost is _not_ recommended."
@@ -119,14 +92,15 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-1.48.0-mpi_python3.patch"
-	epatch "${FILESDIR}/${PN}-1.51.0-respect_python-buildid.patch"
-	epatch "${FILESDIR}/${PN}-1.48.0-support_dots_in_python-buildid.patch"
-	epatch "${FILESDIR}/${PN}-1.48.0-no_strict_aliasing_python2.patch"
-	epatch "${FILESDIR}/${PN}-1.48.0-disable_libboost_python3.patch"
-	epatch "${FILESDIR}/${PN}-1.48.0-python_linking.patch"
-	epatch "${FILESDIR}/${PN}-1.48.0-disable_icu_rpath.patch"
-	epatch "${FILESDIR}/remove-toolset-1.48.0.patch"
+	epatch \
+		"${FILESDIR}/${PN}-1.48.0-mpi_python3.patch" \
+		"${FILESDIR}/${PN}-1.51.0-respect_python-buildid.patch" \
+		"${FILESDIR}/${PN}-1.48.0-support_dots_in_python-buildid.patch" \
+		"${FILESDIR}/${PN}-1.48.0-no_strict_aliasing_python2.patch" \
+		"${FILESDIR}/${PN}-1.48.0-disable_libboost_python3.patch" \
+		"${FILESDIR}/${PN}-1.48.0-python_linking.patch" \
+		"${FILESDIR}/${PN}-1.48.0-disable_icu_rpath.patch" \
+		"${FILESDIR}/remove-toolset-1.48.0.patch"
 }
 
 src_configure() {
@@ -166,42 +140,33 @@ src_configure() {
 }
 
 src_compile() {
-	local jobs
-	jobs=$( echo " ${MAKEOPTS} " | \
-		sed -e 's/ --jobs[= ]/ -j /g' \
-			-e 's/ -j \([1-9][0-9]*\)/ -j\1/g' \
-			-e 's/ -j\>/ -j1/g' | \
-			( while read -d ' ' j; do if [[ "${j#-j}" = "$j" ]]; then continue; fi; jobs="${j#-j}"; done; echo ${jobs} ) )
-	if [[ "${jobs}" != "" ]]; then NUMJOBS="-j"${jobs}; fi
-
 	export BOOST_ROOT="${S}"
 	PYTHON_DIRS=""
 	MPI_PYTHON_MODULE=""
+	NUMJOBS="-j$(makeopts_jobs)"
 
 	building() {
 		create_user-config.jam
 
 		einfo "Using the following command to build:"
-		einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoorelease --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared $(use python && echo --python-buildid=${PYTHON_ABI})"
+		einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoorelease --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} $(use python && echo --python-buildid=${PYTHON_ABI})"
 
 		${BJAM} ${NUMJOBS} -q -d+2 \
 			gentoorelease \
 			--user-config=user-config.jam \
-			${OPTIONS} \
-			threading=single,multi ${LINK_OPTS} runtime-link=shared \
+			${OPTIONS} threading=single,multi ${LINK_OPTS} \
 			$(use python && echo --python-buildid=${PYTHON_ABI}) \
 			|| die "Building of Boost libraries failed"
 
 		# ... and do the whole thing one more time to get the debug libs
 		if use debug; then
 			einfo "Using the following command to build:"
-			einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoodebug --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --buildid=debug $(use python && echo --python-buildid=${PYTHON_ABI})"
+			einfo "${BJAM} ${NUMJOBS} -q -d+2 gentoodebug --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} --buildid=debug $(use python && echo --python-buildid=${PYTHON_ABI})"
 
 			${BJAM} ${NUMJOBS} -q -d+2 \
 				gentoodebug \
 				--user-config=user-config.jam \
-				${OPTIONS} \
-				threading=single,multi ${LINK_OPTS} runtime-link=shared \
+				${OPTIONS} threading=single,multi ${LINK_OPTS} \
 				--buildid=debug \
 				$(use python && echo --python-buildid=${PYTHON_ABI}) \
 				|| die "Building of Boost debug libraries failed"
@@ -258,16 +223,6 @@ src_compile() {
 }
 
 src_install () {
-	dodir /usr/share/boost-eselect/profiles/${SLOT}
-	touch "${D}usr/share/boost-eselect/profiles/${SLOT}/default" || die
-	if use debug; then
-		 touch "${D}usr/share/boost-eselect/profiles/${SLOT}/debug" || die
-	fi
-
-	if use mpi && use python; then
-		_add_line "python_modules=\""
-	fi
-
 	installation() {
 		create_user-config.jam
 
@@ -284,13 +239,12 @@ src_install () {
 		fi
 
 		einfo "Using the following command to install:"
-		einfo "${BJAM} -q -d+2 gentoorelease --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --includedir=\"${D}usr/include\" --libdir=\"${D}usr/$(get_libdir)\" $(use python && echo --python-buildid=${PYTHON_ABI}) install"
+		einfo "${BJAM} -q -d+2 gentoorelease --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} --includedir=\"${D}usr/include\" --libdir=\"${D}usr/$(get_libdir)\" $(use python && echo --python-buildid=${PYTHON_ABI}) install"
 
 		${BJAM} -q -d+2 \
 			gentoorelease \
 			--user-config=user-config.jam \
-			${OPTIONS} \
-			threading=single,multi ${LINK_OPTS} runtime-link=shared \
+			${OPTIONS} threading=single,multi ${LINK_OPTS} \
 			--includedir="${D}usr/include" \
 			--libdir="${D}usr/$(get_libdir)" \
 			$(use python && echo --python-buildid=${PYTHON_ABI}) \
@@ -298,13 +252,12 @@ src_install () {
 
 		if use debug; then
 			einfo "Using the following command to install:"
-			einfo "${BJAM} -q -d+2 gentoodebug --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} runtime-link=shared --includedir=\"${D}usr/include\" --libdir=\"${D}usr/$(get_libdir)\" --buildid=debug $(use python && echo --python-buildid=${PYTHON_ABI})"
+			einfo "${BJAM} -q -d+2 gentoodebug --user-config=user-config.jam ${OPTIONS} threading=single,multi ${LINK_OPTS} --includedir=\"${D}usr/include\" --libdir=\"${D}usr/$(get_libdir)\" --buildid=debug $(use python && echo --python-buildid=${PYTHON_ABI})"
 
 			${BJAM} -q -d+2 \
 				gentoodebug \
 				--user-config=user-config.jam \
-				${OPTIONS} \
-				threading=single,multi ${LINK_OPTS} runtime-link=shared \
+				${OPTIONS} threading=single,multi ${LINK_OPTS} \
 				--includedir="${D}usr/include" \
 				--libdir="${D}usr/$(get_libdir)" \
 				--buildid=debug \
@@ -332,7 +285,6 @@ else:
 	from . import mpi
 del sys
 EOF
-				_add_line "$(python_get_sitedir)/mpi.py:boost_${MAJOR_PV}.mpi"
 			fi
 		fi
 	}
@@ -340,10 +292,6 @@ EOF
 		python_execute_function installation
 	else
 		installation
-	fi
-
-	if use mpi && use python; then
-		_add_line "\""
 	fi
 
 	use python || rm -rf "${D}usr/include/boost-${MAJOR_PV}/boost"/python* || die
@@ -435,45 +383,30 @@ EOF
 	fi
 
 	# Create a subdirectory with completely unversioned symlinks
-	# and store the names in the profiles-file for eselect
 	dodir /usr/$(get_libdir)/boost-${MAJOR_PV}
 
-	_add_line "libs=\"" default
 	local f
 	for f in $(ls -1 ${LIBRARY_TARGETS} | grep -v debug); do
 		dosym ../${f} /usr/$(get_libdir)/boost-${MAJOR_PV}/${f/-${MAJOR_PV}}
-		_add_line "/usr/$(get_libdir)/${f}" default
 	done
-	_add_line "\"" default
 
 	if use debug; then
-		_add_line "libs=\"" debug
 		dodir /usr/$(get_libdir)/boost-${MAJOR_PV}-debug
 		local f
 		for f in $(ls -1 ${LIBRARY_TARGETS} | grep debug); do
 			dosym ../${f} /usr/$(get_libdir)/boost-${MAJOR_PV}-debug/${f/-${MAJOR_PV}-debug}
-			_add_line "/usr/$(get_libdir)/${f}" debug
 		done
-		_add_line "\"" debug
-
-		_add_line "includes=\"/usr/include/boost-${MAJOR_PV}/boost\"" debug
-		_add_line "suffix=\"-debug\"" debug
 	fi
-
-	_add_line "includes=\"/usr/include/boost-${MAJOR_PV}/boost\"" default
 
 	popd > /dev/null || die
 
 	if use tools; then
 		pushd dist/bin > /dev/null || die
 		# Append version postfix to binaries for slotting
-		_add_line "bins=\""
 		local b
 		for b in *; do
 			newbin "${b}" "${b}-${MAJOR_PV}"
-			_add_line "/usr/bin/${b}-${MAJOR_PV}"
 		done
-		_add_line "\""
 		popd > /dev/null || die
 
 		pushd dist > /dev/null || die
@@ -481,7 +414,6 @@ EOF
 		doins -r share/boostbook
 		# Append version postfix for slotting
 		mv "${D}usr/share/boostbook" "${D}usr/share/boostbook-${MAJOR_PV}" || die
-		_add_line "dirs=\"/usr/share/boostbook-${MAJOR_PV}\""
 		popd > /dev/null || die
 	fi
 
@@ -600,16 +532,5 @@ __EOF__
 		python_execute_function -f -q testing
 	else
 		testing
-	fi
-}
-
-pkg_postinst() {
-	if use eselect; then
-		eselect boost update || ewarn "eselect boost update failed."
-	fi
-
-	if [[ ! -h "${ROOT}etc/eselect/boost/active" ]]; then
-		elog "No active boost version found. Calling eselect to select one..."
-		eselect boost update || ewarn "eselect boost update failed."
 	fi
 }
