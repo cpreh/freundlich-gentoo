@@ -86,7 +86,7 @@ REQUIRED_USE="
 	audio_null? ( audio plugin )
 	camera? ( input renderer viewport )
 	cegui? ( charconv image image2d input log renderer viewport )
-	console? ( fonttext input sprite )
+	console? ( font fontdraw input sprite )
 	devil? ( image image2d log plugin )
 	evdev? ( input log plugin window )
 	font? ( plugin )
