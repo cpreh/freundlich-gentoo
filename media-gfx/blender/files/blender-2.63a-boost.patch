@@ -1,0 +1,52 @@
+diff -Nurp blender-2.63a-old/build_files/scons/config/linux-config.py blender-2.63a/build_files/scons/config/linux-config.py
+--- blender-2.63a-old/build_files/scons/config/linux-config.py	2012-09-05 13:50:03.759059943 +0200
++++ blender-2.63a/build_files/scons/config/linux-config.py	2012-09-05 13:50:41.304058818 +0200
+@@ -1,6 +1,7 @@
+ # find library directory
+ import platform
+ import os
++import glob
+ from Modules.FindPython import FindPython
+ 
+ bitness = platform.architecture()[0]
+@@ -192,6 +193,11 @@ BF_EXPAT = '/usr'
+ BF_EXPAT_LIB = 'expat'
+ BF_EXPAT_LIBPATH = '/usr/lib'
+ 
++WITH_BF_COLAMD = True
++BF_COLAMD = '#extern/colamd'
++BF_COLAMD_INC = '${BF_COLAMD}/include'
++BF_COLAMD_LIB = 'extern_colamd'
++
+ WITH_BF_JEMALLOC = False
+ WITH_BF_STATICJEMALLOC = False
+ BF_JEMALLOC = '/usr'
+@@ -212,13 +218,21 @@ BF_OIIO_LIBPATH = BF_OIIO + '/lib'
+ 
+ WITH_BF_BOOST = True
+ WITH_BF_STATICBOOST = False
+-BF_BOOST = LIBDIR + '/boost'
+-if not os.path.exists(LCGDIR + '/boost'):
+-    WITH_BF_BOOST = False
+-    BF_BOOST = '/usr'
+-BF_BOOST_INC = BF_BOOST + '/include'
+-BF_BOOST_LIB = 'boost_date_time boost_filesystem boost_regex boost_system boost_thread'
+-BF_BOOST_LIBPATH = BF_BOOST + '/lib'
++
++BF_BOOSTS = glob.glob('/usr/include/boost-*')
++BF_BOOSTS.sort()
++BF_BOOST_INC = BF_BOOSTS[-1]
++BF_BOOSTS_LIBSUFFIX = os.path.basename(BF_BOOST_INC).lstrip('boost')
++BF_BOOST_LIB = 'boost_date_time{0} boost_filesystem{0} boost_regex{0} boost_system{0} boost_thread{0}'.format(BF_BOOSTS_LIBSUFFIX)
++BF_BOOST_LIBPATH='/usr/lib'
++
++#BF_BOOST = LIBDIR + '/boost'
++#if not os.path.exists(LCGDIR + '/boost'):
++#    WITH_BF_BOOST = False
++#    BF_BOOST = '/usr'
++#BF_BOOST_INC = BF_BOOST + '/include'
++#BF_BOOST_LIB = 'boost_date_time boost_filesystem boost_regex boost_system boost_thread'
++#BF_BOOST_LIBPATH = BF_BOOST + '/lib'
+ 
+ WITH_BF_CYCLES = WITH_BF_OIIO and WITH_BF_BOOST
+ 
