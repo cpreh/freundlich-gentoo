@@ -1,0 +1,50 @@
+--- inkscape-0.48.3.1/configure.ac	2012-02-19 02:43:03.393190443 +0100
++++ configure.ac	2012-09-18 14:49:11.621776365 +0200
+@@ -131,6 +131,19 @@ if test "x$GXX" = "xyes"; then
+ 	fi
+ fi
+ 
++dnl ******************************
++dnl boost checking
++dnl ******************************
++
++AC_MSG_CHECKING(for boost)
++AC_ARG_WITH([boost],
++  [AS_HELP_STRING([--with-boost],
++      [location of the boost headers, defaults to /usr/include/boost])],
++        [BOOST_INCLUDE_DIR="-I$withval"],
++        [BOOST_INCLUDE_DIR='-I/usr/include/boost'])
++AC_SUBST([BOOST_INCLUDE_DIR])
++CPPFLAGS="$CPPFLAGS $BOOST_INCLUDE_DIR"
++
+ # Detect a working version of unordered containers.
+ AC_MSG_CHECKING([TR1 unordered_set usability])
+ AC_COMPILE_IFELSE([
+@@ -147,8 +160,7 @@ if test "x$unordered_set_works" = "xyes"
+ else
+ 	AC_MSG_RESULT([not working])
+ fi
+-AC_CHECK_HEADER([boost/unordered_set.hpp], [AC_DEFINE(HAVE_BOOST_UNORDERED_SET, 1, [Boost unordered_set (Boost >= 1.36)])], [])
+-AC_CHECK_HEADER([ext/hash_set], [AC_DEFINE(HAVE_EXT_HASH_SET, 1, [Legacy GNU ext/hash_set])], [])
++AC_DEFINE(HAVE_BOOST_UNORDERED_SET, 1, [Boost unordered_set (Boost >= 1.36)])
+ 
+ # Test whether GCC emits a spurious warning when using boost::optional
+ # If yes, turn off strict aliasing warnings to reduce noise
+@@ -346,6 +358,7 @@ esac
+ AC_MSG_RESULT([$platform_solaris])
+ AM_CONDITIONAL(PLATFORM_SOLARIS, test "$platform_solaris" = "yes")
+ 
++
+ dnl ******************************
+ dnl gnome vfs checking
+ dnl ******************************
+@@ -765,9 +778,6 @@ if test "x$carbon_ok" = "xyes"; then
+ fi
+ AM_CONDITIONAL(HAVE_CARBON, test "x$carbon_ok" = "xyes")
+ 
+-# Check for some boost header files
+-AC_CHECK_HEADERS([boost/concept_check.hpp], [], AC_MSG_ERROR([You need the boost package (e.g. libboost-dev)]))
+-
+ PKG_CHECK_MODULES(CAIRO_PDF, cairo-pdf, cairo_pdf=yes, cairo_pdf=no)
+ if test "x$cairo_pdf" = "xyes"; then
+   AC_DEFINE(HAVE_CAIRO_PDF, 1, [Whether the Cairo PDF backend is available])
