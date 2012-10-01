@@ -3,4 +3,4 @@
 ~dev-games/cegui-9999
 ~games-emulation/pcsxr-9999
 ~sys-devel/gcc-4.7.2
-~sys-devel/gcc-4.8.0_alpha20120923
+~sys-devel/gcc-4.8.0_alpha20120930
