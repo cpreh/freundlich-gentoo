@@ -11,11 +11,10 @@ RESTRICT_PYTHON_ABIS="*-jython *-pypy-*"
 inherit check-reqs flag-o-matic multilib multiprocessing python toolchain-funcs versionator
 
 MY_P=${PN}_$(replace_all_version_separators _)
-MY_DIR="${PN}_$(replace_all_version_separators _ $(get_version_component_range 1-4))"
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
-SRC_URI="http://boost.cowic.de/rc/${MY_P}.tar.bz2"
+SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
 
 LICENSE="Boost-1.0"
 SLOT="$(get_version_component_range 1-2)"
@@ -30,7 +29,7 @@ RDEPEND="icu? ( >=dev-libs/icu-3.6 )
 DEPEND="${RDEPEND}
 	>=dev-util/boost-build-1.50.0-r2:${SLOT}"
 
-S="${WORKDIR}/${MY_DIR}"
+S="${WORKDIR}/${MY_P}"
 
 MAJOR_PV=$(replace_all_version_separators _ ${SLOT})
 BJAM="b2-${MAJOR_PV}"
