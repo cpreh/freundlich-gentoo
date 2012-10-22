@@ -42,7 +42,7 @@ RDEPEND="
 		media-libs/openal
 	)
 	opencl? (
-		dev-util/nvidia-cuda-sdk[opencl]
+		virtual/opencl
 	)
 	pango? (
 		media-libs/freetype
