@@ -1,8 +1,8 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/boost-build/boost-build-1.50.0-r3.ebuild,v 1.1 2012/08/21 05:37:06 dev-zero Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/boost-build/boost-build-1.51.0.ebuild,v 1.2 2012/10/31 16:32:18 flameeyes Exp $
 
-EAPI="4"
+EAPI="5"
 RESTRICT="mirror"
 PYTHON_DEPEND="python? 2"
 
@@ -17,20 +17,21 @@ HOMEPAGE="http://www.boost.org/doc/tools/build/index.html"
 SRC_URI="mirror://sourceforge/boost/boost_${MY_PV}.tar.bz2"
 
 LICENSE="Boost-1.0"
-SLOT="$(get_version_component_range 1-2)"
+SLOT=0
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd"
 IUSE="examples python test"
+
+REQUIRED_USE="test? ( python )"
 
 RDEPEND="!<dev-libs/boost-1.34.0
 	!<=dev-util/boost-build-1.35.0-r1"
 DEPEND="${RDEPEND}
-	test? ( =dev-lang/python-2*
-		sys-apps/diffutils )"
+	test? ( sys-apps/diffutils )"
 
 S="${WORKDIR}/${MY_DIR}/tools/build/v2"
 
 pkg_setup() {
-	if use python ; then
+	if use python; then
 		python_set_active_version 2
 		python_pkg_setup
 	fi
@@ -72,7 +73,7 @@ src_configure() {
 		-e "s|/usr/share/boost-build|/usr/share/boost-build-${MAJOR_PV}|" \
 		engine/Jambase || die "sed failed"
 
-	if use python ; then
+	if use python; then
 		# replace versions by user-selected one (TODO: fix this when slot-op
 		# deps are available to always match the best version available)
 		sed -i \
@@ -86,7 +87,7 @@ src_compile() {
 
 	local toolset
 
-	if [[ ${CHOST} == *-darwin* ]] ; then
+	if [[ ${CHOST} == *-darwin* ]]; then
 		toolset=darwin
 	else
 		# Using boost's generic toolset here, which respects CC and CFLAGS
@@ -106,14 +107,14 @@ src_install() {
 		build kernel options tools util
 
 	rm "${D}/usr/share/boost-build-${MAJOR_PV}/build/project.ann.py" || die "removing faulty python file failed"
-	if ! use python ; then
+	if ! use python; then
 		find "${D}/usr/share/boost-build-${MAJOR_PV}" -iname "*.py" -delete || die "removing experimental python files failed"
 	fi
 
 	dodoc changes.txt hacking.txt release_procedure.txt \
 		notes/build_dir_option.txt notes/relative_source_paths.txt
 
-	if use examples ; then
+	if use examples; then
 		insinto /usr/share/doc/${PF}
 		doins -r example
 	fi
@@ -126,7 +127,7 @@ src_test() {
 
 	DO_DIFF="${PREFIX}/usr/bin/diff" $(PYTHON -2) test_all.py
 
-	if [ -s test_results.txt ] ; then
+	if [[ -s test_results.txt ]]; then
 		eerror "At least one test failed: $(<test_results.txt)"
 		die "tests failed"
 	fi
