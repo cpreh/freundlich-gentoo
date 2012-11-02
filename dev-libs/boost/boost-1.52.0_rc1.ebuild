@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.51.0-r1.ebuild,v 1.1 2012/10/31 16:32:25 flameeyes Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/boost/boost-1.51.0-r1.ebuild,v 1.2 2012/11/01 15:21:39 flameeyes Exp $
 
 EAPI="5"
 RESTRICT="mirror"
@@ -14,7 +14,7 @@ MY_P=${PN}_$(replace_all_version_separators _)
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
-SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
+SRC_URI="http://boost.cowic.de/rc/${MY_P}.tar.bz2"
 
 LICENSE="Boost-1.0"
 SLOT=0
@@ -30,7 +30,8 @@ RDEPEND="icu? ( >=dev-libs/icu-3.6:= )
 DEPEND="${RDEPEND}
 	=dev-util/boost-build-${MAJOR_V}*"
 
-S="${WORKDIR}/${MY_P}"
+MY_DIR="boost_$(replace_all_version_separators _ $(get_version_component_range 1-3))"
+S="${WORKDIR}/${MY_DIR}"
 
 MAJOR_PV=$(replace_all_version_separators _ ${MAJOR_V})
 BJAM="b2-${MAJOR_PV}"
@@ -273,7 +274,7 @@ EOF
 		installation
 	fi
 
-	use python || rm -rf "${D}usr/include/boost"/python* || die
+	use python || rm -rf "${D}usr/include/boost-${MAJOR_PV}/boost"/python* || die
 
 	if use doc; then
 		find libs/*/* -iname "test" -or -iname "src" | xargs rm -rf
