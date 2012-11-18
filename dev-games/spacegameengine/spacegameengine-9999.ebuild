@@ -14,12 +14,12 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+alda +audio audio_null +camera +charconv cegui +cg +config +console
-+devil doc examples evdev +font +fontbitmap +fontdraw graph +image +image2d
-+image3d +input +line_drawer +log +media modelmd3 modelobj +openal
-opencl +opengl +pango +parse +plugin +png projectile +renderer +rendereropengl
-resource_tree rucksack scenic +shader +sprite +systems test +texture +timer
-+viewport +vorbis +wave +window +x11input"
+IUSE="+audio audio_null +camera +charconv cegui +cg +config +console +devil doc
+examples evdev +font +fontbitmap +fontdraw graph +image +image2d +image3d +input
++line_drawer +log +media modelmd3 modelobj +openal opencl +opengl +pango +parse
++plugin +png projectile +renderer +rendereropengl resource_tree rucksack scenic
++shader +sprite +systems test +texture +timer +viewport +vorbis +wave +window
++x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -128,7 +128,6 @@ src_configure() {
 		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
 		-D INSTALL_DOC_DIR_BASE="/usr/share/doc"
 		-D CHARCONV_BACKEND="iconv"
-		$(cmake-utils_use_enable alda)
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
