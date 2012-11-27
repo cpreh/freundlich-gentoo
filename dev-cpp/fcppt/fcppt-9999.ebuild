@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="4"
+EAPI="5"
 
 inherit cmake-utils git-2
 
@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="doc +examples static-libs test"
 
 RDEPEND="
-	>=dev-libs/boost-1.50.0
+	>=dev-libs/boost-1.47.0
 	"
 DEPEND="
 	${RDEPEND}

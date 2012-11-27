@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="4"
+EAPI="5"
+
+RESTRICT="mirror"
 
 inherit cmake-utils
 
@@ -18,7 +20,7 @@ IUSE="doc +examples static-libs test"
 RDEPEND="
 	>=dev-libs/boost-1.47.0
 	"
-DEPEND+="
+DEPEND="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5
