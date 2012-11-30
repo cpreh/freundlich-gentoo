@@ -15,11 +15,11 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+audio audio_null +camera +charconv cegui +cg +config +console +devil doc
-examples evdev +font +fontbitmap +fontdraw graph +image +image2d +image3d +input
-+line_drawer +log +media modelmd3 modelobj +openal opencl +opengl +pango +parse
-+plugin +png projectile +renderer +rendereropengl resource_tree rucksack scenic
-+shader +sprite +systems test +texture +timer +viewport +vorbis +wave +window
-+x11input"
+examples evdev +font +fontbitmap +fontdraw graph +image +imagecolor +image2d
++image3d +input +line_drawer +log +media modelmd3 modelobj +openal opencl
++opengl +pango +parse +plugin +png postprocessing projectile +renderer
++rendereropengl resource_tree rucksack scenic +shader +sprite +systems test
++texture +timer +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -84,39 +84,39 @@ DEPEND="
 REQUIRED_USE="
 	audio? ( log media plugin )
 	audio_null? ( audio plugin )
-	camera? ( input renderer viewport )
-	cegui? ( charconv image image2d input log renderer viewport )
-	console? ( font fontdraw input sprite )
-	devil? ( image image2d log plugin )
+	camera? ( input log parse renderer viewport )
+	cegui? ( charconv imagecolor image2d input log renderer viewport )
+	console? ( font fontdraw imagecolor input renderer sprite )
+	devil? ( image image2d imagecolor log plugin )
 	evdev? ( input log plugin window )
 	font? ( plugin )
-	fontbitmap? ( font image2d log parse )
-	fontdraw? ( font image image2d renderer sprite texture )
-	graph? ( image image2d renderer sprite texture )
-	image2d? ( image media plugin )
-	image3d? ( image )
-	input? ( plugin )
-	line_drawer? ( image renderer )
-	media? ( log )
+	fontbitmap? ( font imagecolor image2d log parse )
+	fontdraw? ( font imagecolor image2d renderer sprite texture )
+	graph? ( image image2d imagecolor renderer sprite texture )
+	image2d? ( image imagecolor media plugin )
+	image3d? ( image imagecolor )
+	input? ( log plugin )
+	line_drawer? ( imagecolor renderer )
 	modelmd3? ( log )
-	modelobj? ( image renderer )
+	modelobj? ( charconv imagecolor log renderer )
 	openal? ( audio log plugin )
-	opencl? ( image image2d log renderer rendereropengl )
-	opengl? ( image image2d image3d log plugin renderer rendereropengl )
-	pango? ( charconv font image2d plugin )
-	png? ( image image2d log plugin )
-	projectile? ( image line_drawer log renderer )
-	renderer? ( image image2d image3d log plugin )
+	opencl? ( image2d imagecolor log renderer rendereropengl )
+	opengl? ( image2d image3d imagecolor plugin renderer rendereropengl )
+	pango? ( charconv font image2d imagecolor plugin )
+	png? ( image image2d imagecolor log plugin )
+	postprocessing? ( cg config renderer shader viewport )
+	projectile? ( imagecolor line_drawer log renderer )
+	renderer? ( image2d image3d imagecolor log plugin )
 	rucksack? ( viewport )
-	scenic? ( camera image line_drawer modelobj parse renderer viewport )
+	scenic? ( camera cg charconv config imagecolor line_drawer modelobj parse renderer shader viewport )
 	shader? ( cg renderer )
-	sprite? ( image renderer )
-	systems? ( audio charconv config font image2d input log renderer viewport window )
+	sprite? ( renderer )
+	systems? ( audio charconv config font image2d input log parse plugin renderer viewport window )
 	texture? ( image2d log renderer )
 	viewport? ( renderer window )
 	vorbis? ( audio log plugin )
-	wave? ( audio plugin )
-	x11input? ( input log plugin window )
+	wave? ( audio log plugin )
+	x11input? ( input plugin window )
 "
 
 src_configure() {
@@ -160,6 +160,7 @@ src_configure() {
 		$(cmake-utils_use_enable parse)
 		$(cmake-utils_use_enable plugin)
 		$(cmake-utils_use_enable png)
+		$(cmake-utils_use_enable postprocessing)
 		$(cmake-utils_use_enable projectile)
 		$(cmake-utils_use_enable renderer)
 		$(cmake-utils_use_enable rendereropengl)
