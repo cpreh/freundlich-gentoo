@@ -14,12 +14,13 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+audio audio_null +camera +charconv cegui +cg +config +console +devil doc
+IUSE="+audio audio_null +camera cegui +cg +charconv +config +console +devil doc
 examples evdev +font +fontbitmap +fontdraw graph +image +image2d +image3d
 +imagecolor +imageds +imageds2d +input +line_drawer +log +media modelmd3
 modelobj +openal opencl +opengl +pango +parse +plugin +png postprocessing
 projectile +renderer +rendereropengl resource_tree rucksack scenic +shader
-+sprite +systems test +texture +timer +viewport +vorbis +wave +window +x11input"
++sprite static-libs +systems test +texture +timer +viewport +vorbis +wave
++window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -175,6 +176,7 @@ src_configure() {
 		$(cmake-utils_use_enable scenic)
 		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
+		$(cmake-utils_use_enable static-libs STATIC)
 		$(cmake-utils_use_enable systems)
 		$(cmake-utils_use_enable test)
 		$(cmake-utils_use_enable texture)

@@ -3,10 +3,10 @@
 <pkgmetadata>
 <herd>no-herd</herd>
 	<use>
-		<flag name='alda'>Build the alda serialization library</flag>
 		<flag name='audio'>Build the audio core library</flag>
 		<flag name='audio_null'>Build the audio null plugin that doesn't do any audio output</flag>
 		<flag name='camera'>Build the camera library which provides an fps-like camera</flag>
+		<flag name='cegui'>Build the CEGUI bindings library</flag>
 		<flag name='cg'>Build the cg library which provides Cg bindings for the renderer</flag>
 		<flag name='charconv'>Build the charconv core library</flag>
 		<flag name='config'>Build the config library which provides querying of sge's and various system paths</flag>
@@ -16,28 +16,34 @@
 		<flag name='evdev'>Build evdev plugin which handles joysticks and gamepads using /dev/input/event*</flag>
 		<flag name='font'>Build the font core library</flag>
 		<flag name='fontbitmap'>Build the fontbitmap library which loads bitmap fonts in sge's own format</flag>
-		<flag name='fonttext'>Build the fonttext library for text rendering</flag>
-		<flag name='freetype'>Build the freetype font loader plugin which loads truetype fonts</flag>
+		<flag name='fontdraw'>Build the font draw core library which provides basic rendering of fonts</flag>
+		<flag name='graph'>Build the graph library which provides rendering of graphs to a texture</flag>
 		<flag name='image'>Build the image core library</flag>
-		<flag name='image2d'>Build the image2d core library</flag>
-		<flag name='image3d'>Build the image3d core library</flag>
+		<flag name='image2d'>Build the image color 2d core library</flag>
+		<flag name='image3d'>Build the image color 3d core library</flag>
+		<flag name='imagecolor'>Build the image color core library</flag>
+		<flag name='imageds'>Build the image depth stencil core library</flag>
+		<flag name='imageds2d'>Build the image depth stencil 2d library</flag>
 		<flag name='input'>Build the input core library</flag>
 		<flag name='line_drawer'>Build the line_drawer library which can draw a set of lines</flag>
 		<flag name='log'>Build the log core library</flag>
 		<flag name='media'>Build the media core library</flag>
-		<flag name='modelmanager'>Build the model manager library</flag>
 		<flag name='modelmd3'>Build the md3 loader library that can do basic loading of md3 models</flag>
 		<flag name='modelobj'>Build the obj loader library that can do basic loading of obj models</flag>
 		<flag name='openal'>Build OpenAL audio player plugin</flag>
 		<flag name='opencl'>Build OpenCL library</flag>
 		<flag name='opengl'>Build OpenGL renderer plugin that provides most functionality of opengl-2.0 and some of 3.0</flag>
+		<flag name='pango'>Build the pango font plugin</flag>
 		<flag name='parse'>Build the parse library that can be used to load and save json and ini</flag>
 		<flag name='plugin'>Build the plugin core library which provides loading of plugins</flag>
 		<flag name='png'>Build the png image loader plugin</flag>
+		<flag name='postprocessing'>Build the postprocessing library</flag>
 		<flag name='projectile'>Build the projectile library which is a 2D physics frontend for Bullet</flag>
 		<flag name='renderer'>Build the renderer core library</flag>
 		<flag name='rendereropengl'>Build the renderer opengl bindings library</flag>
 		<flag name='resource_tree'>Build the resource tree library</flag>
+		<flag name='rucksack'>Build the rucksack library which provides layouts for rectangles</flag>
+		<flag name='scenic'>Build the scenic library which provides scene management</flag>
 		<flag name='shader'>Build the shader library which makes the process of creating shaders easier</flag>
 		<flag name='sprite'>Build the sprite library</flag>
 		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>
@@ -48,7 +54,5 @@
 		<flag name='wave'>Build the wave audio loader library</flag>
 		<flag name='window'>Build the window library which wraps awl windows</flag>
 		<flag name='x11input'>Build the x11input plugin which uses XI2 to handle cursors, mice and keyboards</flag>
-		<flag name='xrandr'>Enable the opengl plugin to switch resolutions using xrandr</flag>
 	</use>
 </pkgmetadata>
-
