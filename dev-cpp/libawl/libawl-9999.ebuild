@@ -14,7 +14,7 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+examples"
+IUSE="+examples static-libs"
 
 DEPEND="
 	>=dev-libs/boost-1.47.0
@@ -25,6 +25,7 @@ RDEPEND="${DEPEND}"
 src_configure() {
 	local mycmakeargs=(
 		$(cmake-utils_use_enable examples)
+		$(cmake-utils_use_enable static-libs STATIC)
 	)
 
 	cmake-utils_src_configure
