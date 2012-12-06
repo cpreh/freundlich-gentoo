@@ -15,11 +15,11 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+audio audio_null +camera +charconv cegui +cg +config +console +devil doc
-examples evdev +font +fontbitmap +fontdraw graph +image +imagecolor +image2d
-+image3d +input +line_drawer +log +media modelmd3 modelobj +openal opencl
-+opengl +pango +parse +plugin +png postprocessing projectile +renderer
-+rendereropengl resource_tree rucksack scenic +shader +sprite +systems test
-+texture +timer +viewport +vorbis +wave +window +x11input"
+examples evdev +font +fontbitmap +fontdraw graph +image +image2d +image3d
++imagecolor +imageds +imageds2d +input +line_drawer +log +media modelmd3
+modelobj +openal opencl +opengl +pango +parse +plugin +png postprocessing
+projectile +renderer +rendereropengl resource_tree rucksack scenic +shader
++sprite +systems test +texture +timer +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -95,18 +95,21 @@ REQUIRED_USE="
 	graph? ( image image2d imagecolor renderer sprite texture )
 	image2d? ( image imagecolor media plugin )
 	image3d? ( image imagecolor )
+	imagecolor? ( image )
+	imageds? ( image )
+	imageds2d? ( image imageds )
 	input? ( log plugin )
 	line_drawer? ( imagecolor renderer )
 	modelmd3? ( log )
 	modelobj? ( charconv imagecolor log renderer )
 	openal? ( audio log plugin )
 	opencl? ( image2d imagecolor log renderer rendereropengl )
-	opengl? ( image2d image3d imagecolor plugin renderer rendereropengl )
+	opengl? ( image2d image3d imagecolor imageds imageds2d plugin renderer rendereropengl )
 	pango? ( charconv font image2d imagecolor plugin )
 	png? ( image image2d imagecolor log plugin )
 	postprocessing? ( cg config renderer shader viewport )
 	projectile? ( imagecolor line_drawer log renderer )
-	renderer? ( image2d image3d imagecolor log plugin )
+	renderer? ( image2d image3d imagecolor imageds imageds2d log plugin )
 	rucksack? ( viewport )
 	scenic? ( camera cg charconv config imagecolor line_drawer modelobj parse renderer shader viewport )
 	shader? ( cg renderer )
@@ -147,6 +150,9 @@ src_configure() {
 		$(cmake-utils_use_enable image)
 		$(cmake-utils_use_enable image2d)
 		$(cmake-utils_use_enable image3d)
+		$(cmake-utils_use_enable imagecolor)
+		$(cmake-utils_use_enable imageds)
+		$(cmake-utils_use_enable imageds2d)
 		$(cmake-utils_use_enable input)
 		$(cmake-utils_use_enable line_drawer)
 		$(cmake-utils_use_enable log)
