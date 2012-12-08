@@ -3,6 +3,6 @@
 <pkgmetadata>
 <herd>no-herd</herd>
 	<use>
-		<flag name='examples'>Build fcppt's examples to further test compilation. They won't be installed.</flag>
+		<flag name='examples'>Build examples to further test compilation. They won't be installed.</flag>
 	</use>
 </pkgmetadata>

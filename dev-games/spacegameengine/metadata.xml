@@ -12,7 +12,7 @@
 		<flag name='config'>Build the config library which provides querying of sge's and various system paths</flag>
 		<flag name='console'>Build the console library which provides a quake-like console</flag>
 		<flag name='devil'>Build the devil image loader plugin which loads bmp, jpeg, png, tiff and others</flag>
-		<flag name='examples'>Build and install sge's examples</flag>
+		<flag name='examples'>Build and install examples</flag>
 		<flag name='evdev'>Build evdev plugin which handles joysticks and gamepads using /dev/input/event*</flag>
 		<flag name='font'>Build the font core library</flag>
 		<flag name='fontbitmap'>Build the fontbitmap library which loads bitmap fonts in sge's own format</flag>
