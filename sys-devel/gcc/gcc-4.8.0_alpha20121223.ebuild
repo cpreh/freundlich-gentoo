@@ -15,6 +15,9 @@ SSP_UCLIBC_STABLE=""
 
 inherit toolchain
 
+SRC_URI="
+	ftp://gcc.gnu.org/pub/gcc/snapshots/${SNAPSHOT}/${PN}-${SNAPSHOT}.tar.bz2
+	$(get_gcc_src_uri)"
 DESCRIPTION="The GNU Compiler Collection"
 
 LICENSE="GPL-3 LGPL-3 || ( GPL-3 libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.2"
