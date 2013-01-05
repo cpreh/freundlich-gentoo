@@ -70,7 +70,8 @@ src_prepare() {
 		"${FILESDIR}/${PN}-1.48.0-disable_libboost_python3.patch" \
 		"${FILESDIR}/${PN}-1.48.0-python_linking.patch" \
 		"${FILESDIR}/${PN}-1.48.0-disable_icu_rpath.patch" \
-		"${FILESDIR}/remove-toolset-1.48.0.patch"
+		"${FILESDIR}/remove-toolset-1.48.0.patch" \
+		"${FILESDIR}/${P}-spirit-stream.patch"
 
 	# Avoid a patch for now
 	for file in libs/context/src/asm/*.S; do
