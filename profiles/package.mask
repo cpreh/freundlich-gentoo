@@ -1,8 +1,8 @@
 ~app-dicts/jmdict-9999
 ~dev-cpp/fcppt-9999
 ~dev-games/cegui-9999
-~dev-libs/boost-1.53.0_beta1_rc2
-~dev-util/boost-build-1.53.0_beta1_rc2
+~dev-libs/boost-1.53.0_beta1
+~dev-util/boost-build-1.53.0_beta1
 ~games-emulation/pcsxr-9999
 ~sys-devel/gcc-4.7.2
 ~sys-devel/gcc-4.8.0_alpha20130106
