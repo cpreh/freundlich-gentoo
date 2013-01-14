@@ -8,7 +8,7 @@ PYTHON_DEPEND="2"
 inherit cmake-utils mercurial python
 
 EHG_REVISION="default"
-EHG_REPO_URI="http://crayzedsgui.hg.sourceforge.net/hgroot/crayzedsgui/cegui_mk2"
+EHG_REPO_URI="http://bitbucket.org/cegui/cegui"
 
 DESCRIPTION="Crazy Eddie's GUI System"
 HOMEPAGE="http://www.cegui.org.uk/"
