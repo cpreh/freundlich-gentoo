@@ -4,16 +4,17 @@
 
 EAPI="5"
 PYTHON_COMPAT=( python{2_5,2_6,2_7,3_1,3_2,3_3} )
+RESTRICT="mirror"
 
 inherit eutils flag-o-matic multilib multiprocessing python-r1 toolchain-funcs versionator
 
 MY_PV=$(replace_all_version_separators _)
 MY_P=${PN}_${MY_PV}
-MY_DIR=${PN}_$(get_version_component_range 1-4 ${MY_PV})
+MY_DIR=${PN}_$(get_version_component_range 1-3 ${MY_PV})
 
 DESCRIPTION="Boost Libraries for C++"
 HOMEPAGE="http://www.boost.org/"
-SRC_URI="mirror://sourceforge/boost/${MY_P}.tar.bz2"
+SRC_URI="http://boost.cowic.de/rc/${MY_P}.tar.bz2"
 
 LICENSE="Boost-1.0"
 SLOT=0
@@ -69,8 +70,7 @@ src_prepare() {
 		"${FILESDIR}/${PN}-1.48.0-no_strict_aliasing_python2.patch" \
 		"${FILESDIR}/${PN}-1.48.0-disable_libboost_python3.patch" \
 		"${FILESDIR}/${PN}-1.48.0-python_linking.patch" \
-		"${FILESDIR}/${PN}-1.48.0-disable_icu_rpath.patch" \
-		"${FILESDIR}/${PN}-1.53.0_beta1_rc2-spirit-stream.patch"
+		"${FILESDIR}/${PN}-1.48.0-disable_icu_rpath.patch"
 
 	# Avoid a patch for now
 	for file in libs/context/src/asm/*.S; do
