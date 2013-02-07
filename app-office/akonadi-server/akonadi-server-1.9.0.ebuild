@@ -1,19 +1,28 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-office/akonadi-server/akonadi-server-1.8.1.ebuild,v 1.4 2012/11/30 15:11:40 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-office/akonadi-server/akonadi-server-1.9.0.ebuild,v 1.4 2013/02/07 04:13:39 alexxy Exp $
 
 EAPI=4
 
-inherit cmake-utils
+if [[ $PV = *9999* ]]; then
+	scm_eclass=git-2
+	EGIT_REPO_URI="git://anongit.kde.org/akonadi"
+	SRC_URI=""
+	KEYWORDS=""
+else
+	SRC_URI="mirror://kde/stable/${PN/-server/}/src/${P/-server/}.tar.bz2"
+	KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd ~amd64-linux ~x86-linux"
+	S="${WORKDIR}/${P/-server/}"
+fi
+
+inherit cmake-utils ${scm_eclass}
 
 DESCRIPTION="The server part of Akonadi"
 HOMEPAGE="http://pim.kde.org/akonadi"
-SRC_URI="mirror://kde/stable/${PN/-server/}/src/${P/-server/}.tar.bz2"
 
 LICENSE="LGPL-2.1"
-KEYWORDS="amd64 ~arm ppc ~ppc64 x86 ~amd64-linux ~x86-linux"
 SLOT="0"
-IUSE="mysql postgres +sqlite test"
+IUSE="+mysql postgres sqlite test"
 
 CDEPEND="
 	dev-libs/boost
@@ -33,26 +42,25 @@ RDEPEND="${CDEPEND}
 
 REQUIRED_USE="|| ( sqlite mysql postgres )"
 
-S=${WORKDIR}/${P/-server/}
-
 RESTRICT=test
-# bug 401139
+
+PATCHES=( "${FILESDIR}/${P}-qt5.patch" )
 
 pkg_setup() {
-	# Set default storage backend in order: SQLite, MySQL, PostgreSQL
+	# Set default storage backend in order: MySQL, SQLite PostgreSQL
 	# reverse driver check to keep the order
 	if use postgres; then
 		DRIVER="QPSQL"
 		AVAILABLE+=" ${DRIVER}"
 	fi
 
-	if use mysql; then
-		DRIVER="QMYSQL"
+	if use sqlite; then
+		DRIVER="QSQLITE3"
 		AVAILABLE+=" ${DRIVER}"
 	fi
 
-	if use sqlite; then
-		DRIVER="QSQLITE3"
+	if use mysql; then
+		DRIVER="QMYSQL"
 		AVAILABLE+=" ${DRIVER}"
 	fi
 
@@ -64,23 +72,24 @@ pkg_setup() {
 	fi
 
 	# Notify about MySQL not being default anymore
-	if ! use mysql && has_version "<=${CATEGORY}/${PN}-1.4.0[mysql]"; then
+	if ! use sqlite && has_version "<=${CATEGORY}/${PN}-1.9.0[sqlite]"; then
 		ewarn
-		ewarn "MySQL driver is not enabled by default in Gentoo anymore."
-		ewarn "If you intend to use it, please enable mysql USE flag and reinstall"
+		ewarn "The default storage drive has changed from SQLite to MySQL."
+		ewarn "If you want to stay with SQLite, enable the sqlite USE flag and reinstall"
 		ewarn "${CATEGORY}/${PN}."
-		ewarn "Otherwise select different driver in your ~/.config/akonadi/akonadiserverrc."
+		ewarn "Otherwise, select a different driver in your ~/.config/akonadi/akonadiserverrc."
 		ewarn "Available drivers are:${AVAILABLE}"
 	fi
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${P}-boost-join.patch"
+	epatch "${FILESDIR}/${PN}-1.8.1-boost-join.patch"
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DAKONADI_USE_STRIGI_SEARCH=OFF
+		-DWITH_QT5=OFF
 		$(cmake-utils_use test AKONADI_BUILD_TESTS)
 		$(cmake-utils_use sqlite AKONADI_BUILD_QSQLITE)
 	)
