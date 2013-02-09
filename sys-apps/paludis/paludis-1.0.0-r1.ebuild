@@ -1,10 +1,10 @@
-# Copyright 1999-2007 Ciaran McCreesh
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-1.0.0.ebuild,v 1.1 2013/02/07 06:29:50 jdhore Exp $
 
 EAPI="3"
 
-inherit bash-completion eutils
+inherit bash-completion-r1 eutils user
 
 DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.exherbo.org/"
@@ -108,7 +108,7 @@ src_install() {
 	emake DESTDIR="${D}" install || die "install failed"
 	dodoc AUTHORS README NEWS
 
-	BASHCOMPLETION_NAME="cave" dobashcompletion bash-completion/cave
+	BASHCOMPLETION_NAME="cave" dobashcomp bash-completion/cave
 
 	if use zsh-completion ; then
 		insinto /usr/share/zsh/site-functions
@@ -148,4 +148,3 @@ pkg_postinst() {
 		elog "    eselect package-manager set paludis"
 	fi
 }
-
