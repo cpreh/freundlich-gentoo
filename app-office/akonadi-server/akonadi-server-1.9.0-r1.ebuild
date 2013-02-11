@@ -44,7 +44,10 @@ REQUIRED_USE="|| ( sqlite mysql postgres )"
 
 RESTRICT=test
 
-PATCHES=( "${FILESDIR}/${P}-qt5.patch" )
+PATCHES=(
+	"${FILESDIR}/${P}-qt5.patch"
+	"${FILESDIR}/${PN}-1.8.1-boost-join.patch"
+)
 
 pkg_setup() {
 	# Set default storage backend in order: MySQL, SQLite PostgreSQL
@@ -80,10 +83,6 @@ pkg_setup() {
 		ewarn "Otherwise, select a different driver in your ~/.config/akonadi/akonadiserverrc."
 		ewarn "Available drivers are:${AVAILABLE}"
 	fi
-}
-
-src_prepare() {
-	epatch "${FILESDIR}/${PN}-1.8.1-boost-join.patch"
 }
 
 src_configure() {
