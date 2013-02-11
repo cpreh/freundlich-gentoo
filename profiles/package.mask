@@ -2,4 +2,4 @@
 ~dev-cpp/fcppt-9999
 ~dev-games/cegui-9999
 ~games-emulation/pcsxr-9999
-~sys-devel/gcc-4.8.0_alpha20130203
+~sys-devel/gcc-4.8.0_alpha20130210
