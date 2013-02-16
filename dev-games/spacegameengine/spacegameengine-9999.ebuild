@@ -193,11 +193,7 @@ src_configure() {
 }
 
 src_compile() {
-	local ARGS=("all")
-
-	use doc && ARGS+=("doc")
-
-	cmake-utils_src_compile "${ARGS[@]}"
+	cmake-utils_src_compile
 }
 
 src_install() {
