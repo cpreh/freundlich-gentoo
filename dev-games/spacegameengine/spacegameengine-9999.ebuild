@@ -26,6 +26,7 @@ RDEPEND="
 	~dev-cpp/fcppt-9999
 	~dev-cpp/mizuiro-9999
 	~dev-cpp/libawl-9999
+	~dev-cpp/majutsu-9999
 	>=dev-libs/boost-1.47.0
 	cegui? (
 		dev-games/cegui:1
