@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-1.0.0.ebuild,v 1.1 2013/02/07 06:29:50 jdhore Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/paludis/paludis-1.0.0.ebuild,v 1.2 2013/03/10 08:49:55 dev-zero Exp $
 
 EAPI="3"
 
@@ -14,7 +14,7 @@ IUSE="doc pbins pink portage prebuilt-documentation python-bindings
 ruby-bindings search-index test vim-syntax visibility xml zsh-completion"
 LICENSE="GPL-2 vim-syntax? ( vim )"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~hppa ~ppc ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 
 COMMON_DEPEND="
 	>=app-admin/eselect-1.2.13
@@ -39,7 +39,7 @@ DEPEND="${COMMON_DEPEND}
 		ruby-bindings? ( dev-ruby/syntax )
 	)
 	virtual/pkgconfig
-	test? ( dev-cpp/gtest[threads] )"
+	test? ( >=dev-cpp/gtest-1.6.0-r1 )"
 
 RDEPEND="${COMMON_DEPEND}
 	sys-apps/sandbox"
