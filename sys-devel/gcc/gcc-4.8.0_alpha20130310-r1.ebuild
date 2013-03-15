@@ -48,3 +48,9 @@ pkg_setup() {
 	ewarn "Any bugs resulting from the use of LTO will not be fixed."
 	ewarn
 }
+
+src_install() {
+	toolchain_src_install
+
+	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la \) -exec rm '{}' \;
+}
