@@ -2,8 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.6.2.ebuild,v 1.2 2011/11/09 19:22:57 vapier Exp $
 
-I_PROMISE_TO_SUPPLY_PATCHES_WITH_BUGS=1
 RESTRICT="mirror"
+
+PATCH_VER="1.5"
+UCLIBC_VER="1.0"
+
+PATCH_GCC_VER="4.7.2"
+PIE_GCC_VER="4.7.2"
+
+PIE_VER="0.5.5"
+SPECS_VER="0.2.0"
+SPECS_GCC_VER="4.4.3"
+
 # Hardened gcc 4 stuff
 # arch/libc configurations known to be stable with {PIE,SSP}-by-default
 PIE_GLIBC_STABLE="x86 amd64 ppc ppc64 arm ia64"
@@ -16,7 +26,7 @@ SSP_UCLIBC_STABLE=""
 inherit toolchain
 
 SRC_URI="
-	ftp://gcc.gnu.org/pub/gcc/snapshots/${SNAPSHOT}/${PN}-${SNAPSHOT}.tar.bz2
+	ftp://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_PV}/gcc-${GCC_RELEASE_VER}.tar.bz2
 	$(get_gcc_src_uri)"
 DESCRIPTION="The GNU Compiler Collection"
 
@@ -33,6 +43,21 @@ if [[ ${CATEGORY} != cross-* ]] ; then
 fi
 
 src_unpack() {
+	EPATCH_EXCLUDE="
+		11_all_default-warn-format-security.patch
+		16_all_libgo-Werror-pr53679.patch
+		33_all_armhf.patch
+		39_all_gfortran-sysroot-pr54725.patch
+		49_all_x86_pr52695_libitm-m64.patch
+		67_all_gcc-poison-system-directories.patch
+		74_all_gcc47_cloog-dl.patch
+		82_all_alpha_4.6.4_pr56023_bootstrap.patch
+		90_all_gcc-4.7-x32.patch
+		93_all_pr33763_4.7.3_extern-inline.patch
+		95_all_pr55940_4.7.3_x86-stack-parameters.patch
+		96_all_pr56125_4.7.3_ffast-math-pow.patch
+	"
+
 	toolchain_src_unpack
 
 	use vanilla && return 0
