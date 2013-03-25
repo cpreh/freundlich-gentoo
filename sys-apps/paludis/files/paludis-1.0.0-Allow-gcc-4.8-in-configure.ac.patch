@@ -1,0 +1,27 @@
+From 312f59ed6dc42a4cb375123796771d7dc3c5ee85 Mon Sep 17 00:00:00 2001
+From: Philipp Reh <sefi@s-e-f-i.de>
+Date: Mon, 25 Mar 2013 16:45:00 +0100
+Subject: [PATCH] Allow gcc-4.8 in configure.ac
+
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 53b1881..c74572a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -429,8 +429,8 @@ AC_PREPROC_IFELSE([AC_LANG_SOURCE([
+ #  error not gcc 4
+ #endif
+ 
+-#if __GNUC_MINOR__ != 4 && __GNUC_MINOR__ != 5 && __GNUC_MINOR__ != 6 && __GNUC_MINOR__ != 7
+-#  error not gcc 4.4 to 4.7
++#if __GNUC_MINOR__ != 4 && __GNUC_MINOR__ != 5 && __GNUC_MINOR__ != 6 && __GNUC_MINOR__ != 7 && __GNUC_MINOR__ != 8
++#  error not gcc 4.4 to 4.8
+ #endif
+ ])],
+ 	[AC_MSG_RESULT([yes])
+-- 
+1.8.1.5
+
