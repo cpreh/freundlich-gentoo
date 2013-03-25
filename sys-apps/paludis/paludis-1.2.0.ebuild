@@ -4,7 +4,7 @@
 
 EAPI="3"
 
-inherit bash-completion-r1 eutils user autotools
+inherit bash-completion-r1 eutils user
 
 DESCRIPTION="paludis, the other package mangler"
 HOMEPAGE="http://paludis.exherbo.org/"
@@ -77,13 +77,7 @@ pkg_setup() {
 	fi
 }
 
-src_prepare() {
-	epatch "${FILESDIR}/${P}-Allow-gcc-4.8-in-configure.ac.patch"
-}
-
 src_configure() {
-	eautoreconf || die "autogen failed"
-
 	local repositories=`echo default unavailable unpackaged | tr -s \  ,`
 	local environments=`echo default $(usev portage ) | tr -s \  ,`
 	econf \
