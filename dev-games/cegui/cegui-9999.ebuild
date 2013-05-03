@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=4
+EAPI=5
 PYTHON_DEPEND="2"
 
 inherit cmake-utils mercurial python
@@ -24,7 +24,11 @@ RDEPEND="
 	bidi? ( dev-libs/fribidi )
 	devil? ( media-libs/devil )
 	directfb? ( dev-libs/DirectFB )
-	examples? ( gtk? ( x11-libs/gtk+:2 ) )
+	examples? (
+		gtk? ( x11-libs/gtk+:2 )
+		ogre? ( dev-games/ogre[ois] )
+		opengl? ( media-libs/glfw )
+	)
 	expat? ( dev-libs/expat )
 	freeimage? ( media-libs/freeimage )
 	irrlicht? ( dev-games/irrlicht )
@@ -36,8 +40,8 @@ RDEPEND="
 	opengl? (
 		virtual/opengl
 		virtual/glu
-		media-libs/freeglut
 		media-libs/glew
+		media-libs/glm
 	)
 	ogre? ( dev-games/ogre )
 	pcre? ( dev-libs/libpcre )
@@ -66,7 +70,6 @@ src_configure() {
 		-D CEGUI_BUILD_IMAGECODEC_STB=ON
 		-D CEGUI_BUILD_IMAGECODEC_TGA=ON
 		-D CEGUI_SLOTTED_INSTALLATION=ON
-		$(cmake-utils_use bibi CEGUI_BIDI_SUPPORT)
 		$(cmake-utils_use devil CEGUI_BUILD_IMAGECODEC_DEVIL)
 		$(cmake-utils_use directfb CEGUI_BUILD_RENDERER_DIRECTFB)
 		$(cmake-utils_use examples CEGUI_SAMPLES_ENABLED)
@@ -90,6 +93,13 @@ src_configure() {
 	if use examples && use gtk; then
 		mycmakeargs+="-D CEGUI_SAMPLES_USE_GTK2=ON"
 	fi
+
+	if use bidi ; then
+		mycmakeargs+='-DCEGUI_BIDI_SUPPORT="2"'
+	else
+		mycmakeargs+='-DCEGUI_BIDI_SUPPORT="0"'
+	fi
+
 
 	cmake-utils_src_configure
 }
