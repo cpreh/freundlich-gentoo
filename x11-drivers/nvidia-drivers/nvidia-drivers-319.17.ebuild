@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-313.26.ebuild,v 1.5 2013/03/30 17:02:36 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-319.17.ebuild,v 1.2 2013/05/03 13:34:16 jer Exp $
 
 EAPI=5
 
@@ -21,23 +21,25 @@ SRC_URI="x86? ( ftp://download.nvidia.com/XFree86/Linux-x86/${PV}/${X86_NV_PACKA
 
 LICENSE="GPL-2 NVIDIA-r1"
 SLOT="0"
-KEYWORDS="-* amd64 ~x86 ~amd64-fbsd ~x86-fbsd"
+KEYWORDS="-* ~amd64 ~x86 ~amd64-fbsd ~x86-fbsd"
 IUSE="acpi multilib kernel_FreeBSD kernel_linux pax_kernel +tools +X"
 RESTRICT="bindist mirror strip"
 EMULTILIB_PKG="true"
 
-COMMON="app-admin/eselect-opencl
+COMMON="
+	app-admin/eselect-opencl
 	kernel_linux? ( >=sys-libs/glibc-2.6.1 )
-	multilib? ( app-emulation/emul-linux-x86-xlibs )
 	X? (
-		<x11-base/xorg-server-1.14.99
 		>=app-admin/eselect-opengl-1.0.9
-	)"
-DEPEND="${COMMON}
-	kernel_linux? (
-		virtual/linux-sources
-	)"
-RDEPEND="${COMMON}
+	)
+"
+DEPEND="
+	${COMMON}
+	app-arch/xz-utils
+	kernel_linux? ( virtual/linux-sources )
+"
+RDEPEND="
+	${COMMON}
 	acpi? ( sys-power/acpid )
 	tools? (
 		dev-libs/atk
@@ -48,7 +50,20 @@ RDEPEND="${COMMON}
 		x11-libs/libXext
 		x11-libs/pango[X]
 	)
-	X? ( >=x11-libs/libvdpau-0.3-r1 )"
+	X? (
+		<x11-base/xorg-server-1.14.99
+		>=x11-libs/libvdpau-0.3-r1
+		multilib? (
+			|| (
+				 (
+					x11-libs/libX11[abi_x86_32]
+					x11-libs/libXext[abi_x86_32]
+				 )
+				app-emulation/emul-linux-x86-xlibs
+			)
+		)
+	)
+"
 
 REQUIRED_USE="tools? ( X )"
 
@@ -120,8 +135,8 @@ src_prepare() {
 		ewarn "Using PAX patches is not supported. You will be asked to"
 		ewarn "use a standard kernel should you have issues. Should you"
 		ewarn "need support with these patches, contact the PaX team."
-	    epatch "${FILESDIR}"/nvidia-drivers-pax-const.patch
-	    epatch "${FILESDIR}"/nvidia-drivers-pax-usercopy.patch
+		epatch "${FILESDIR}"/nvidia-drivers-pax-const.patch
+		epatch "${FILESDIR}"/nvidia-drivers-pax-usercopy.patch
 	fi
 
 	# Allow user patches so they can support RC kernels and whatever else
@@ -200,7 +215,7 @@ src_install() {
 			-e 's:VIDEOGID:'${VIDEOGROUP}':' "${FILESDIR}"/nvidia-169.07 > \
 			"${WORKDIR}"/nvidia
 		insinto /etc/modprobe.d
-		newins "${WORKDIR}"/nvidia nvidia.conf || die
+		newins "${WORKDIR}"/nvidia nvidia.conf
 
 		# Ensures that our device nodes are created when not using X
 		exeinto "$(udev_get_udevdir)"
@@ -210,11 +225,11 @@ src_install() {
 	elif use kernel_FreeBSD; then
 		if use x86-fbsd; then
 			insinto /boot/modules
-			doins "${S}/src/nvidia.kld" || die
+			doins "${S}/src/nvidia.kld"
 		fi
 
 		exeinto /boot/modules
-		doexe "${S}/src/nvidia.ko" || die
+		doexe "${S}/src/nvidia.ko"
 	fi
 
 	# NVIDIA kernel <-> userspace driver config lib
@@ -229,7 +244,7 @@ src_install() {
 	if use X; then
 		# Xorg DDX driver
 		insinto /usr/$(get_libdir)/xorg/modules/drivers
-		doins ${NV_X11}/nvidia_drv.so || die "failed to install nvidia_drv.so"
+		doins ${NV_X11}/nvidia_drv.so
 
 		# Xorg GLX driver
 		donvidia ${NV_X11}/libglx.so ${NV_SOVER} \
@@ -255,30 +270,30 @@ src_install() {
 		doman "${NV_MAN}/nvidia-smi.1.gz"
 		use X && doman "${NV_MAN}/nvidia-xconfig.1.gz"
 		use tools && doman "${NV_MAN}/nvidia-settings.1.gz"
-		doman "${NV_MAN}/nvidia-cuda-proxy-control.1.gz"
+		doman "${NV_MAN}/nvidia-cuda-mps-control.1.gz"
 	fi
 
 	# Helper Apps
 	exeinto /opt/bin/
 
 	if use X; then
-		doexe ${NV_OBJ}/nvidia-xconfig || die
+		doexe ${NV_OBJ}/nvidia-xconfig
 	fi
 
 	if use kernel_linux ; then
-		doexe ${NV_OBJ}/nvidia-debugdump || die
-		doexe ${NV_OBJ}/nvidia-cuda-proxy-control || die
-		doexe ${NV_OBJ}/nvidia-cuda-proxy-server || die
-		doexe ${NV_OBJ}/nvidia-smi || die
+		doexe ${NV_OBJ}/nvidia-debugdump
+		doexe ${NV_OBJ}/nvidia-cuda-mps-control
+		doexe ${NV_OBJ}/nvidia-cuda-mps-server
+		doexe ${NV_OBJ}/nvidia-smi
 		newinitd "${FILESDIR}/nvidia-smi.init" nvidia-smi
 	fi
 
 	if use tools; then
-		doexe ${NV_OBJ}/nvidia-settings || die
+		doexe ${NV_OBJ}/nvidia-settings
 	fi
 
 	exeinto /usr/bin/
-	doexe ${NV_OBJ}/nvidia-bug-report.sh || die
+	doexe ${NV_OBJ}/nvidia-bug-report.sh
 
 	# Desktop entries for nvidia-settings
 	if use tools ; then
