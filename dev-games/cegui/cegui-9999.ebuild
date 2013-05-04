@@ -14,7 +14,7 @@ DESCRIPTION="Crazy Eddie's GUI System"
 HOMEPAGE="http://www.cegui.org.uk/"
 
 LICENSE="MIT"
-SLOT="1"
+SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 	bidi devil directfb examples expat freeimage gtk irrlicht lua minizip ogre
@@ -69,7 +69,6 @@ src_configure() {
 		-D CEGUI_BUILD_EMBEDDED_TOLUAPP=OFF
 		-D CEGUI_BUILD_IMAGECODEC_STB=ON
 		-D CEGUI_BUILD_IMAGECODEC_TGA=ON
-		-D CEGUI_SLOTTED_INSTALLATION=ON
 		$(cmake-utils_use devil CEGUI_BUILD_IMAGECODEC_DEVIL)
 		$(cmake-utils_use directfb CEGUI_BUILD_RENDERER_DIRECTFB)
 		$(cmake-utils_use examples CEGUI_SAMPLES_ENABLED)
