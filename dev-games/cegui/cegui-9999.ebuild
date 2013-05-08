@@ -69,6 +69,8 @@ src_configure() {
 		-D CEGUI_BUILD_EMBEDDED_TOLUAPP=OFF
 		-D CEGUI_BUILD_IMAGECODEC_STB=ON
 		-D CEGUI_BUILD_IMAGECODEC_TGA=ON
+		-D CEGUI_USE_MINIBIDI=OFF
+		$(cmake-utils_use bidi CEGUI_USE_FRIBIDI)
 		$(cmake-utils_use devil CEGUI_BUILD_IMAGECODEC_DEVIL)
 		$(cmake-utils_use directfb CEGUI_BUILD_RENDERER_DIRECTFB)
 		$(cmake-utils_use examples CEGUI_SAMPLES_ENABLED)
@@ -93,13 +95,6 @@ src_configure() {
 		mycmakeargs+="-D CEGUI_SAMPLES_USE_GTK2=ON"
 	fi
 
-	if use bidi ; then
-		mycmakeargs+='-DCEGUI_BIDI_SUPPORT="2"'
-	else
-		mycmakeargs+='-DCEGUI_BIDI_SUPPORT="0"'
-	fi
-
-
 	cmake-utils_src_configure
 }
 
@@ -107,7 +102,7 @@ src_install() {
 	cmake-utils_src_install
 
 	cat > "${T}/env" << EOF
-LDPATH=/usr/lib/CEGUI-9999.0
+LDPATH=/usr/lib/cegui-0.8
 EOF
 	newenvd "${T}/env" 99cegui
 }
