@@ -23,7 +23,7 @@ DEPEND="
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
 	=dev-games/spacegameengine-9999[cegui,charconv,config,console,font,fontdraw,image,image2d,input,log,parse,projectile,renderer,sprite,systems,texture,timer,viewport,window]
-	dev-games/cegui:1
+	dev-games/cegui
 "
 RDEPEND="${DEPEND}"
 

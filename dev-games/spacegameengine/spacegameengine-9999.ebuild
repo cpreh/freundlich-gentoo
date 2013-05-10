@@ -29,7 +29,7 @@ RDEPEND="
 	~dev-cpp/majutsu-9999
 	>=dev-libs/boost-1.47.0
 	cegui? (
-		dev-games/cegui:1
+		dev-games/cegui
 	)
 	cg? (
 		>=media-gfx/nvidia-cg-toolkit-3
