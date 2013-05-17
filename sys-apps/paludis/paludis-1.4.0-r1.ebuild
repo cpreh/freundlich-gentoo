@@ -24,7 +24,7 @@ COMMON_DEPEND="
 	python-bindings? ( >=dev-lang/python-2.6 >=dev-libs/boost-1.41.0[python] )
 	xml? ( >=dev-libs/libxml2-2.6 )
 	search-index? ( dev-db/sqlite:3 )
-	pbins? ( >=app-arch/libarchive-3.0.4[-xattr] )
+	pbins? ( >=app-arch/libarchive-3.1.2[-xattr] )
 	sys-apps/file"
 
 DEPEND="${COMMON_DEPEND}
