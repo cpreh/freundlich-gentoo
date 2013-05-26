@@ -3,16 +3,13 @@
 # $Header: $
 
 EAPI=5
-RESTRICT="mirror"
 PYTHON_DEPEND="2"
 
-inherit cmake-utils mercurial python
-
-EHG_REVISION="v0-8"
-EHG_REPO_URI="http://bitbucket.org/cegui/cegui"
+inherit cmake-utils python
 
 DESCRIPTION="Crazy Eddie's GUI System"
 HOMEPAGE="http://www.cegui.org.uk/"
+SRC_URI="mirror://sourceforge/crayzedsgui/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
