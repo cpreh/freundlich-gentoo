@@ -1,5 +1,4 @@
 ~app-dicts/jmdict-9999
 ~dev-cpp/fcppt-9999
-~dev-games/cegui-9999
 ~games-emulation/pcsxr-9999
 ~sys-devel/gcc-4.8.0
