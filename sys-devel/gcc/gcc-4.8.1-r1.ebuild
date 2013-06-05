@@ -1,14 +1,12 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.8.0.ebuild,v 1.8 2013/05/19 14:12:15 blueness Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.8.1.ebuild,v 1.1 2013/06/04 05:25:51 dirtyepic Exp $
 
-PATCH_GCC_VER="4.8.0"
-PIE_GCC_VER="4.8.0"
-PATCH_VER="1.3"
+PATCH_VER="1.0"
 UCLIBC_VER="1.0"
 
 # Hardened gcc 4 stuff
-PIE_VER="0.5.5"
+PIE_VER="0.5.6"
 SPECS_VER="0.2.0"
 SPECS_GCC_VER="4.4.3"
 # arch/libc configurations known to be stable with {PIE,SSP}-by-default
@@ -28,9 +26,6 @@ LICENSE="GPL-3+ LGPL-3+ || ( GPL-3+ libgcc libstdc++ gcc-runtime-library-excepti
 
 KEYWORDS=""
 
-SRC_URI="$(get_gcc_src_uri)
-	ftp://ftp.gnu.org/gnu/gcc/${P}/${P}.tar.bz2"
-
 RDEPEND=""
 DEPEND="${RDEPEND}
 	elibc_glibc? ( >=sys-libs/glibc-2.8 )
@@ -41,12 +36,6 @@ if [[ ${CATEGORY} != cross-* ]] ; then
 fi
 
 src_unpack() {
-	EPATCH_EXCLUDE="
-		70_all_gcc48_pr56754_target_h.patch
-		95_all_4.8.1_mxop-wrong-code.patch
-		96_all_4.8.1_msabi-memcopy-clobber.patch
-	"
-
 	if has_version '<sys-libs/glibc-2.12' ; then
 		ewarn "Your host glibc is too old; disabling automatic fortify."
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
