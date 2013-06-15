@@ -1,0 +1,11 @@
+--- libstreams/include/strigi/bufferedstream.h	2013-06-15 21:31:20.700940577 +0200
++++ libstreams/include/strigi/bufferedstream.h	2013-06-15 21:27:51.961216288 +0200
+@@ -34,7 +34,7 @@
+  * BufferedStream will do the rest.
+  */
+ template <class T>
+-class BufferedStream : public StreamBase<T> {
++class STREAMS_EXPORT BufferedStream : public StreamBase<T> {
+ private:
+     StreamBuffer<T> buffer;
+     bool finishedWritingToBuffer;
