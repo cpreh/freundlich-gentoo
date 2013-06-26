@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-319.23.ebuild,v 1.1 2013/05/23 15:04:55 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-319.32.ebuild,v 1.1 2013/06/26 11:45:37 jer Exp $
 
 EAPI=5
 
@@ -284,10 +284,15 @@ src_install() {
 	fi
 
 	if use kernel_linux ; then
-		doexe ${NV_OBJ}/nvidia-debugdump
 		doexe ${NV_OBJ}/nvidia-cuda-mps-control
 		doexe ${NV_OBJ}/nvidia-cuda-mps-server
+		doexe ${NV_OBJ}/nvidia-debugdump
+		doexe ${NV_OBJ}/nvidia-modprobe
+		doexe ${NV_OBJ}/nvidia-persistenced
 		doexe ${NV_OBJ}/nvidia-smi
+		doman nvidia-cuda-mps-control.1.gz
+		doman nvidia-modprobe.1.gz
+		doman nvidia-persistenced.1.gz
 		newinitd "${FILESDIR}/nvidia-smi.init" nvidia-smi
 	fi
 
