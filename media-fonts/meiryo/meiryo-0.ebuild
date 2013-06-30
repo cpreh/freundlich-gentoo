@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-RESTRICT="fetch"
-
 EAPI="2"
+
+RESTRICT="fetch"
 
 DESCRIPTION="Windows proprietary japanese font"
 HOMEPAGE=""
