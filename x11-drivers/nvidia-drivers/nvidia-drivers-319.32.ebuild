@@ -142,6 +142,8 @@ src_prepare() {
 		epatch "${FILESDIR}"/nvidia-drivers-pax-usercopy.patch
 	fi
 
+	epatch "${FILESDIR}/${P}-linux-3.10.patch"
+
 	# Allow user patches so they can support RC kernels and whatever else
 	epatch_user
 }
