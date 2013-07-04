@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-319.32.ebuild,v 1.1 2013/06/26 11:45:37 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-325.08.ebuild,v 1.1 2013/07/03 15:57:06 jer Exp $
 
 EAPI=5
 
@@ -131,7 +131,7 @@ src_prepare() {
 		fi
 
 		# If greater than 2.6.5 use M= instead of SUBDIR=
-		convert_to_m "${NV_SRC}"/Makefile.kbuild
+#		convert_to_m "${NV_SRC}"/Makefile.kbuild
 	fi
 
 	if use pax_kernel; then
