@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit cmake-utils git-2 games
+inherit cmake-utils games git-2
 
 EGIT_REPO_URI="git://github.com/pmiddend/fruitcut.git"
 DESCRIPTION="Arcade game where the goal is to cut fruits to earn points."
