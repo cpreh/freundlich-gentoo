@@ -2,24 +2,23 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="2"
+EAPI="5"
+
+FONT_SUFFIX="ttc"
+
+inherit font
 
 RESTRICT="fetch"
 
 DESCRIPTION="Windows proprietary japanese font"
 HOMEPAGE=""
-SRC_URI="http://test/${P}.tar.bz2"
+SRC_URI="${P}.tar.bz2"
 
 LICENSE=""
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND=""
-RDEPEND="${DEPEND}"
-
-src_install() {
-	local installdest="${D}/usr/share/fonts/truetype"
-	mkdir -p "${installdest}"
-	cp meiryob.ttc meiryo.ttc ${installdest}
+pkg_nofetch() {
+	einfo "Please place ${P}.tar.bz2 in ${DISTDIR}"
 }
