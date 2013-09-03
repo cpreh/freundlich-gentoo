@@ -141,6 +141,7 @@ src_prepare() {
 		epatch "${FILESDIR}"/${PN}-pax-usercopy.patch
 	fi
 
+	epatch "${FILESDIR}"/${PN}-linux-3.11.patch
 	# Allow user patches so they can support RC kernels and whatever else
 	epatch_user
 }
