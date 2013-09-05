@@ -37,7 +37,7 @@ src_unpack() {
 
 	use vanilla && return 0
 
-	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env.patch
+	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env-r1.patch
 }
 
 pkg_setup() {
@@ -55,7 +55,7 @@ pkg_setup() {
 src_install() {
 	toolchain_src_install
 
-	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la \) -exec rm '{}' \;
+	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la -o -name libubsan.la \) -exec rm '{}' \;
 }
 
 pkg_postinst() {
