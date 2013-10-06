@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-325.15.ebuild,v 1.2 2013/08/06 17:05:27 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-331.13.ebuild,v 1.1 2013/10/05 13:45:25 jer Exp $
 
 EAPI=5
 
@@ -25,7 +25,7 @@ SRC_URI="
 LICENSE="GPL-2 NVIDIA-r1"
 SLOT="0"
 KEYWORDS="-* ~amd64 ~x86 ~amd64-fbsd ~x86-fbsd"
-IUSE="acpi multilib kernel_FreeBSD kernel_linux pax_kernel +tools +X"
+IUSE="acpi multilib kernel_FreeBSD kernel_linux pax_kernel +tools +X linux3_11"
 RESTRICT="bindist mirror strip"
 EMULTILIB_PKG="true"
 
@@ -141,7 +141,9 @@ src_prepare() {
 		epatch "${FILESDIR}"/${PN}-pax-usercopy.patch
 	fi
 
-	epatch "${FILESDIR}"/${PN}-linux-3.11.patch
+	if use linux3_11 ; then
+		epatch "${FILESDIR}"/${PN}-linux-3.11.patch
+	fi
 	# Allow user patches so they can support RC kernels and whatever else
 	epatch_user
 }
@@ -306,8 +308,8 @@ src_install() {
 	# Desktop entries for nvidia-settings
 	if use tools ; then
 		# There is no icon in the FreeBSD tarball.
-		use kernel_FreeBSD || newicon ${NV_OBJ}/nvidia-settings.png nvidia-drivers-settings.png
-		domenu "${FILESDIR}"/nvidia-drivers-settings.desktop
+		use kernel_FreeBSD || newicon ${NV_OBJ}/nvidia-settings.png ${PN}-settings.png
+		domenu "${FILESDIR}"/${PN}-settings.desktop
 		exeinto /etc/X11/xinit/xinitrc.d
 		doexe "${FILESDIR}"/95-nvidia-settings
 	fi
