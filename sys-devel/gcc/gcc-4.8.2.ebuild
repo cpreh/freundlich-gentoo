@@ -6,6 +6,8 @@ PATCH_VER="1.2"
 UCLIBC_VER="1.0"
 
 # Hardened gcc 4 stuff
+PATCH_GCC_VER="4.8.1"
+PIE_GCC_VER="4.8.1"
 PIE_VER="0.5.7"
 SPECS_VER="0.2.0"
 SPECS_GCC_VER="4.4.3"
@@ -19,6 +21,10 @@ SSP_UCLIBC_STABLE="x86 amd64 mips ppc ppc64 arm"
 #end Hardened stuff
 
 inherit toolchain
+
+SRC_URI="
+	ftp://ftp.gnu.org/gnu/gcc/${P}/${P}.tar.bz2
+	$(get_gcc_src_uri)"
 
 DESCRIPTION="The GNU Compiler Collection"
 
@@ -36,6 +42,11 @@ if [[ ${CATEGORY} != cross-* ]] ; then
 fi
 
 src_unpack() {
+	EPATCH_EXCLUDE+="
+		94_all_pr57777-O3-avx2.patch
+		97_all_native-ivybridge-haswell.patch
+		33_all_gcc48_config_rs6000.patch"
+
 	if has_version '<sys-libs/glibc-2.12' ; then
 		ewarn "Your host glibc is too old; disabling automatic fortify."
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
