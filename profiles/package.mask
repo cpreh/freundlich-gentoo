@@ -2,4 +2,4 @@
 ~dev-cpp/fcppt-9999
 ~dev-libs/boost-1.54.0
 ~games-emulation/pcsxr-9999
-~sys-devel/gcc-4.9.0_alpha20131013
+~sys-devel/gcc-4.9.0_alpha20131020
