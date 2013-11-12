@@ -55,7 +55,7 @@ pkg_setup() {
 src_install() {
 	toolchain_src_install
 
-	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la -o -name libubsan.la \) -exec rm '{}' \;
+	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la -o -name libubsan.la -o -name libcilkrts.la \) -exec rm '{}' \;
 }
 
 pkg_postinst() {
