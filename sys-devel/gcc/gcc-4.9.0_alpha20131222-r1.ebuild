@@ -36,28 +36,12 @@ src_unpack() {
 	toolchain_src_unpack
 
 	use vanilla && return 0
-
+	#Use -r1 for newer piepatchet that use DRIVER_SELF_SPECS for the hardened specs.
 	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env-r1.patch
-}
-
-pkg_setup() {
-	toolchain_pkg_setup
-
-	if use lto ; then
-		ewarn
-		ewarn "LTO support is still experimental and unstable.  Any bug reports"
-		ewarn "about LTO that do not include an upstream patch will be closed as"
-		ewarn "invalid."
-		ewarn
-	fi
 }
 
 src_install() {
 	toolchain_src_install
 
 	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la -o -name libubsan.la -o -name libcilkrts.la \) -exec rm '{}' \;
-}
-
-pkg_postinst() {
-	toolchain_pkg_postinst
 }
