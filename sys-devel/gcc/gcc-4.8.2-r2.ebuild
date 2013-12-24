@@ -1,8 +1,8 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.8.2.ebuild,v 1.1 2013/11/11 23:38:10 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.8.2.ebuild,v 1.2 2013/12/23 21:36:09 dirtyepic Exp $
 
-PATCH_VER="1.0"
+PATCH_VER="1.1"
 UCLIBC_VER="1.0"
 
 # Hardened gcc 4 stuff
@@ -49,24 +49,8 @@ src_unpack() {
 	[[ ${CHOST} == ${CTARGET} ]] && epatch "${FILESDIR}"/gcc-spec-env-r1.patch
 }
 
-pkg_setup() {
-	toolchain_pkg_setup
-
-	if use lto ; then
-		ewarn
-		ewarn "LTO support is still experimental and unstable.  Any bug reports"
-		ewarn "about LTO that do not include an upstream patch will be closed as"
-		ewarn "invalid."
-		ewarn
-	fi
-}
-
 src_install() {
 	toolchain_src_install
 
 	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la \) -exec rm '{}' \;
-}
-
-pkg_postinst() {
-	toolchain_pkg_postinst
 }
