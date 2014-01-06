@@ -43,5 +43,5 @@ src_unpack() {
 src_install() {
 	toolchain_src_install
 
-	find "${D}/${LIBPATH}" \( -name libasan.la -o -name libtsan.la -o -name libubsan.la -o -name libcilkrts.la \) -exec rm '{}' \;
+	find "${D}/${LIBPATH}" \( -name libubsan.la -o -name libcilkrts.la \) -exec rm '{}' \;
 }
