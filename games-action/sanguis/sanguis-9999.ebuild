@@ -22,7 +22,7 @@ DEPEND="
 	~dev-cpp/libawl-9999
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
-	=dev-games/spacegameengine-9999[audio,charconv,config,console,font,fontdraw,image,image2d,input,log,parse,renderer,rucksack,sprite,systems,texture,timer,viewport,window]
+	=dev-games/spacegameengine-9999[audio,charconv,config,console,font,fontdraw,image,image2d,input,log,parse,parseini,parsejson,renderer,rucksack,sprite,systems,texture,timer,viewport,window]
 "
 RDEPEND="${DEPEND}"
 

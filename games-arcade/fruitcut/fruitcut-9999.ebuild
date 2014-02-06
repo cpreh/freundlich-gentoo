@@ -24,7 +24,7 @@ DEPEND="
 	cegui? (
 		>=dev-games/cegui-0.8.0
 	)
-	~dev-games/spacegameengine-9999[audio,camera,cegui?,charconv,cg,config,console,fontbitmap,fontdraw,font,image,image2d,input,line_drawer,log,modelmd3,parse,renderer,shader,sprite,systems,texture,window]
+	~dev-games/spacegameengine-9999[audio,camera,cegui?,charconv,cg,config,console,fontbitmap,fontdraw,font,image,image2d,input,line_drawer,log,modelmd3,parse,parsejson,renderer,shader,sprite,systems,texture,window]
 "
 
 RDEPEND="${DEPEND}"

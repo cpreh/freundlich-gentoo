@@ -17,10 +17,10 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+audio audio_null +camera cegui +cg +charconv +config +console +devil doc
 examples evdev +font +fontbitmap +fontdraw graph +image +image2d +image3d
 +imagecolor +imageds +imageds2d +input +line_drawer +log +media modelmd3
-modelobj +openal opencl +opengl +pango +parse +plugin +png postprocessing
-projectile +renderer +rendereropengl resource_tree rucksack scenic +shader
-+sprite static-libs +systems test +texture +timer +viewport +vorbis +wave
-+window +x11input"
+modelobj +openal opencl +opengl +pango +parse +parseini +parsejson +plugin +png
+postprocessing projectile +renderer +rendereropengl resource_tree rucksack
+scenic +shader +sprite static-libs +systems test +texture +timer +viewport
++vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -86,13 +86,13 @@ DEPEND="
 REQUIRED_USE="
 	audio? ( log media plugin )
 	audio_null? ( audio plugin )
-	camera? ( input log parse renderer viewport )
+	camera? ( input log parsejson renderer viewport )
 	cegui? ( charconv imagecolor image2d input log renderer viewport )
 	console? ( font fontdraw imagecolor input renderer sprite )
 	devil? ( image image2d imagecolor log plugin )
 	evdev? ( input log plugin window )
 	font? ( plugin )
-	fontbitmap? ( font imagecolor image2d log parse )
+	fontbitmap? ( font imagecolor image2d log parsejson )
 	fontdraw? ( font imagecolor image2d renderer sprite texture )
 	graph? ( image image2d imagecolor renderer sprite texture )
 	image2d? ( image imagecolor media plugin )
@@ -108,15 +108,17 @@ REQUIRED_USE="
 	opencl? ( image2d imagecolor log renderer rendereropengl )
 	opengl? ( image2d image3d imagecolor imageds imageds2d plugin renderer rendereropengl )
 	pango? ( charconv font image2d imagecolor plugin )
+	parseini? ( parse )
+	parsejson? ( parse )
 	png? ( image image2d imagecolor log plugin )
 	postprocessing? ( cg config renderer shader viewport )
 	projectile? ( imagecolor line_drawer log renderer )
 	renderer? ( image2d image3d imagecolor imageds imageds2d log plugin )
 	rucksack? ( viewport )
-	scenic? ( camera cg charconv config imagecolor line_drawer modelobj parse renderer shader viewport )
+	scenic? ( camera cg charconv config imagecolor line_drawer modelobj parsejson renderer shader viewport )
 	shader? ( cg renderer )
 	sprite? ( renderer )
-	systems? ( audio charconv config font image2d input log parse plugin renderer viewport window )
+	systems? ( audio charconv config font image2d input log parseini plugin renderer viewport window )
 	texture? ( image2d log renderer )
 	viewport? ( renderer window )
 	vorbis? ( audio log plugin )
@@ -166,6 +168,8 @@ src_configure() {
 		$(cmake-utils_use_enable opengl)
 		$(cmake-utils_use_enable pango)
 		$(cmake-utils_use_enable parse)
+		$(cmake-utils_use_enable parseini)
+		$(cmake-utils_use_enable parsejson)
 		$(cmake-utils_use_enable plugin)
 		$(cmake-utils_use_enable png)
 		$(cmake-utils_use_enable postprocessing)
