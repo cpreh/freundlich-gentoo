@@ -14,7 +14,7 @@ HOMEPAGE="https://github.com/freundlich/sanguis"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="tools"
 
 DEPEND="
 	~dev-cpp/fcppt-9999
@@ -23,6 +23,7 @@ DEPEND="
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
 	=dev-games/spacegameengine-9999[audio,charconv,config,console,font,fontdraw,image,image2d,input,log,parse,parseini,parsejson,renderer,rucksack,sprite,systems,texture,timer,viewport,window]
+	tools? ( dev-qt/qtwidgets:5 )
 "
 RDEPEND="${DEPEND}"
 
@@ -31,6 +32,7 @@ src_configure() {
 		-D CMAKE_INSTALL_PREFIX="${GAMES_PREFIX}"
 		-D INSTALL_LIBRARY_DIR="$(games_get_libdir)"
 		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
+		$(cmake-utils_use_enable tools)
 	)
 
 	cmake-utils_src_configure
