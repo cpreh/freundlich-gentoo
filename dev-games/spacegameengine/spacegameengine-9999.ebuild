@@ -147,6 +147,7 @@ src_configure() {
 		$(cmake-utils_use_enable devil)
 		$(cmake-utils_use_enable doc)
 		$(cmake-utils_use_enable examples)
+		$(cmake-utils_use examples INSTALL_EXAMPLES)
 		$(cmake-utils_use_enable evdev)
 		$(cmake-utils_use_enable font)
 		$(cmake-utils_use_enable fontbitmap)
