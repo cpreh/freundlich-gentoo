@@ -4,6 +4,7 @@
 
 EAPI="5"
 
+CMAKE_MIN_VERSION="2.8.12"
 inherit cmake-utils git-2
 
 DESCRIPTION="A serialization library"

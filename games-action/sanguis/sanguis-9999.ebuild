@@ -4,6 +4,7 @@
 
 EAPI="5"
 
+CMAKE_MIN_VERSION="2.8.12"
 inherit cmake-utils games git-2
 
 EGIT_REPO_URI="git://github.com/freundlich/sanguis.git"
@@ -18,7 +19,6 @@ IUSE="tools"
 
 DEPEND="
 	~dev-cpp/fcppt-9999
-	~dev-cpp/mizuiro-9999
 	~dev-cpp/libawl-9999
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
