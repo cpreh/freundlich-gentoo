@@ -1,4 +1,4 @@
 ~app-dicts/jmdict-9999
 ~dev-cpp/fcppt-9999
 ~games-emulation/pcsxr-9999
-~sys-devel/gcc-4.9.0_alpha20140323
+~sys-devel/gcc-4.9.0_alpha20140330
