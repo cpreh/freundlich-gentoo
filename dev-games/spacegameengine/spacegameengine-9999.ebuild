@@ -15,13 +15,13 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+audio audio_null +camera cegui +cg +charconv +config +console +devil doc
-examples evdev +font +fontbitmap +fontdraw graph +image +image2d +image3d
-+imagecolor +imageds +imageds2d +input +line_drawer +log +media modelmd3
-modelobj +openal opencl +opengl +pango +parse +parseini +parsejson +plugin +png
-postprocessing projectile +renderer +rendereropengl resource_tree rucksack
-scenic +shader +sprite static-libs +systems test +texture +timer +viewport
-+vorbis +wave +window +x11input"
+IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
++consolegfx +devil doc examples evdev +font +fontbitmap +fontdraw graph +image
++image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
++media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
++parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
+resource_tree rucksack scenic +shader +sprite static-libs +systems test
++texture +timer +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -89,10 +89,11 @@ REQUIRED_USE="
 	audio_null? ( audio plugin )
 	camera? ( input log parsejson renderer viewport )
 	cegui? ( charconv imagecolor image2d input log renderer viewport )
-	console? ( font fontdraw imagecolor input renderer sprite )
+	console? ( font )
+	consolegfx? ( console font fontdraw imagecolor input renderer sprite )
 	devil? ( image image2d imagecolor log plugin )
 	evdev? ( input log plugin window )
-	font? ( plugin )
+	font? ( log plugin )
 	fontbitmap? ( font imagecolor image2d log parsejson )
 	fontdraw? ( font imagecolor image2d renderer sprite texture )
 	graph? ( image image2d imagecolor renderer sprite texture )
@@ -111,6 +112,7 @@ REQUIRED_USE="
 	pango? ( charconv font image2d imagecolor plugin )
 	parseini? ( parse )
 	parsejson? ( parse )
+	plugin? ( log )
 	png? ( image image2d imagecolor log plugin )
 	postprocessing? ( cg config renderer shader viewport )
 	projectile? ( imagecolor line_drawer log renderer )
@@ -144,6 +146,7 @@ src_configure() {
 		$(cmake-utils_use_enable charconv)
 		$(cmake-utils_use_enable config)
 		$(cmake-utils_use_enable console)
+		$(cmake-utils_use_enable consolegfx)
 		$(cmake-utils_use_enable devil)
 		$(cmake-utils_use_enable doc)
 		$(cmake-utils_use_enable examples)

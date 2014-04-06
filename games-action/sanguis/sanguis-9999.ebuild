@@ -22,8 +22,10 @@ DEPEND="
 	~dev-cpp/libawl-9999
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
-	=dev-games/spacegameengine-9999[audio,charconv,config,console,font,fontdraw,imagecolor,image2d,input,log,parse,parseini,parsejson,renderer,rucksack,sprite,systems,texture,timer,viewport,window]
-	tools? ( dev-qt/qtwidgets:5 )
+	=dev-games/spacegameengine-9999[audio,charconv,config,console,consolegfx,font,fontdraw,imagecolor,image2d,input,log,parse,parseini,parsejson,renderer,rucksack,sprite,systems,texture,timer,viewport,window]
+	tools? (
+		dev-qt/qtwidgets:5
+	)
 "
 RDEPEND="${DEPEND}"
 
