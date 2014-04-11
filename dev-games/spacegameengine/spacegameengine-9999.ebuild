@@ -25,9 +25,6 @@ resource_tree rucksack scenic +shader +sprite static-libs +systems test
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
-	~dev-cpp/mizuiro-9999
-	~dev-cpp/libawl-9999
-	~dev-cpp/majutsu-9999
 	>=dev-libs/boost-1.47.0
 	cegui? (
 		>=dev-games/cegui-0.8.0
@@ -40,6 +37,12 @@ RDEPEND="
 	)
 	devil? (
 		media-libs/devil
+	)
+	examples? (
+		~dev-cpp/libawl-9999
+	)
+	image? (
+		~dev-cpp/mizuiro-9999
 	)
 	openal? (
 		media-libs/openal
@@ -57,6 +60,9 @@ RDEPEND="
 	projectile? (
 		sci-physics/bullet
 	)
+	renderer? (
+		~dev-cpp/libawl-9999
+	)
 	rendereropengl? (
 		virtual/opengl
 		opengl? (
@@ -65,8 +71,14 @@ RDEPEND="
 			x11-libs/libXrandr
 		)
 	)
+	sprite? (
+		~dev-cpp/majutsu-9999
+	)
 	vorbis? (
 		media-libs/libvorbis
+	)
+	window? (
+		~dev-cpp/libawl-9999
 	)
 	x11input? (
 		x11-libs/libXi
