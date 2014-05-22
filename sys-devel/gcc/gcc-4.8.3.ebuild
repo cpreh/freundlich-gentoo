@@ -6,6 +6,8 @@ EAPI="2"
 
 PATCH_VER="1.4-ssptest"
 UCLIBC_VER="1.0"
+PATCH_GCC_VER="4.8.2"
+PIE_GCC_VER="4.8.2"
 
 # Hardened gcc 4 stuff
 PIE_VER="0.5.9-ssptest"
@@ -38,6 +40,11 @@ if [[ ${CATEGORY} != cross-* ]] ; then
 fi
 
 src_prepare() {
+	EPATCH_EXCLUDE+="
+		20_all_gcj-freetype.patch
+		91_all_pr58800_nth_element-segfault.patch
+		93_all_cross-build-cxxflags.patch"
+
 	if has_version '<sys-libs/glibc-2.12' ; then
 		ewarn "Your host glibc is too old; disabling automatic fortify."
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
