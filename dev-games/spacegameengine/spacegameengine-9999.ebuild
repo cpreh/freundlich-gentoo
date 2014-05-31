@@ -16,7 +16,7 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
-+consolegfx +devil doc examples evdev +font +fontbitmap +fontdraw graph +image
++consolegfx doc examples evdev +font +fontbitmap +fontdraw graph +image
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
@@ -34,9 +34,6 @@ RDEPEND="
 	)
 	charconv? (
 		virtual/libiconv
-	)
-	devil? (
-		media-libs/devil
 	)
 	examples? (
 		~dev-cpp/libawl-9999
@@ -103,7 +100,6 @@ REQUIRED_USE="
 	cegui? ( charconv imagecolor image2d input log renderer viewport )
 	console? ( font )
 	consolegfx? ( console font fontdraw imagecolor input renderer sprite )
-	devil? ( image image2d imagecolor log plugin )
 	evdev? ( input log plugin window )
 	font? ( log plugin )
 	fontbitmap? ( font imagecolor image2d log parsejson )
@@ -159,7 +155,6 @@ src_configure() {
 		$(cmake-utils_use_enable config)
 		$(cmake-utils_use_enable console)
 		$(cmake-utils_use_enable consolegfx)
-		$(cmake-utils_use_enable devil)
 		$(cmake-utils_use_enable doc)
 		$(cmake-utils_use_enable examples)
 		$(cmake-utils_use examples INSTALL_EXAMPLES)
