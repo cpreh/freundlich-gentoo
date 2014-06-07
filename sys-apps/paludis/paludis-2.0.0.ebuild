@@ -32,11 +32,13 @@ COMMON_DEPEND="
 	search-index? ( >=dev-db/sqlite-3 )"
 
 DEPEND="${COMMON_DEPEND}
+	>=app-text/asciidoc-8.6.3
+	app-text/htmltidy
+	app-text/xmlto
 	doc? (
 		|| ( >=app-doc/doxygen-1.5.3 <=app-doc/doxygen-1.5.1 )
 		python? (
-			dev-python/epydoc[${PYTHON_USEDEP}]
-			dev-python/pygments[${PYTHON_USEDEP}] )
+			dev-python/sphinx[${PYTHON_USEDEP}] )
 		ruby? ( dev-ruby/syntax )
 	)
 	virtual/pkgconfig
@@ -84,8 +86,6 @@ src_prepare() {
 	# https://bugs.gentoo.org/show_bug.cgi?id=439372#c2
 	sed -i -e '1s/ruby/&19/' ruby/demos/*.rb || die
 
-	epatch "${FILESDIR}/${P}-gcc49.patch"
-
 	epatch_user
 
 	eautoreconf
@@ -106,7 +106,6 @@ src_configure() {
 		$(use_enable search-index)
 		$(use_enable test gtest)
 
-		--enable-prebuilt-documentation
 		--enable-vim
 		--enable-visibility
 		--with-config-framework=eselect
