@@ -6,6 +6,8 @@ EAPI="4"
 
 PATCH_VER="1.0"
 UCLIBC_VER="1.0"
+PATCH_GCC_VER="4.9.0"
+PIE_GCC_VER="4.9.0"
 
 # Hardened gcc 4 stuff
 PIE_VER="0.6.0"
@@ -43,6 +45,13 @@ src_prepare() {
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
 		EPATCH_EXCLUDE+=" 10_all_default-fortify-source.patch"
 	fi
+
+	EPATCH_EXCLUDE+="
+		93_all_pr60971-wrong-code.patch
+		94_all_pr60902-ffmpeg-miscompile.patch
+		95_all_pr60960-wrong-code.patch
+		96_all_pr59952-avx2-no-rtm.patch
+		97_all_pr60965-devirt-placement-new.patch"
 
 	toolchain_src_prepare
 
