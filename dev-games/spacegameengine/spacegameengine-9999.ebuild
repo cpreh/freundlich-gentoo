@@ -129,7 +129,7 @@ REQUIRED_USE="
 	scenic? ( camera cg charconv config imagecolor line_drawer modelobj parsejson renderer shader viewport )
 	shader? ( cg renderer )
 	sprite? ( renderer )
-	systems? ( audio charconv config font image2d input log parseini plugin renderer viewport window )
+	systems? ( audio charconv config font image2d input log parseini plugin renderer sprite viewport window )
 	texture? ( image2d log renderer )
 	viewport? ( renderer window )
 	vorbis? ( audio log plugin )
