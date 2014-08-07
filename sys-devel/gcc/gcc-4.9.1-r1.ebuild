@@ -1,13 +1,11 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.9.0.ebuild,v 1.1 2014/05/18 08:33:52 rhill Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.9.1.ebuild,v 1.1 2014/08/07 00:40:11 rhill Exp $
 
 EAPI="4"
 
 PATCH_VER="1.0"
 UCLIBC_VER="1.0"
-PATCH_GCC_VER="4.9.0"
-PIE_GCC_VER="4.9.0"
 
 # Hardened gcc 4 stuff
 PIE_VER="0.6.0"
@@ -45,13 +43,6 @@ src_prepare() {
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
 		EPATCH_EXCLUDE+=" 10_all_default-fortify-source.patch"
 	fi
-
-	EPATCH_EXCLUDE+="
-		93_all_pr60971-wrong-code.patch
-		94_all_pr60902-ffmpeg-miscompile.patch
-		95_all_pr60960-wrong-code.patch
-		96_all_pr59952-avx2-no-rtm.patch
-		97_all_pr60965-devirt-placement-new.patch"
 
 	toolchain_src_prepare
 
