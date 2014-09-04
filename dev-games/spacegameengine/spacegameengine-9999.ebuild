@@ -20,8 +20,8 @@ IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
-resource_tree rucksack scenic +shader +sprite static-libs +systems test
-+texture +timer +viewport +vorbis +wave +window +x11input"
+resource_tree rucksack rucksackviewport scenic +shader +sprite static-libs
++systems test +texture +timer +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -125,7 +125,7 @@ REQUIRED_USE="
 	postprocessing? ( cg config renderer shader viewport )
 	projectile? ( imagecolor line_drawer log renderer )
 	renderer? ( image2d image3d imagecolor imageds imageds2d log plugin )
-	rucksack? ( viewport )
+	rucksackviewport? ( renderer rucksack viewport )
 	scenic? ( camera cg charconv config imagecolor line_drawer modelobj parsejson renderer shader viewport )
 	shader? ( cg renderer )
 	sprite? ( renderer )
@@ -190,6 +190,7 @@ src_configure() {
 		$(cmake-utils_use_enable rendereropengl)
 		$(cmake-utils_use_enable resource_tree)
 		$(cmake-utils_use_enable rucksack)
+		$(cmake-utils_use_enable rucksackviewport)
 		$(cmake-utils_use_enable scenic)
 		$(cmake-utils_use_enable shader)
 		$(cmake-utils_use_enable sprite)
