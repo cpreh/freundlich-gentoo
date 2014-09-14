@@ -21,7 +21,7 @@ IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
 resource_tree rucksack rucksackviewport scenic +shader +sprite static-libs
-+systems test +texture +timer +viewport +vorbis +wave +window +x11input"
++systems test +texture +timer tools +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
@@ -70,6 +70,9 @@ RDEPEND="
 	)
 	sprite? (
 		~dev-cpp/majutsu-9999
+	)
+	tools? (
+		~dev-cpp/libawl-9999
 	)
 	vorbis? (
 		media-libs/libvorbis
@@ -199,6 +202,7 @@ src_configure() {
 		$(cmake-utils_use_enable test)
 		$(cmake-utils_use_enable texture)
 		$(cmake-utils_use_enable timer)
+		$(cmake-utils_use_enable tools)
 		$(cmake-utils_use_enable viewport)
 		$(cmake-utils_use_enable vorbis)
 		$(cmake-utils_use_enable window)
@@ -217,7 +221,7 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 
-	# Remove empty directories because doxygen creates them
+	# Remove empty directories created by doxygen
 	find "${D}" -type d -empty -delete || die
 
 	prepgamesdirs
