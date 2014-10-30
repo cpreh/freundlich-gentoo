@@ -6,6 +6,8 @@ EAPI="4"
 
 PATCH_VER="1.0"
 UCLIBC_VER="1.0"
+PATCH_GCC_VER="4.9.1"
+PIE_GCC_VER="4.9.1"
 
 # Hardened gcc 4 stuff
 PIE_VER="0.6.0"
@@ -21,10 +23,6 @@ SSP_UCLIBC_STABLE="x86 amd64 mips ppc ppc64 arm"
 #end Hardened stuff
 
 inherit eutils toolchain
-
-DESCRIPTION="The GNU Compiler Collection"
-
-LICENSE="GPL-3+ LGPL-3+ || ( GPL-3+ libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.3+"
 
 KEYWORDS=""
 
@@ -43,6 +41,8 @@ src_prepare() {
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
 		EPATCH_EXCLUDE+=" 10_all_default-fortify-source.patch"
 	fi
+
+	EPATCH_EXCLUDE+=" 91_all_4.9.2_pr61801.patch"
 
 	toolchain_src_prepare
 

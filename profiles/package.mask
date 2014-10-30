@@ -1,3 +1,2 @@
 ~app-dicts/jmdict-9999
 ~dev-cpp/fcppt-9999
-~sys-devel/gcc-4.9.1
