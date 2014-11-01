@@ -1,16 +1,14 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.9.1.ebuild,v 1.1 2014/08/07 00:40:11 rhill Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gcc/gcc-4.9.2.ebuild,v 1.1 2014/11/01 07:56:35 vapier Exp $
 
 EAPI="4"
 
 PATCH_VER="1.0"
 UCLIBC_VER="1.0"
-PATCH_GCC_VER="4.9.1"
-PIE_GCC_VER="4.9.1"
 
 # Hardened gcc 4 stuff
-PIE_VER="0.6.0"
+PIE_VER="0.6.1"
 SPECS_VER="0.2.0"
 SPECS_GCC_VER="4.4.3"
 # arch/libc configurations known to be stable with {PIE,SSP}-by-default
@@ -41,8 +39,6 @@ src_prepare() {
 		ewarn "Please rebuild gcc after upgrading to >=glibc-2.12 #362315"
 		EPATCH_EXCLUDE+=" 10_all_default-fortify-source.patch"
 	fi
-
-	EPATCH_EXCLUDE+=" 91_all_4.9.2_pr61801.patch"
 
 	toolchain_src_prepare
 
