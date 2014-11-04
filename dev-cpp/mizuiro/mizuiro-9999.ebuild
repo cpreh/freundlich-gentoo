@@ -19,7 +19,7 @@ IUSE="examples +fcppt test"
 
 DEPEND="
 	dev-libs/boost
-	fcppt? ( ~dev-cpp/fcppt-9999 )
+	fcppt? ( >=dev-cpp/fcppt-1.0.0 )
 "
 RDEPEND="${DEPEND}"
 
