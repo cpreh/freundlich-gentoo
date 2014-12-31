@@ -15,18 +15,15 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="examples +fcppt test"
+IUSE="test"
 
 DEPEND="
-	dev-libs/boost
-	fcppt? ( >=dev-cpp/fcppt-1.0.0 )
+	test? ( dev-libs/boost )
 "
 RDEPEND="${DEPEND}"
 
 src_configure() {
 	local mycmakeargs="
-		$(cmake-utils_use_enable examples)
-		$(cmake-utils_use_enable fcppt)
 		$(cmake-utils_use_enable test)
 	"
 
