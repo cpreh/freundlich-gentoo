@@ -23,10 +23,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	doc? (
-		>=app-doc/doxygen-1.7.5
-		app-text/dvipsk
-		app-text/ghostscript-gpl
-		dev-texlive/texlive-latex
+		>=app-doc/doxygen-1.7.5[latex]
 	)
 "
 

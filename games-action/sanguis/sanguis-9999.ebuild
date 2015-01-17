@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+client tools"
 
 DEPEND="
-	~dev-cpp/fcppt-9999
+	>=dev-cpp/fcppt-1.1.0
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
 	~dev-games/spacegameengine-9999[charconv,config,console,font,parse,parsejson,timer]

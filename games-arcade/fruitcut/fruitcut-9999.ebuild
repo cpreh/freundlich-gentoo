@@ -18,7 +18,7 @@ IUSE="cegui"
 
 DEPEND="
 	>=dev-libs/boost-1.49.0
-	~dev-cpp/fcppt-9999
+	>=dev-cpp/fcppt-1.1.0
 	~dev-cpp/libawl-9999
 	~dev-cpp/mizuiro-9999
 	sci-physics/bullet
