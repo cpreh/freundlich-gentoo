@@ -19,7 +19,7 @@ IUSE="+examples static-libs"
 
 DEPEND="
 	>=dev-libs/boost-1.47.0
-	>=dev-cpp/fcppt-1.1.0
+	>=dev-cpp/fcppt-1.2.0
 "
 RDEPEND="${DEPEND}"
 
