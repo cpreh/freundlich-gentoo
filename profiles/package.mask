@@ -1,2 +1,1 @@
-~app-dicts/jmdict-9999
 ~dev-cpp/fcppt-9999
