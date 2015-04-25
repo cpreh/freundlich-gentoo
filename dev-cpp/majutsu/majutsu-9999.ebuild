@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 DEPEND="
-	>=dev-cpp/fcppt-1.1.0
+	>=dev-cpp/fcppt-1.3.0
 	dev-libs/boost
 "
 RDEPEND="${DEPEND}"

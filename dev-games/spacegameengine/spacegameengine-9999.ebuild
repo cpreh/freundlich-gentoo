@@ -24,7 +24,7 @@ resource_tree rucksack rucksackviewport scenic +shader +sprite static-libs
 +systems test +texture +timer tools +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
-	>=dev-cpp/fcppt-1.2.0
+	>=dev-cpp/fcppt-1.3.0
 	>=dev-libs/boost-1.47.0
 	cegui? (
 		>=dev-games/cegui-0.8.0

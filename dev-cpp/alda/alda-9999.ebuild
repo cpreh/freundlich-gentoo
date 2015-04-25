@@ -18,7 +18,7 @@ IUSE="static-libs test"
 
 RDEPEND="
 	>=dev-libs/boost-1.50
-	>=dev-cpp/fcppt-1.2.0
+	>=dev-cpp/fcppt-1.3.0
 	~dev-cpp/majutsu-9999
 	"
 DEPEND="

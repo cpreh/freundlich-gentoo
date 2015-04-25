@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+sge"
 
 RDEPEND="
-	>=dev-cpp/fcppt-1.0.0
+	>=dev-cpp/fcppt-1.3.0
 	dev-libs/boost
 	sge? (
 		~dev-games/spacegameengine-9999[parse,parsejson]
