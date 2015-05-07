@@ -1,0 +1,34 @@
+commit 16acb5e446ea244c88cae8c25b4a6bd9cc8bae7d
+Author: Wouter van Kesteren <woutershep@gmail.com>
+Date:   Sat May 2 19:31:02 2015 +0200
+
+    GCC 5.1 compatibility
+    
+    Change-Id: I2cb6e653147e64f8e85583e03d1c0a2fb846335e
+    Reported-by: Marc Duponcheel <marc@offline.be>
+
+diff --git a/paludis/resolver/collect_depped_upon.cc b/paludis/resolver/collect_depped_upon.cc
+index ef88ea7..1dbc7a3 100644
+--- a/paludis/resolver/collect_depped_upon.cc
++++ b/paludis/resolver/collect_depped_upon.cc
+@@ -41,6 +41,7 @@
+ #include <paludis/slot.hh>
+ 
+ #include <algorithm>
++#include <initializer_list>
+ #include <sstream>
+ 
+ using namespace paludis;
+@@ -239,10 +240,9 @@ paludis::resolver::dependent_upon(
+     }
+     else
+     {
+-        auto k { &PackageID::build_dependencies_key, &PackageID::run_dependencies_key, &PackageID::post_dependencies_key };
+-        for (auto i(k.begin()), i_end(k.end()) ; i != i_end ; ++i)
++        for (auto& fn : { &PackageID::build_dependencies_key, &PackageID::run_dependencies_key, &PackageID::post_dependencies_key })
+         {
+-            auto key(((*id).*(*i))());
++            auto key(((*id).*fn)());
+             if (key)
+             {
+                 c.labels_stack.push_front(key->initial_labels());
