@@ -17,11 +17,16 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+examples static-libs"
 
-DEPEND="
+RDEPEND="
 	>=dev-libs/boost-1.47.0
 	>=dev-cpp/fcppt-1.3.0
+	x11-libs/libX11
 "
-RDEPEND="${DEPEND}"
+
+DEPEND="
+	${RDEPEND}
+	x11-proto/xproto
+"
 
 src_configure() {
 	local mycmakeargs=(
