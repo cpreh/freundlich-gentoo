@@ -88,12 +88,7 @@ RDEPEND="
 #for doxygen formulas, 'latex', 'dvips' and 'gs' are needed
 DEPEND="
 	${RDEPEND}
-	doc? (
-		>=app-doc/doxygen-1.7.5
-		app-text/dvipsk
-		app-text/ghostscript-gpl
-		dev-texlive/texlive-latex
-	)
+	>=app-doc/doxygen-1.7.5[latex]
 "
 
 REQUIRED_USE="
@@ -115,6 +110,7 @@ REQUIRED_USE="
 	imageds2d? ( image imageds )
 	input? ( log plugin )
 	line_drawer? ( imagecolor renderer )
+	media? ( log )
 	modelmd3? ( log )
 	modelobj? ( charconv imagecolor log renderer )
 	openal? ( audio log plugin )
@@ -124,7 +120,7 @@ REQUIRED_USE="
 	parseini? ( parse )
 	parsejson? ( parse )
 	plugin? ( log )
-	png? ( image image2d imagecolor log plugin )
+	png? ( image image2d imagecolor log media plugin )
 	postprocessing? ( cg config renderer shader viewport )
 	projectile? ( imagecolor line_drawer log renderer )
 	renderer? ( image2d image3d imagecolor imageds imageds2d log plugin )
@@ -135,8 +131,8 @@ REQUIRED_USE="
 	systems? ( audio charconv config font image2d input log parseini plugin renderer sprite viewport window )
 	texture? ( image2d log renderer )
 	viewport? ( renderer window )
-	vorbis? ( audio log plugin )
-	wave? ( audio log plugin )
+	vorbis? ( audio log media plugin )
+	wave? ( audio log media plugin )
 	x11input? ( input plugin window )
 "
 
