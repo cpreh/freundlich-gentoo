@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-CMAKE_MIN_VERSION="2.8.12"
+CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils games git-2
 
 EGIT_REPO_URI="git://github.com/freundlich/sanguis.git"
@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+client tools"
 
 DEPEND="
-	>=dev-cpp/fcppt-1.3.0
+	>=dev-cpp/fcppt-9999
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0
 	~dev-games/spacegameengine-9999[charconv,config,console,font,parse,parsejson,timer]

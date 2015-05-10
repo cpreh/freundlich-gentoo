@@ -4,6 +4,7 @@
 
 EAPI=5
 
+CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-2
 
 EGIT_REPO_URI="git://github.com/freundlich/sgec.git"

@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-CMAKE_MIN_VERSION="2.8.12"
+CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils games git-2
 
 EGIT_REPO_URI="git://github.com/pmiddend/fruitcut.git"
