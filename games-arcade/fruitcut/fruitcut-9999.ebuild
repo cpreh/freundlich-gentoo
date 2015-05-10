@@ -30,7 +30,6 @@ DEPEND="
 
 RDEPEND="${DEPEND}"
 
-
 src_configure() {
 	local mycmakeargs=(
 		"-DCMAKE_INSTALL_PREFIX=${GAMES_PREFIX}"
@@ -40,6 +39,10 @@ src_configure() {
 	)
 
 	cmake-utils_src_configure
+}
+
+src_compile() {
+	cmake-utils_src_compile
 }
 
 src_install() {
