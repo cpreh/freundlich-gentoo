@@ -51,3 +51,37 @@ diff -r a326a6240e90 -r d8d107be209c src/share/vm/gc_implementation/g1/g1SATBCar
  /*
     Claimed and deferred bits are used together in G1 during the evacuation
 
+--- openjdk/hotspot/src/share/vm/opto/type.cpp	2015-04-27 16:01:30.150632318 +0200
++++ openjdk/hotspot/src/share/vm/opto/type.cpp	2015-04-27 16:01:30.092633225 +0200
+@@ -1158,11 +1158,11 @@
+   // Certain normalizations keep us sane when comparing types.
+   // The 'SMALLINT' covers constants and also CC and its relatives.
+   if (lo <= hi) {
+-    if ((juint)(hi - lo) <= SMALLINT)  w = Type::WidenMin;
+-    if ((juint)(hi - lo) >= max_juint) w = Type::WidenMax; // TypeInt::INT
++    if ((juint)hi - lo <= SMALLINT)  w = Type::WidenMin;
++    if ((juint)hi - lo >= max_juint) w = Type::WidenMax; // TypeInt::INT
+   } else {
+-    if ((juint)(lo - hi) <= SMALLINT)  w = Type::WidenMin;
+-    if ((juint)(lo - hi) >= max_juint) w = Type::WidenMin; // dual TypeInt::INT
++    if ((juint)lo - hi <= SMALLINT)  w = Type::WidenMin;
++    if ((juint)lo - hi >= max_juint) w = Type::WidenMin; // dual TypeInt::INT
+   }
+   return w;
+ }
+@@ -1416,11 +1416,11 @@
+   // Certain normalizations keep us sane when comparing types.
+   // The 'SMALLINT' covers constants.
+   if (lo <= hi) {
+-    if ((julong)(hi - lo) <= SMALLINT)   w = Type::WidenMin;
+-    if ((julong)(hi - lo) >= max_julong) w = Type::WidenMax; // TypeLong::LONG
++    if ((julong)hi - lo <= SMALLINT)   w = Type::WidenMin;
++    if ((julong)hi - lo >= max_julong) w = Type::WidenMax; // TypeLong::LONG
+   } else {
+-    if ((julong)(lo - hi) <= SMALLINT)   w = Type::WidenMin;
+-    if ((julong)(lo - hi) >= max_julong) w = Type::WidenMin; // dual TypeLong::LONG
++    if ((julong)lo - hi <= SMALLINT)   w = Type::WidenMin;
++    if ((julong)lo - hi >= max_julong) w = Type::WidenMin; // dual TypeLong::LONG
+   }
+   return w;
+ }
