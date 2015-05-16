@@ -5,8 +5,8 @@ Upstream Status:         Unknown
 Origin:                  Self
 Description:             Fixes building with GCC 5.
 
---- a/mozilla/js/src/builtin/TypedObject.cpp	2015-03-30 18:48:16.000000000 +0200
-+++ b/mozilla/js/src/builtin/TypedObject.cpp	2015-04-10 21:06:02.629917801 +0200
+--- mozilla/js/src/builtin/TypedObject.cpp	2015-03-30 18:48:16.000000000 +0200
++++ mozilla/js/src/builtin/TypedObject.cpp	2015-04-10 21:06:02.629917801 +0200
 @@ -710,12 +710,12 @@
      contents.append(")");
      RootedAtom stringRepr(cx, contents.finishAtom());
@@ -145,19 +145,8 @@ Description:             Fixes building with GCC 5.
          }
          Rooted<TypedObject*> obj(cx, createZeroed(cx, callee, length));
          if (!obj)
---- a/mozilla/js/src/frontend/BytecodeCompiler.cpp	2015-03-30 18:48:17.000000000 +0200
-+++ b/mozilla/js/src/frontend/BytecodeCompiler.cpp	2015-04-10 21:06:45.991784284 +0200
-@@ -544,7 +544,7 @@
- 
-     RootedScriptSource sourceObject(cx, CreateScriptSourceObject(cx, options));
-     if (!sourceObject)
--        return nullptr;
-+        return false;
-     ScriptSource *ss = sourceObject->source();
- 
-     SourceCompressionTask sct(cx);
---- a/mozilla/js/xpconnect/wrappers/XrayWrapper.cpp	2015-03-30 18:48:09.000000000 +0200
-+++ b/mozilla/js/xpconnect/wrappers/XrayWrapper.cpp	2015-04-10 21:29:16.381036189 +0200
+--- mozilla/js/xpconnect/wrappers/XrayWrapper.cpp	2015-03-30 18:48:09.000000000 +0200
++++ mozilla/js/xpconnect/wrappers/XrayWrapper.cpp	2015-04-10 21:29:16.381036189 +0200
 @@ -351,7 +351,7 @@
          {
              JSAutoCompartment ac(cx, target);
@@ -167,8 +156,8 @@ Description:             Fixes building with GCC 5.
          }
          return JS_WrapObject(cx, protop);
      }
---- a/mozilla/netwerk/ipc/NeckoParent.cpp	2015-03-30 18:48:13.000000000 +0200
-+++ b/mozilla/netwerk/ipc/NeckoParent.cpp	2015-04-10 21:23:07.143575131 +0200
+--- mozilla/netwerk/ipc/NeckoParent.cpp	2015-03-30 18:48:13.000000000 +0200
++++ mozilla/netwerk/ipc/NeckoParent.cpp	2015-04-10 21:23:07.143575131 +0200
 @@ -359,7 +359,7 @@
    RtspChannelParent* p = static_cast<RtspChannelParent*>(aActor);
    return p->Init(aConnectArgs);
@@ -178,3 +167,14 @@ Description:             Fixes building with GCC 5.
  #endif
  }
  
+--- mozilla/js/src/frontend/BytecodeCompiler.cpp	2015-05-16 10:32:29.749128962 +0200
++++ mozilla/js/src/frontend/BytecodeCompiler.cpp	2015-05-16 10:32:42.055087301 +0200
+@@ -544,7 +544,7 @@
+ 
+     RootedScriptSource sourceObject(cx, CreateScriptSourceObject(cx, options));
+     if (!sourceObject)
+-        return nullptr;
++        return false;
+     ScriptSource* ss = sourceObject->source();
+ 
+     SourceCompressionTask sct(cx);
