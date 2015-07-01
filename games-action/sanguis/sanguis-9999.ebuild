@@ -24,7 +24,7 @@ DEPEND="
 	~dev-games/spacegameengine-9999[charconv,config,console,font,parse,parsejson,timer]
 	client? (
 		~dev-cpp/libawl-9999
-		dev-games/spacegameengine[audio,consolegfx,fontdraw,imagecolor,image2d,input,log,parseini,renderer,rucksack,rucksackviewport,sprite,systems,texture,viewport,window]
+		dev-games/spacegameengine[audio,consolegfx,fontdraw,gui,imagecolor,image2d,input,log,parseini,renderer,rucksack,rucksackviewport,sprite,systems,texture,viewport,window]
 	)
 	tools? (
 		dev-qt/qtwidgets:5

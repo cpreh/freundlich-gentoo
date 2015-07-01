@@ -18,6 +18,7 @@
 		<flag name='font'>Build the font core library</flag>
 		<flag name='fontbitmap'>Build the fontbitmap library which loads bitmap fonts in sge's own format</flag>
 		<flag name='fontdraw'>Build the font draw core library which provides basic rendering of fonts</flag>
+		<flag name='gui'>Build the gui library which provides a simple gui</flag>
 		<flag name='graph'>Build the graph library which provides rendering of graphs to a texture</flag>
 		<flag name='image'>Build the image core library</flag>
 		<flag name='image2d'>Build the image color 2d core library</flag>

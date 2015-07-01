@@ -16,7 +16,7 @@ LICENSE="LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
-+consolegfx doc examples evdev +font +fontbitmap +fontdraw graph +image
++consolegfx doc examples evdev +font +fontbitmap +fontdraw gui graph +image
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
@@ -102,6 +102,7 @@ REQUIRED_USE="
 	font? ( log plugin )
 	fontbitmap? ( font imagecolor image2d log parsejson )
 	fontdraw? ( font imagecolor image2d renderer sprite texture )
+	gui? ( font fontdraw imagecolor input renderer rucksack rucksackviewport sprite texture )
 	graph? ( image image2d imagecolor renderer sprite texture )
 	image2d? ( image imagecolor media plugin )
 	image3d? ( image imagecolor )
@@ -161,6 +162,7 @@ src_configure() {
 		$(cmake-utils_use_enable font)
 		$(cmake-utils_use_enable fontbitmap)
 		$(cmake-utils_use_enable fontdraw)
+		$(cmake-utils_use_enable gui)
 		$(cmake-utils_use_enable graph)
 		$(cmake-utils_use_enable image)
 		$(cmake-utils_use_enable image2d)
