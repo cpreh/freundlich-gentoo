@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-emulation/wine/wine-1.7.46.ebuild,v 1.1 2015/06/30 02:59:17 np-hardass Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-emulation/wine/wine-1.7.47.ebuild,v 1.1 2015/07/18 20:19:37 np-hardass Exp $
 
 EAPI="5"
 
@@ -212,6 +212,7 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-1.4_rc2-multilib-portage.patch #395615
 		"${FILESDIR}"/${PN}-1.7.12-osmesa-check.patch #429386
 		"${FILESDIR}"/${PN}-1.6-memset-O3.patch #480508
+		"${FILESDIR}"/${PN}-1.7.47-critical-security-cookie-fix.patch # only necessary for this version, upstream #38895
 	)
 	if use gstreamer; then
 		# See http://bugs.winehq.org/show_bug.cgi?id=30557
@@ -239,6 +240,7 @@ src_prepare() {
 		ewarn "unless you can reproduce them with USE=-staging"
 
 		local STAGING_EXCLUDE=""
+		STAGING_EXCLUDE="${STAGING_EXCLUDE} -W ntdll-Revert_Security_Cookie" # only necessary in this version
 		use pipelight || STAGING_EXCLUDE="${STAGING_EXCLUDE} -W Pipelight"
 
 		# Launch wine-staging patcher in a subshell, using epatch as a backend, and gitapply.sh as a backend for binary patches
