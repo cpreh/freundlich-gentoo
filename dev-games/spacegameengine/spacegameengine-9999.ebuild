@@ -97,7 +97,7 @@ REQUIRED_USE="
 	camera? ( input log parsejson renderer viewport )
 	cegui? ( charconv imagecolor image2d input log renderer viewport )
 	console? ( font )
-	consolegfx? ( console font fontdraw imagecolor input renderer sprite )
+	consolegfx? ( console font fontdraw imagecolor input renderer )
 	evdev? ( input log plugin window )
 	font? ( log plugin )
 	fontbitmap? ( font imagecolor image2d log parsejson )
