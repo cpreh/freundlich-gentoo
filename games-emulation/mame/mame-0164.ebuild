@@ -11,7 +11,7 @@ inherit eutils games python-any-r1
 
 DESCRIPTION="Multiple Arcade Machine Emulator"
 HOMEPAGE="http://mamedev.org"
-SRC_URI="http://mamedev.org/downloader.php?file=mame0164/mame0164s.zip"
+SRC_URI="http://mamedev.org/downloader.php?file=${PN}${PV}/${PN}${PV}s.zip"
 
 LICENSE="XMAME"
 SLOT="0"
