@@ -28,7 +28,7 @@ RDEPEND="
 	media-libs/alsa-lib
 	media-libs/portaudio
 	media-libs/portmidi
-	media-libs/libsdl2[X,alsa,joystick,opengl,sound,video]
+	media-libs/libsdl2[X,alsa,joystick,opengl,sound,threads,video]
 	media-libs/sdl2-ttf[X]
 	sys-libs/zlib
 	virtual/jpeg:0
