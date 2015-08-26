@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-emulation/wine/wine-1.7.47.ebuild,v 1.1 2015/07/18 20:19:37 np-hardass Exp $
+# $Id$
 
 EAPI="5"
 
@@ -23,7 +23,7 @@ else
 	S=${WORKDIR}/${MY_P}
 fi
 
-GV="2.36"
+GV="2.40"
 MV="4.5.6"
 STAGING_P="wine-staging-${PV}"
 STAGING_DIR="${WORKDIR}/${STAGING_P}"
@@ -37,8 +37,8 @@ SRC_URI="${SRC_URI}
 		abi_x86_64? ( mirror://sourceforge/${PN}/Wine%20Gecko/${GV}/wine_gecko-${GV}-x86_64.msi )
 	)
 	mono? ( mirror://sourceforge/${PN}/Wine%20Mono/${MV}/wine-mono-${MV}.msi )
-	gstreamer? ( http://dev.gentoo.org/~tetromino/distfiles/${PN}/${GST_P}.patch.bz2 )
-	http://dev.gentoo.org/~tetromino/distfiles/${PN}/${WINE_GENTOO}.tar.bz2"
+	gstreamer? ( https://dev.gentoo.org/~tetromino/distfiles/${PN}/${GST_P}.patch.bz2 )
+	https://dev.gentoo.org/~tetromino/distfiles/${PN}/${WINE_GENTOO}.tar.bz2"
 
 if [[ ${PV} == "9999" ]] ; then
 	STAGING_EGIT_REPO_URI="git://github.com/wine-compholio/wine-staging.git"
@@ -58,6 +58,7 @@ REQUIRED_USE="|| ( abi_x86_32 abi_x86_64 )
 	pipelight? ( staging )
 	s3tc? ( staging )
 	vaapi? ( staging )
+	?? ( gstreamer staging )
 	osmesa? ( opengl )" #286560
 
 # FIXME: the test suite is unsuitable for us; many tests require net access
@@ -212,7 +213,6 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-1.4_rc2-multilib-portage.patch #395615
 		"${FILESDIR}"/${PN}-1.7.12-osmesa-check.patch #429386
 		"${FILESDIR}"/${PN}-1.6-memset-O3.patch #480508
-		"${FILESDIR}"/${PN}-1.7.47-critical-security-cookie-fix.patch # only necessary for this version, upstream #38895
 	)
 	if use gstreamer; then
 		# See http://bugs.winehq.org/show_bug.cgi?id=30557
@@ -240,7 +240,6 @@ src_prepare() {
 		ewarn "unless you can reproduce them with USE=-staging"
 
 		local STAGING_EXCLUDE=""
-		STAGING_EXCLUDE="${STAGING_EXCLUDE} -W ntdll-Revert_Security_Cookie" # only necessary in this version
 		use pipelight || STAGING_EXCLUDE="${STAGING_EXCLUDE} -W Pipelight"
 
 		# Launch wine-staging patcher in a subshell, using epatch as a backend, and gitapply.sh as a backend for binary patches
