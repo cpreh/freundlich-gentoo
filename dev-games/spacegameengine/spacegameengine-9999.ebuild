@@ -184,7 +184,7 @@ src_configure() {
 		$(cmake-utils_use_enable parseini)
 		$(cmake-utils_use_enable parsejson)
 		$(cmake-utils_use_enable plugin)
-		$(cmake-utils_use_enable png)
+		$(cmake-utils_use_enable png LIBPNG)
 		$(cmake-utils_use_enable postprocessing)
 		$(cmake-utils_use_enable projectile)
 		$(cmake-utils_use_enable renderer)
