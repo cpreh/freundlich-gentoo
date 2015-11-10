@@ -25,15 +25,12 @@ resource_tree rucksack rucksackviewport scenic +shader +sprite static-libs
 
 RDEPEND="
 	>=dev-cpp/fcppt-1.3.0
-	>=dev-libs/boost-1.47.0
+	>=dev-libs/boost-1.59.0
 	cegui? (
 		>=dev-games/cegui-0.8.0
 	)
 	cg? (
 		>=media-gfx/nvidia-cg-toolkit-3
-	)
-	charconv? (
-		virtual/libiconv
 	)
 	examples? (
 		~dev-cpp/libawl-9999
@@ -85,7 +82,6 @@ RDEPEND="
 		x11-libs/libX11
 	)
 "
-#for doxygen formulas, 'latex', 'dvips' and 'gs' are needed
 DEPEND="
 	${RDEPEND}
 	>=app-doc/doxygen-1.7.5[latex]
@@ -145,7 +141,6 @@ src_configure() {
 		-D INSTALL_BINARY_DIR="${GAMES_BINDIR}"
 		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
 		-D INSTALL_DOC_DIR_BASE="/usr/share/doc"
-		-D CHARCONV_BACKEND="iconv"
 		$(cmake-utils_use_enable audio)
 		$(cmake-utils_use_enable audio_null)
 		$(cmake-utils_use_enable camera)
