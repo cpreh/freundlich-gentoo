@@ -60,7 +60,6 @@ RDEPEND="
 	rendereropengl? (
 		virtual/opengl
 		opengl? (
-			media-libs/glew
 			x11-libs/libX11
 			x11-libs/libXrandr
 		)
