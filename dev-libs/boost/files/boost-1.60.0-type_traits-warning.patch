@@ -1,0 +1,23 @@
+--- boost/type_traits/detail/template_arity_spec.hpp	2015-12-18 21:09:14.568501774 +0100
++++ boost/type_traits/detail/template_arity_spec.hpp	2015-12-18 21:09:41.564539267 +0100
+@@ -9,8 +9,5 @@
+ //
+ // This header is deprecated and no longer used by type_traits:
+ //
+-#if defined(__GNUC__) || defined(_MSC_VER)
+-# pragma message("NOTE: Use of this header (template_arity_spec.hpp) is deprecated")
+-#endif
+ 
+ #   define BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(i, name) /**/
+--- boost/type_traits/detail/bool_trait_def.hpp	2015-12-18 21:16:43.764034174 +0100
++++ boost/type_traits/detail/bool_trait_def.hpp	2015-12-18 21:16:51.155896481 +0100
+@@ -14,9 +14,6 @@
+ //
+ // This header is deprecated and no longer used by type_traits:
+ //
+-#if defined(__GNUC__) || defined(_MSC_VER)
+-# pragma message("NOTE: Use of this header (bool_trait_def.hpp) is deprecated")
+-#endif
+ 
+ #include <boost/type_traits/detail/template_arity_spec.hpp>
+ #include <boost/type_traits/integral_constant.hpp>
