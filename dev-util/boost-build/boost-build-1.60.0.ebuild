@@ -1,17 +1,17 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 RESTRICT="test"
 
 PYTHON_COMPAT=( python2_7 )
-inherit eutils flag-o-matic multilib python-single-r1 toolchain-funcs versionator
+inherit eutils flag-o-matic python-single-r1 toolchain-funcs versionator
 
 MY_PV="$(replace_all_version_separators _)"
 
-DESCRIPTION="A system for large project software construction, which is simple to use and powerful"
+DESCRIPTION="A system for large project software construction, simple to use and powerful"
 HOMEPAGE="http://www.boost.org/doc/tools/build/index.html"
 SRC_URI="mirror://sourceforge/boost/boost_${MY_PV}.tar.bz2"
 
@@ -76,7 +76,7 @@ src_prepare() {
 		-e 's/\(debug-symbols      : on off\)/\1 none/' \
 		tools/builtin.jam || die "sed failed"
 
-	epatch_user
+	eapply_user
 }
 
 src_configure() {
