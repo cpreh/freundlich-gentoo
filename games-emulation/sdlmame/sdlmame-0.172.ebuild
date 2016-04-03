@@ -12,10 +12,10 @@ DESCRIPTION="Multiple Arcade Machine Emulator + Multi Emulator Super System (MES
 HOMEPAGE="http://mamedev.org/"
 SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY_PV}s.zip -> mame-${PV}.zip"
 
-LICENSE="XMAME"
+LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="X alsa +arcade debug +mess opengl tools"
+IUSE="X alsa +arcade debug +mess tools"
 REQUIRED_USE="|| ( arcade mess )
 		debug? ( X )"
 
@@ -28,9 +28,10 @@ RDEPEND="!games-emulation/sdlmametools
 	!games-emulation/sdlmess
 	dev-db/sqlite:3
 	dev-libs/expat
+	dev-libs/libuv
 	media-libs/fontconfig
 	media-libs/flac
-	media-libs/libsdl2[joystick,opengl?,sound,video]
+	media-libs/libsdl2[joystick,opengl,sound,threads,video]
 	media-libs/portaudio
 	media-libs/sdl2-ttf
 	sys-libs/zlib
@@ -81,6 +82,7 @@ src_prepare() {
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
 	enable_feature USE_SYSTEM_LIB_SQLITE3
 	enable_feature USE_SYSTEM_LIB_ZLIB
+	enable_feature USE_SYSTEM_LIB_UV
 
 	# Disable warnings being treated as errors and enable verbose build output
 	enable_feature NOWERROR
@@ -89,7 +91,6 @@ src_prepare() {
 	use amd64 && enable_feature PTR64
 	use ppc && enable_feature BIGENDIAN
 	use debug && enable_feature DEBUG
-	use opengl || enable_feature NO_OPENGL
 	use tools && enable_feature TOOLS
 	use X || enable_feature NO_X11
 
@@ -163,7 +164,7 @@ src_install() {
 	dosym ${MAMEBIN} "${GAMES_BINDIR}/${PN}"
 
 	insinto "${GAMES_DATADIR}/${PN}"
-	doins -r src/osd/sdl/keymaps $(use mess && echo hash)
+	doins -r keymaps $(use mess && echo hash)
 
 	# Create default mame.ini and inject Gentoo settings into it
 	#  Note that '~' does not work and '$HOME' must be used
@@ -189,7 +190,7 @@ src_install() {
 	sed -i \
 		-e "s:\(keymap_file\)[ \t]*\(.*\):\1 \t\t\$HOME/.${PN}/\2:" \
 		"${T}/mame.ini" || die
-	for f in src/osd/sdl/keymaps/km*.txt ; do
+	for f in keymaps/km*.txt ; do
 		sed -i \
 			-e "/^keymap_file/a \#keymap_file \t\t${GAMES_DATADIR}/${PN}/keymaps/${f##*/}" \
 			"${T}/mame.ini" || die
@@ -223,10 +224,4 @@ pkg_postinst() {
 	elog "It is strongly recommended to change either the system-wide"
 	elog "  ${GAMES_SYSCONFDIR}/${PN}/mame.ini or use a per-user setup at ~/.${PN}/mame.ini"
 	elog
-	if use opengl ; then
-		elog "You built ${PN} with opengl support and should set"
-		elog "\"video\" to \"opengl\" in mame.ini to take advantage of that"
-		elog
-		elog "For more info see http://wiki.mamedev.org"
-	fi
 }
