@@ -144,8 +144,8 @@ src_install() {
 	function mess_install() {
 		dosym ${MAMEBIN} "${GAMES_BINDIR}"/mess${suffix}
 		dosym ${MAMEBIN} "${GAMES_BINDIR}"/sdlmess
-		newman src/osd/sdl/man/mess.6 sdlmess.6
-		doman src/osd/sdl/man/mess.6
+		newman docs/man/mess.6 sdlmess.6
+		doman docs/man/mess.6
 	}
 	if use arcade ; then
 		if use mess ; then
@@ -154,8 +154,8 @@ src_install() {
 		else
 			MAMEBIN="mamearcade${suffix}"
 		fi
-		doman src/osd/sdl/man/mame.6
-		newman src/osd/sdl/man/mame.6 ${PN}.6
+		doman docs/man/mame.6
+		newman docs/man/mame.6 ${PN}.6
 	elif use mess ; then
 		MAMEBIN="mess${suffix}"
 		mess_install
@@ -209,10 +209,10 @@ src_install() {
 	if use tools ; then
 		for f in castool chdman floptool imgtool jedutil ldresample ldverify romcmp testkeys ; do
 			newgamesbin ${f} ${PN}-${f}
-			newman src/osd/sdl/man/${f}.1 ${PN}-${f}.1
+			newman docs/man/${f}.1 ${PN}-${f}.1
 		done
 		newgamesbin ldplayer${suffix} ${PN}-ldplayer
-		newman src/osd/sdl/man/ldplayer.1 ${PN}-ldplayer.1
+		newman docs/man/ldplayer.1 ${PN}-ldplayer.1
 	fi
 
 	prepgamesdirs
