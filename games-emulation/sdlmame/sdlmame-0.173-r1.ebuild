@@ -1,10 +1,10 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI=5
 PYTHON_COMPAT=( python2_7 )
-inherit eutils python-any-r1 toolchain-funcs games
+inherit eutils python-any-r1 toolchain-funcs qmake-utils games
 
 MY_PV="${PV/.}"
 
@@ -12,12 +12,11 @@ DESCRIPTION="Multiple Arcade Machine Emulator + Multi Emulator Super System (MES
 HOMEPAGE="http://mamedev.org/"
 SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY_PV}s.zip -> mame-${PV}.zip"
 
-LICENSE="GPL-2"
+LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="X alsa +arcade debug +mess tools"
-REQUIRED_USE="|| ( arcade mess )
-		debug? ( X )"
+IUSE="alsa +arcade debug +mess openmp tools"
+REQUIRED_USE="|| ( arcade mess )"
 
 # MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
 #  MAME/MESS build combined (default)	+arcade +mess	(mame)
@@ -36,18 +35,20 @@ RDEPEND="!games-emulation/sdlmametools
 	media-libs/sdl2-ttf
 	sys-libs/zlib
 	virtual/jpeg:0
+	virtual/opengl
 	alsa? ( media-libs/alsa-lib
 		media-libs/portmidi )
-	debug? ( dev-qt/qtcore:4
-		dev-qt/qtgui:4 )
-	X? ( x11-libs/libX11
-		x11-libs/libXinerama )
+	debug? ( dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtwidgets:5 )
+	x11-libs/libX11
+	x11-libs/libXinerama
 	${PYTHON_DEPS}"
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	app-arch/unzip
 	virtual/pkgconfig
-	X? ( x11-proto/xineramaproto )"
+	x11-proto/xineramaproto"
 
 S=${WORKDIR}
 
@@ -89,10 +90,10 @@ src_prepare() {
 	enable_feature VERBOSE
 
 	use amd64 && enable_feature PTR64
-	use ppc && enable_feature BIGENDIAN
 	use debug && enable_feature DEBUG
 	use tools && enable_feature TOOLS
-	use X || enable_feature NO_X11
+	disable_feature NO_X11 # bgfx needs X
+	use openmp && enable_feature OPENMP
 
 	if use alsa ; then
 		enable_feature USE_SYSTEM_LIB_PORTMIDI
@@ -116,11 +117,11 @@ src_compile() {
 	function my_emake() {
 		# Workaround conflicting $ARCH variable used by both Gentoo's
 		# portage and by Mame's build scripts
-		# turn off bgfx for now since it's an embedded library (bug #556642)
 		PYTHON_EXECUTABLE=${PYTHON} \
 		OVERRIDE_CC=$(tc-getCC) \
 		OVERRIDE_CXX=$(tc-getCXX) \
 		OVERRIDE_LD=$(tc-getCXX) \
+		QT_HOME="$(qt5_get_libdir)/qt5" \
 		ARCH= \
 			emake "$@" \
 				AR=$(tc-getAR)
@@ -190,7 +191,7 @@ src_install() {
 	sed -i \
 		-e "s:\(keymap_file\)[ \t]*\(.*\):\1 \t\t\$HOME/.${PN}/\2:" \
 		"${T}/mame.ini" || die
-	for f in keymaps/km*.txt ; do
+	for f in keymaps/km*.map ; do
 		sed -i \
 			-e "/^keymap_file/a \#keymap_file \t\t${GAMES_DATADIR}/${PN}/keymaps/${f##*/}" \
 			"${T}/mame.ini" || die
