@@ -30,6 +30,8 @@ DEPEND="
 
 src_configure() {
 	local mycmakeargs=(
+		-DENABLE_X11=ON
+		-DENABLE_WAYLAND=OFF
 		$(cmake-utils_use_enable examples)
 		$(cmake-utils_use_enable static-libs STATIC)
 	)
