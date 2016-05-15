@@ -200,6 +200,7 @@ src_configure() {
 		$(cmake-utils_use_enable window)
 		$(cmake-utils_use_enable wave)
 		$(cmake-utils_use_enable x11input)
+		-D ENABLE_WLINPUT=OFF
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	)
 
