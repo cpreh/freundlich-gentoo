@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa +arcade debug +mess openmp tools"
+IUSE="alsa +arcade debug +mess opengl openmp tools"
 REQUIRED_USE="|| ( arcade mess )"
 
 # MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
@@ -30,7 +30,7 @@ RDEPEND="!games-emulation/sdlmametools
 	dev-libs/libuv
 	media-libs/fontconfig
 	media-libs/flac
-	media-libs/libsdl2[joystick,opengl,sound,threads,video]
+	media-libs/libsdl2[joystick,opengl?,sound,video]
 	media-libs/portaudio
 	media-libs/sdl2-ttf
 	sys-libs/zlib
@@ -54,12 +54,12 @@ S=${WORKDIR}
 
 # Function to disable a makefile option
 disable_feature() {
-	sed -i -e "/$1.*=/s:^:# :" makefile || die
+	sed -i -e "/^[ 	]*$1.*=/s:^:# :" makefile || die
 }
 
 # Function to enable a makefile option
 enable_feature() {
-	sed -i -e "/^#.*$1.*=/s:^#::"  makefile || die
+	sed -i -e "/^#.*$1.*=/s:^#[ 	]*::"  makefile || die
 }
 
 pkg_setup() {
@@ -74,6 +74,9 @@ src_unpack() {
 }
 
 src_prepare() {
+	epatch \
+		"${FILESDIR}"/${P}-qt.patch \
+		"${FILESDIR}"/${P}-cxx14.patch
 	# Disable using bundled libraries
 	enable_feature USE_SYSTEM_LIB_EXPAT
 	enable_feature USE_SYSTEM_LIB_FLAC
@@ -208,7 +211,7 @@ src_install() {
 		"${GAMES_SYSCONFDIR}/${PN}"/{ctrlr,cheat}
 
 	if use tools ; then
-		for f in castool chdman floptool imgtool jedutil ldresample ldverify romcmp testkeys ; do
+		for f in castool chdman floptool imgtool jedutil ldresample ldverify romcmp ; do
 			newgamesbin ${f} ${PN}-${f}
 			newman docs/man/${f}.1 ${PN}-${f}.1
 		done
@@ -225,4 +228,10 @@ pkg_postinst() {
 	elog "It is strongly recommended to change either the system-wide"
 	elog "  ${GAMES_SYSCONFDIR}/${PN}/mame.ini or use a per-user setup at ~/.${PN}/mame.ini"
 	elog
+	if use opengl ; then
+		elog "You built ${PN} with opengl support and should set"
+		elog "\"video\" to \"opengl\" in mame.ini to take advantage of that"
+		elog
+		elog "For more info see http://wiki.mamedev.org"
+	fi
 }
