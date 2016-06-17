@@ -30,7 +30,7 @@ RDEPEND="!games-emulation/sdlmametools
 	dev-libs/libuv
 	media-libs/fontconfig
 	media-libs/flac
-	media-libs/libsdl2[joystick,opengl?,sound,video]
+	media-libs/libsdl2[joystick,opengl?,sound,threads,video,X]
 	media-libs/portaudio
 	media-libs/sdl2-ttf
 	sys-libs/zlib
@@ -75,8 +75,8 @@ src_unpack() {
 
 src_prepare() {
 	epatch \
-		"${FILESDIR}"/${PN}-0.173-qt.patch \
-		"${FILESDIR}"/${PN}-0.173-cxx14.patch
+		"${FILESDIR}"/${P}-qt.patch \
+		"${FILESDIR}"/${P}-cxx14.patch
 	# Disable using bundled libraries
 	enable_feature USE_SYSTEM_LIB_EXPAT
 	enable_feature USE_SYSTEM_LIB_FLAC
