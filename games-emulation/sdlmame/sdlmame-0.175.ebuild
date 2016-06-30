@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa +arcade debug +mess opengl openmp tools"
+IUSE="alsa +arcade debug +mess opengl tools"
 REQUIRED_USE="|| ( arcade mess )"
 
 # MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
@@ -25,7 +25,6 @@ REQUIRED_USE="|| ( arcade mess )"
 # games-emulation/sdlmametools is dropped and enabled instead by the 'tools' useflag
 RDEPEND="!games-emulation/sdlmametools
 	!games-emulation/sdlmess
-	dev-db/sqlite:3
 	dev-libs/expat
 	dev-libs/libuv
 	media-libs/fontconfig
@@ -69,14 +68,13 @@ pkg_setup() {
 
 src_unpack() {
 	default
-	unpack ./mame.zip
+	unzip -q ./mame.zip
 	rm -f mame.zip || die
 }
 
 src_prepare() {
 	epatch \
-		"${FILESDIR}"/${P}-qt.patch \
-		"${FILESDIR}"/${P}-cxx14.patch
+		"${FILESDIR}"/${PN}-0.174-qt.patch
 	# Disable using bundled libraries
 	enable_feature USE_SYSTEM_LIB_EXPAT
 	enable_feature USE_SYSTEM_LIB_FLAC
@@ -84,7 +82,6 @@ src_prepare() {
 # Use bundled lua for now to ensure correct compilation (ref. b.g.o #407091)
 #	enable_feature USE_SYSTEM_LIB_LUA
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
-	enable_feature USE_SYSTEM_LIB_SQLITE3
 	enable_feature USE_SYSTEM_LIB_ZLIB
 	enable_feature USE_SYSTEM_LIB_UV
 
@@ -96,7 +93,8 @@ src_prepare() {
 	use debug && enable_feature DEBUG
 	use tools && enable_feature TOOLS
 	disable_feature NO_X11 # bgfx needs X
-	use openmp && enable_feature OPENMP
+	# Currently broken
+	#use openmp && enable_feature OPENMP
 
 	if use alsa ; then
 		enable_feature USE_SYSTEM_LIB_PORTMIDI
