@@ -1,8 +1,6 @@
-No point in adding qt-related things to the compile line unless the qt debugger is wanted
-
---- scripts/src/osd/sdl_cfg.lua.orig
-+++ scripts/src/osd/sdl_cfg.lua
-@@ -115,14 +115,16 @@
+--- scripts/src/osd/sdl_cfg.lua.old	2016-07-30 10:45:08.736849748 +0200
++++ scripts/src/osd/sdl_cfg.lua	2016-07-30 10:45:53.733791177 +0200
+@@ -117,14 +117,16 @@ if _OPTIONS["targetos"]=="windows" then
  	configuration { }
  
  elseif _OPTIONS["targetos"]=="linux" then
@@ -12,7 +10,7 @@ No point in adding qt-related things to the compile line unless the qt debugger 
 -		}
 -	else
 -		buildoptions {
--			backtick("pkg-config --cflags Qt5Widgets"),
+-			backtick(pkgconfigcmd() .. " --cflags Qt5Widgets"),
 -		}
 +	if _OPTIONS["USE_QTDEBUG"]=="1" then
 +		if _OPTIONS["QT_HOME"]~=nil then
@@ -21,7 +19,7 @@ No point in adding qt-related things to the compile line unless the qt debugger 
 +			}
 +		else
 +			buildoptions {
-+				backtick("pkg-config --cflags Qt5Widgets"),
++				backtick(pkgconfigcmd() .. " --cflags Qt5Widgets"),
 +			}
 +		end
  	end
