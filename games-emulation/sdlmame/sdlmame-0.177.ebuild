@@ -74,7 +74,7 @@ src_unpack() {
 
 src_prepare() {
 	epatch \
-		"${FILESDIR}"/${PN}-0.176-qt.patch
+		"${FILESDIR}"/${PN}-0.177-qt.patch
 	# Disable using bundled libraries
 	enable_feature USE_SYSTEM_LIB_EXPAT
 	enable_feature USE_SYSTEM_LIB_FLAC
@@ -203,7 +203,6 @@ src_install() {
 	insinto "${GAMES_SYSCONFDIR}/${PN}"
 	doins "${FILESDIR}/vector.ini"
 
-	dodoc docs/{config,mame,newvideo}.txt
 	keepdir \
 		"${GAMES_DATADIR}/${PN}"/{ctrlr,cheat,roms,samples,artwork,crosshair} \
 		"${GAMES_SYSCONFDIR}/${PN}"/{ctrlr,cheat}
