@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
 CMAKE_MIN_VERSION="3.0.0"
-inherit cmake-utils git-2
+inherit cmake-utils git-r3
 
 EGIT_REPO_URI="git://github.com/freundlich/sgec.git"
 
@@ -22,7 +22,7 @@ RDEPEND="${DEPEND}"
 
 RDEPEND="
 	>=dev-libs/boost-1.47.0
-	>=dev-cpp/fcppt-1.3.0
+	~dev-cpp/fcppt-9999
 	~dev-cpp/libawl-9999
 	~dev-games/spacegameengine-9999[font,fontdraw,image,imagecolor,input,renderer,sprite,systems,texture,viewport,window]
 "
@@ -31,7 +31,7 @@ DEPEND="${RDEPEND}"
 
 src_configure() {
 	local mycmakeargs=(
-		$(cmake-utils_use_enable static-libs STATIC)
+		-D ENABLE_STATIC="$(usex static-libs)"
 		-D ENABLE_EXAMPLES=OFF
 	)
 
