@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=6
 
 CMAKE_MIN_VERSION="3.0.0"
-inherit cmake-utils git-2
+inherit cmake-utils git-r3
 
 DESCRIPTION="A serialization library"
 HOMEPAGE=""
@@ -18,7 +18,7 @@ IUSE="static-libs test"
 
 RDEPEND="
 	>=dev-libs/boost-1.50
-	>=dev-cpp/fcppt-1.3.0
+	~dev-cpp/fcppt-9999
 	~dev-cpp/majutsu-9999
 	"
 DEPEND="
@@ -27,8 +27,8 @@ DEPEND="
 
 src_configure() {
 	local mycmakeargs=(
-		$(cmake-utils_use_enable static-libs STATIC)
-		$(cmake-utils_use_enable test)
+		-D ENABLE_STATIC="$(usex static-libs)"
+		-D ENABLE_TEST="$(usex test)"
 	)
 
 	cmake-utils_src_configure
