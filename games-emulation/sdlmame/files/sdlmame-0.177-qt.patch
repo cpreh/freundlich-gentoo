@@ -1,5 +1,5 @@
---- scripts/src/osd/sdl_cfg.lua.old	2016-08-31 17:21:29.975886157 +0200
-+++ scripts/src/osd/sdl_cfg.lua	2016-08-31 17:22:08.741865452 +0200
+--- ./scripts/src/osd/sdl_cfg.lua	2016-08-31 17:21:29.975886157 +0200
++++ ./scripts/src/osd/sdl_cfg.lua	2016-08-31 17:22:08.741865452 +0200
 @@ -117,14 +117,16 @@
  	configuration { }
  

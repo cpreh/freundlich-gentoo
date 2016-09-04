@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 PYTHON_COMPAT=( python2_7 )
-inherit eutils python-any-r1 toolchain-funcs qmake-utils games
+inherit python-any-r1 toolchain-funcs qmake-utils
 
 MY_PV="${PV/.}"
 
@@ -51,6 +51,10 @@ DEPEND="${RDEPEND}
 
 S=${WORKDIR}
 
+SYSCONFDIR="/etc/${PN}"
+DATADIR="/usr/share/${PN}"
+BINDIR="/usr/bin"
+
 # Function to disable a makefile option
 disable_feature() {
 	sed -i -e "/^[ 	]*$1.*=/s:^:# :" makefile || die
@@ -62,7 +66,6 @@ enable_feature() {
 }
 
 pkg_setup() {
-	games_pkg_setup
 	python-any-r1_pkg_setup
 }
 
@@ -72,9 +75,12 @@ src_unpack() {
 	rm -f mame.zip || die
 }
 
+PATCHES=(
+	"${FILESDIR}"/${PN}-0.177-qt.patch
+)
+
 src_prepare() {
-	epatch \
-		"${FILESDIR}"/${PN}-0.177-qt.patch
+	default
 	# Disable using bundled libraries
 	enable_feature USE_SYSTEM_LIB_EXPAT
 	enable_feature USE_SYSTEM_LIB_FLAC
@@ -130,7 +136,7 @@ src_compile() {
 	my_emake -j1 generate
 
 	my_emake ${targetargs} \
-		SDL_INI_PATH="\$\$\$\$HOME/.sdlmame;${GAMES_SYSCONFDIR}/${PN}" \
+		SDL_INI_PATH="\$\$\$\$HOME/.sdlmame;${SYSCONFDIR}" \
 		USE_QTDEBUG=${qtdebug}
 
 	if use tools ; then
@@ -144,8 +150,8 @@ src_install() {
 	local f
 
 	function mess_install() {
-		dosym ${MAMEBIN} "${GAMES_BINDIR}"/mess${suffix}
-		dosym ${MAMEBIN} "${GAMES_BINDIR}"/sdlmess
+		dosym ${MAMEBIN} "${BINDIR}"/mess${suffix}
+		dosym ${MAMEBIN} "${BINDIR}"/sdlmess
 		newman docs/man/mess.6 sdlmess.6
 		doman docs/man/mess.6
 	}
@@ -162,10 +168,10 @@ src_install() {
 		MAMEBIN="mess${suffix}"
 		mess_install
 	fi
-	dogamesbin ${MAMEBIN}
-	dosym ${MAMEBIN} "${GAMES_BINDIR}/${PN}"
+	dobin ${MAMEBIN}
+	dosym ${MAMEBIN} "${BINDIR}/${PN}"
 
-	insinto "${GAMES_DATADIR}/${PN}"
+	insinto "${DATADIR}"
 	doins -r keymaps $(use mess && echo hash)
 
 	# Create default mame.ini and inject Gentoo settings into it
@@ -174,12 +180,12 @@ src_install() {
 	# -- Paths --
 	for f in {rom,hash,sample,art,font,crosshair} ; do
 		sed -i \
-			-e "s:\(${f}path\)[ \t]*\(.*\):\1 \t\t\$HOME/.${PN}/\2;${GAMES_DATADIR}/${PN}/\2:" \
+			-e "s:\(${f}path\)[ \t]*\(.*\):\1 \t\t\$HOME/.${PN}/\2;${DATADIR}/\2:" \
 			"${T}/mame.ini" || die
 	done
 	for f in {ctrlr,cheat} ; do
 		sed -i \
-			-e "s:\(${f}path\)[ \t]*\(.*\):\1 \t\t\$HOME/.${PN}/\2;${GAMES_SYSCONFDIR}/${PN}/\2;${GAMES_DATADIR}/${PN}/\2:" \
+			-e "s:\(${f}path\)[ \t]*\(.*\):\1 \t\t\$HOME/.${PN}/\2;${SYSCONFDIR}/\2;${DATADIR}/\2:" \
 			"${T}/mame.ini" || die
 	done
 	# -- Directories
@@ -194,36 +200,32 @@ src_install() {
 		"${T}/mame.ini" || die
 	for f in keymaps/km*.map ; do
 		sed -i \
-			-e "/^keymap_file/a \#keymap_file \t\t${GAMES_DATADIR}/${PN}/keymaps/${f##*/}" \
+			-e "/^keymap_file/a \#keymap_file \t\t${DATADIR}/keymaps/${f##*/}" \
 			"${T}/mame.ini" || die
 	done
-	insinto "${GAMES_SYSCONFDIR}/${PN}"
+	insinto "${SYSCONFDIR}"
 	doins "${T}/mame.ini"
 
-	insinto "${GAMES_SYSCONFDIR}/${PN}"
+	insinto "${SYSCONFDIR}"
 	doins "${FILESDIR}/vector.ini"
 
 	keepdir \
-		"${GAMES_DATADIR}/${PN}"/{ctrlr,cheat,roms,samples,artwork,crosshair} \
-		"${GAMES_SYSCONFDIR}/${PN}"/{ctrlr,cheat}
+		"${DATADIR}"/{ctrlr,cheat,roms,samples,artwork,crosshair} \
+		"${SYSCONFDIR}"/{ctrlr,cheat}
 
 	if use tools ; then
 		for f in castool chdman floptool imgtool jedutil ldresample ldverify romcmp ; do
-			newgamesbin ${f} ${PN}-${f}
+			newbin ${f} ${PN}-${f}
 			newman docs/man/${f}.1 ${PN}-${f}.1
 		done
-		newgamesbin ldplayer${suffix} ${PN}-ldplayer
+		newbin ldplayer${suffix} ${PN}-ldplayer
 		newman docs/man/ldplayer.1 ${PN}-ldplayer.1
 	fi
-
-	prepgamesdirs
 }
 
 pkg_postinst() {
-	games_pkg_postinst
-
 	elog "It is strongly recommended to change either the system-wide"
-	elog "  ${GAMES_SYSCONFDIR}/${PN}/mame.ini or use a per-user setup at ~/.${PN}/mame.ini"
+	elog "  ${SYSCONFDIR}/mame.ini or use a per-user setup at ~/.${PN}/mame.ini"
 	elog
 	if use opengl ; then
 		elog "You built ${PN} with opengl support and should set"
