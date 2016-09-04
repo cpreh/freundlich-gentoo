@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=6
 
 CMAKE_MIN_VERSION="3.0.0"
-inherit cmake-utils git-2
+inherit cmake-utils git-r3
 
 EGIT_REPO_URI="git://github.com/freundlich/libawl.git"
 
@@ -30,10 +30,10 @@ DEPEND="
 
 src_configure() {
 	local mycmakeargs=(
-		-DENABLE_X11=ON
-		-DENABLE_WAYLAND=OFF
-		$(cmake-utils_use_enable examples)
-		$(cmake-utils_use_enable static-libs STATIC)
+		-D ENABLE_X11=ON
+		-D ENABLE_WAYLAND=OFF
+		-D ENABLE_EXAMPLES="$(usex examples)"
+		-D ENABLE_STATIC="$(usex static-libs)"
 	)
 
 	cmake-utils_src_configure
