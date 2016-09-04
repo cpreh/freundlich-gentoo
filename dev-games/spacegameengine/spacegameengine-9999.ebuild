@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=6
 
 CMAKE_MIN_VERSION="3.0.0"
-inherit cmake-utils games git-2
+inherit cmake-utils git-r3
 
 EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
 
@@ -133,97 +133,70 @@ REQUIRED_USE="
 "
 
 src_configure() {
-	# Libs and includes go to the normal destination (/usr)
-	# Everything else should go into the games dir (examples and media)
 	local mycmakeargs=(
-		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
-		-D INSTALL_BINARY_DIR="${GAMES_BINDIR}"
-		-D INSTALL_PLUGIN_DIR_BASE=$(games_get_libdir)
-		-D INSTALL_DOC_DIR_BASE="/usr/share/doc"
-		$(cmake-utils_use_enable audio)
-		$(cmake-utils_use_enable audio_null)
-		$(cmake-utils_use_enable camera)
-		$(cmake-utils_use_enable cegui)
-		$(cmake-utils_use_enable cg)
-		$(cmake-utils_use_enable charconv)
-		$(cmake-utils_use_enable config)
-		$(cmake-utils_use_enable console)
-		$(cmake-utils_use_enable consolegfx)
-		$(cmake-utils_use_enable doc)
-		$(cmake-utils_use_enable examples)
-		$(cmake-utils_use examples INSTALL_EXAMPLES)
-		$(cmake-utils_use_enable evdev)
-		$(cmake-utils_use_enable font)
-		$(cmake-utils_use_enable fontbitmap)
-		$(cmake-utils_use_enable fontdraw)
-		$(cmake-utils_use_enable gui)
-		$(cmake-utils_use_enable graph)
-		$(cmake-utils_use_enable image)
-		$(cmake-utils_use_enable image2d)
-		$(cmake-utils_use_enable image3d)
-		$(cmake-utils_use_enable imagecolor)
-		$(cmake-utils_use_enable imageds)
-		$(cmake-utils_use_enable imageds2d)
-		$(cmake-utils_use_enable input)
-		$(cmake-utils_use_enable line_drawer)
-		$(cmake-utils_use_enable log)
-		$(cmake-utils_use_enable media)
-		$(cmake-utils_use_enable modelmd3)
-		$(cmake-utils_use_enable modelobj)
-		$(cmake-utils_use_enable openal)
-		$(cmake-utils_use_enable opencl)
-		$(cmake-utils_use_enable opengl)
-		$(cmake-utils_use_enable pango)
-		$(cmake-utils_use_enable parse)
-		$(cmake-utils_use_enable parseini)
-		$(cmake-utils_use_enable parsejson)
-		$(cmake-utils_use_enable plugin)
-		$(cmake-utils_use_enable png LIBPNG)
-		$(cmake-utils_use_enable postprocessing)
-		$(cmake-utils_use_enable projectile)
-		$(cmake-utils_use_enable renderer)
-		$(cmake-utils_use_enable rendereropengl)
-		$(cmake-utils_use_enable resource_tree)
-		$(cmake-utils_use_enable rucksack)
-		$(cmake-utils_use_enable rucksackviewport)
-		$(cmake-utils_use_enable scenic)
-		$(cmake-utils_use_enable shader)
-		$(cmake-utils_use_enable sprite)
-		$(cmake-utils_use_enable static-libs STATIC)
-		$(cmake-utils_use_enable systems)
-		$(cmake-utils_use_enable test)
-		$(cmake-utils_use_enable texture)
-		$(cmake-utils_use_enable timer)
-		$(cmake-utils_use_enable tools)
-		$(cmake-utils_use_enable viewport)
-		$(cmake-utils_use_enable vorbis)
-		$(cmake-utils_use_enable window)
-		$(cmake-utils_use_enable wave)
-		$(cmake-utils_use_enable x11input)
+		-D ENABLE_AUDIO="$(usex audio)"
+		-D ENABLE_AUDIO_NULL="$(usex audio_null)"
+		-D ENABLE_CAMERA="$(usex camera)"
+		-D ENABLE_CEGUI="$(usex cegui)"
+		-D ENABLE_CG="$(usex cg)"
+		-D ENABLE_CHARCONV="$(usex charconv)"
+		-D ENABLE_CONFIG="$(usex config)"
+		-D ENABLE_CONSOLE="$(usex console)"
+		-D ENABLE_CONSOLEGFX="$(usex consolegfx)"
+		-D ENABLE_DOC="$(usex doc)"
+		-D ENABLE_EXAMPLES="$(usex examples)"
+		-D INSTALL_EXAMPLES="$(usex examples)"
+		-D ENABLE_EVDEV="$(usex evdev)"
+		-D ENABLE_FONT="$(usex font)"
+		-D ENABLE_FONTBITMAP="$(usex fontbitmap)"
+		-D ENABLE_FONTDRAW="$(usex fontdraw)"
+		-D ENABLE_GUI="$(usex gui)"
+		-D ENABLE_GRAPH="$(usex graph)"
+		-D ENABLE_IMAGE="$(usex image)"
+		-D ENABLE_IMAGE2D="$(usex image2d)"
+		-D ENABLE_IMAGE3D="$(usex image3d)"
+		-D ENABLE_IMAGECOLOR="$(usex imagecolor)"
+		-D ENABLE_IMAGEDS="$(usex imageds)"
+		-D ENABLE_IMAGEDS2D="$(usex imageds2d)"
+		-D ENABLE_INPUT="$(usex input)"
+		-D ENABLE_LINE_DRAWER="$(usex line_drawer)"
+		-D ENABLE_LOG="$(usex log)"
+		-D ENABLE_MEDIA="$(usex media)"
+		-D ENABLE_MODELMD3="$(usex modelmd3)"
+		-D ENABLE_MODELOBJ="$(usex modelobj)"
+		-D ENABLE_OPENAL="$(usex openal)"
+		-D ENABLE_OPENCL="$(usex opencl)"
+		-D ENABLE_OPENGL="$(usex opengl)"
+		-D ENABLE_PANGO="$(usex pango)"
+		-D ENABLE_PARSE="$(usex parse)"
+		-D ENABLE_PARSEINI="$(usex parseini)"
+		-D ENABLE_PARSEJSON="$(usex parsejson)"
+		-D ENABLE_PLUGIN="$(usex plugin)"
+		-D ENABLE_LIBPNG="$(usex png)"
+		-D ENABLE_POSTPROCESSING="$(usex postprocessing)"
+		-D ENABLE_PROJECTILE="$(usex projectile)"
+		-D ENABLE_RENDERER="$(usex renderer)"
+		-D ENABLE_RENDEREROPENGL="$(usex rendereropengl)"
+		-D ENABLE_RESOURCE_TREE="$(usex resource_tree)"
+		-D ENABLE_RUCKSACK="$(usex rucksack)"
+		-D ENABLE_RUCKSACKVIEWPORT="$(usex rucksackviewport)"
+		-D ENABLE_SCENIC="$(usex scenic)"
+		-D ENABLE_SHADER="$(usex shader)"
+		-D ENABLE_SPRITE="$(usex sprite)"
+		-D ENABLE_STATIC="$(usex static-libs)"
+		-D ENABLE_SYSTEMS="$(usex systems)"
+		-D ENABLE_TEST="$(usex test)"
+		-D ENABLE_TEXTURE="$(usex texture)"
+		-D ENABLE_TIMER="$(usex timer)"
+		-D ENABLE_TOOLS="$(usex tools)"
+		-D ENABLE_VIEWPORT="$(usex viewport)"
+		-D ENABLE_VORBIS="$(usex vorbis)"
+		-D ENABLE_WINDOW="$(usex window)"
+		-D ENABLE_WAVE="$(usex wave)"
+		-D ENABLE_X11INPUT="$(usex x11input)"
 		-D ENABLE_WLINPUT=OFF
 		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	)
 
 	cmake-utils_src_configure
-}
-
-src_compile() {
-	cmake-utils_src_compile
-}
-
-src_install() {
-	cmake-utils_src_install
-
-	# Remove empty directories created by doxygen
-	find "${D}" -type d -empty -delete || die
-
-	prepgamesdirs
-}
-
-pkg_preinst() {
-	games_pkg_preinst
-}
-
-pkg_postinst() {
-	games_pkg_postinst
 }
