@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=6
 
 CMAKE_MIN_VERSION="3.0.0"
-inherit cmake-utils games git-2
+inherit cmake-utils git-r3
 
 EGIT_REPO_URI="git://github.com/freundlich/sanguis.git"
 
@@ -35,22 +35,9 @@ RDEPEND="${DEPEND}"
 
 src_configure() {
 	local mycmakeargs=(
-		-D CMAKE_INSTALL_PREFIX="${GAMES_PREFIX}"
-		-D INSTALL_LIBRARY_DIR="$(games_get_libdir)"
-		-D INSTALL_DATA_DIR_BASE="${GAMES_DATADIR}"
-		$(cmake-utils_use_enable client)
-		$(cmake-utils_use_enable tools)
+		-D ENABLE_CLIENT="$(usex client)"
+		-D ENABLE_TOOLS="$(usex tools)"
 	)
 
 	cmake-utils_src_configure
-}
-
-src_compile() {
-	cmake-utils_src_compile
-}
-
-src_install() {
-	cmake-utils_src_install
-
-	prepgamesdirs
 }
