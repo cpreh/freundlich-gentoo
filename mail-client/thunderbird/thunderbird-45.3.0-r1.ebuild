@@ -228,6 +228,12 @@ src_configure() {
 		append-cxxflags -fno-stack-protector
 	fi
 
+	if [[ $(gcc-major-version) -ge 6 ]]; then
+		append-cxxflags -fno-delete-null-pointer-checks
+		append-cxxflags -fno-lifetime-dse
+		append-cxxflags -fno-schedule-insns2
+	fi
+
 	if use crypt; then
 		pushd "${WORKDIR}"/enigmail &>/dev/null ||die
 		econf
