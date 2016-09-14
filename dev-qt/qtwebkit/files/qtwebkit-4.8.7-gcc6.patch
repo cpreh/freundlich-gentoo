@@ -1,0 +1,75 @@
+--- qt-everywhere-opensource-src-4.8.7-orig/src/3rdparty/webkit/Source/JavaScriptCore/wtf/HashSet.h	2015-05-08 00:14:45.000000000 +1000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/HashSet.h	2016-05-22 11:23:06.260429236 +1000
+@@ -92,12 +92,12 @@
+         friend void deleteAllValues<>(const HashSet&);
+         friend void fastDeleteAllValues<>(const HashSet&);
+ 
+-#if COMPILER(MSVC) && _MSC_VER >= 1700
++#if (COMPILER(MSVC) && _MSC_VER >= 1700) || (__cplusplus >= 201402L)
+         // MSVC2012/MSVC2013 has trouble constructing a HashTableConstIteratorAdapter from a
+         // HashTableIterator despite the existence of a const_iterator cast method on the latter class.
+         pair<iterator, bool> iterator_const_cast(const pair<typename HashTableType::iterator, bool>& p)
+         {
+-            return make_pair(iterator(HashTableType::const_iterator(p.first)), p.second);
++            return make_pair(iterator(typename HashTableType::const_iterator(p.first)), p.second);
+         }
+ #endif
+         HashTableType m_impl;
+@@ -185,7 +185,7 @@
+     template<typename T, typename U, typename V>
+     inline pair<typename HashSet<T, U, V>::iterator, bool> HashSet<T, U, V>::add(const ValueType& value)
+     {
+-#if COMPILER(MSVC) && _MSC_VER >= 1700
++#if (COMPILER(MSVC) && _MSC_VER >= 1700) || (__cplusplus >= 201402L)
+         return iterator_const_cast(m_impl.add(value));
+ #else
+         return m_impl.add(value);
+@@ -198,7 +198,7 @@
+     HashSet<Value, HashFunctions, Traits>::add(const T& value)
+     {
+         typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, HashTranslator> Adapter;
+-#if COMPILER(MSVC) && _MSC_VER >= 1700
++#if (COMPILER(MSVC) && _MSC_VER >= 1700) || (__cplusplus >= 201402L)
+         return iterator_const_cast(m_impl.template addPassingHashCode<T, T, Adapter>(value, value));
+ #else
+         return m_impl.template addPassingHashCode<T, T, Adapter>(value, value);
+--- qt-everywhere-opensource-src-4.8.7-orig/src/3rdparty/webkit/Source/JavaScriptCore/wtf/unicode/UTF8.cpp	2015-05-08 00:14:45.000000000 +1000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/unicode/UTF8.cpp	2016-05-22 11:07:21.268981023 +1000
+@@ -233,8 +233,8 @@
+ // Magic values subtracted from a buffer value during UTF8 conversion.
+ // This table contains as many values as there might be trailing bytes
+ // in a UTF-8 sequence.
+-static const UChar32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL, 
+-            0x03C82080UL, 0xFA082080UL, 0x82082080UL };
++static const UChar32 offsetsFromUTF8[6] = { static_cast<const UChar32>(0x00000000UL), static_cast<const UChar32>(0x00003080UL), static_cast<const UChar32>(0x000E2080UL), 
++                                            static_cast<const UChar32>(0x03C82080UL), static_cast<const UChar32>(0xFA082080UL), static_cast<const UChar32>(0x82082080UL) };
+ 
+ static inline UChar32 readUTF8Sequence(const char*& sequence, unsigned length)
+ {
+--- qt-everywhere-opensource-src-4.8.7-orig/src/3rdparty/webkit/Source/JavaScriptCore/wtf/TypeTraits.h	2015-05-08 00:14:45.000000000 +1000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/TypeTraits.h	2016-05-22 10:44:47.413350384 +1000
+@@ -25,8 +25,12 @@
+ #include "Platform.h"
+ 
+ #if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
++#if (__cplusplus >= 201402L)
++#include <tr1/type_traits>
++#else
+ #include <type_traits>
+ #endif
++#endif
+ 
+ namespace WTF {
+ 
+diff -ur qt-everywhere-opensource-src-4.8.7-orig/src/3rdparty/webkit/Source/WebCore/dom/Element.cpp qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/WebCore/dom/Element.cpp
+--- qt-everywhere-opensource-src-4.8.7-orig/src/3rdparty/webkit/Source/WebCore/dom/Element.cpp	2015-05-08 00:14:47.000000000 +1000
++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/WebCore/dom/Element.cpp	2016-05-22 12:22:43.148515352 +1000
+@@ -1080,7 +1080,7 @@
+ {
+     // Ref currentStyle in case it would otherwise be deleted when setRenderStyle() is called.
+     RefPtr<RenderStyle> currentStyle(renderStyle());
+-    bool hasParentStyle = parentNodeForRenderingAndStyle() ? parentNodeForRenderingAndStyle()->renderStyle() : false;
++    bool hasParentStyle = parentNodeForRenderingAndStyle() ? (parentNodeForRenderingAndStyle()->renderStyle() != static_cast<WebCore::RenderStyle*>(0)) : false;
+     bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
+     bool hasIndirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByForwardPositionalRules();
+ 
