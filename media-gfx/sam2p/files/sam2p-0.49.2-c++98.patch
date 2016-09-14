@@ -1,0 +1,21 @@
+diff -Naur sam2p-0.49.2/ccdep.pl sam2p-0.49.2.new/ccdep.pl
+--- sam2p-0.49.2/ccdep.pl	2013-09-03 07:32:54.000000000 -0700
++++ sam2p-0.49.2.new/ccdep.pl	2016-06-11 12:47:45.535510617 -0700
+@@ -138,7 +138,7 @@
+ my @DS=find_ds();
+ my @DSQ=map{shq$_}@DS;
+ my $DIAG=" -fno-diagnostics-show-caret";
+-my $Q="$GCCP -DOBJDEP$DIAG -M -MG -E 2>&1 @DSQ";
++my $Q="$GCCP -DOBJDEP$DIAG -std=c++98 -M -MG -E 2>&1 @DSQ";
+ my $R=backtick($Q);
+ if ($R=~/\berror: .*-fno-diagnostics-show-caret\b/) {
+   # gcc-4.6 and earlier don't have this flag, and they fail.
+@@ -150,7 +150,7 @@
+ if ($R!~/: warning: #warning\b/) {
+   # config2.h:314:4: warning: #warning REQUIRES: c_lgcc3.o
+   # Dat: g++-3.3 ignores #warning with -M -MG -E
+-  $R.="\n".backtick("$GCCP -DOBJDEP$DIAG -E 2>&1 >/dev/null @DSQ");
++  $R.="\n".backtick("$GCCP -DOBJDEP$DIAG -std=c++98 -E 2>&1 >/dev/null @DSQ");
+ }
+ 
+ ## die $R;
