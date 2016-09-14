@@ -1,0 +1,11 @@
+--- trainer.cpp	2016-09-14 19:36:12.009235634 +0200
++++ trainer.cpp	2016-09-14 19:36:22.518246538 +0200
+@@ -103,7 +103,7 @@
+     if (!fn) {
+       return false;
+     }
+-    x_.push_back(std::make_pair<std::string, FeatureNode *>(y, fn));
++    x_.push_back(std::make_pair(y, fn));
+     return true;
+   }
+ 
