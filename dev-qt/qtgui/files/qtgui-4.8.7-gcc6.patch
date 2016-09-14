@@ -1,0 +1,12 @@
+diff -ur qt-everywhere-opensource-src-4.8.7-orig/src/plugins/accessible/widgets/itemviews.cpp qt-everywhere-opensource-src-4.8.7/src/plugins/accessible/widgets/itemviews.cpp
+--- qt-everywhere-opensource-src-4.8.7-orig/src/plugins/accessible/widgets/itemviews.cpp	2015-05-08 00:14:48.000000000 +1000
++++ qt-everywhere-opensource-src-4.8.7/src/plugins/accessible/widgets/itemviews.cpp	2016-05-21 22:55:28.340328159 +1000
+@@ -393,7 +393,7 @@
+     QModelIndex index = view()->model()->index(0, column, view()->rootIndex());
+     if (!index.isValid() || view()->selectionMode() & QAbstractItemView::NoSelection)
+         return false;
+-    view()->selectionModel()->select(index, QItemSelectionModel::Columns & QItemSelectionModel::Deselect);
++    view()->selectionModel()->select(index, QFlags<QItemSelectionModel::SelectionFlag>(QItemSelectionModel::Columns & QItemSelectionModel::Deselect));
+     return true;
+ }
+ 
