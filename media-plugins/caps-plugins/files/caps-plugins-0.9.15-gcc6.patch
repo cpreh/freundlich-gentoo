@@ -1,0 +1,12 @@
+diff -Naur caps-0.9.15/AutoFilter.cc caps-0.9.15.new/AutoFilter.cc
+--- caps-0.9.15/AutoFilter.cc	2013-08-26 06:11:33.000000000 -0700
++++ caps-0.9.15.new/AutoFilter.cc	2016-06-10 14:19:56.343562647 -0700
+@@ -75,7 +75,7 @@
+ void
+ AutoFilter::subsubcycle (uint frames, SVF & svf, Over & over)
+ {
+-	div_t qr = div (frames, blocksize);
++	div_t qr = div ((int) frames, (int) blocksize);
+ 	int blocks = qr.quot;
+ 	if (qr.rem) ++blocks;
+ 	float over_blocks = 1./blocks;
