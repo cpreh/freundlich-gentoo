@@ -1,0 +1,18 @@
+--- src/memory.cc.old	2016-09-16 18:42:04.065892263 +0200
++++ src/memory.cc	2016-09-16 18:42:32.207895261 +0200
+@@ -118,6 +118,15 @@
+ 	free(ptr);
+ }
+ 
++__attribute__((weak))
++void operator delete(void * ptr, size_t)
++#if __cplusplus < 201000L
++throw()
++#endif
++{
++	free(ptr);
++}
++
+ 
+ __attribute__((weak))
+ void * operator new[](size_t size)
