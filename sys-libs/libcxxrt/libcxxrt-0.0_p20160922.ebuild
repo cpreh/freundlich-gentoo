@@ -37,7 +37,6 @@ DOCS=( AUTHORS COPYRIGHT README )
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-gcc6.patch
-
 	cp "${FILESDIR}/Makefile" src/ || die
 	cp "${FILESDIR}/Makefile.test" test/Makefile || die
 	multilib_copy_sources
