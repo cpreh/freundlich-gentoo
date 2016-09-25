@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=6
 
 RESTRICT="mirror"
 
@@ -30,10 +30,10 @@ DEPEND="
 
 src_configure() {
 	local mycmakeargs=(
-		$(cmake-utils_use_enable doc)
-		$(cmake-utils_use_enable examples)
-		$(cmake-utils_use_enable static-libs STATIC)
-		$(cmake-utils_use_enable test)
+		-D ENABLE_DOC="$(usex doc)"
+		-D ENABLE_EXAMPLES="$(usex examples)"
+		-D ENABLE_STATIC="$(usex static-libs)"
+		-D ENABLE_TEST="$(usex test)"
 	)
 
 	cmake-utils_src_configure
@@ -42,6 +42,6 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 
-	# Remove empty directories because doxygen creates them
+	# Remove empty directories created by doxygen
 	find "${D}" -type d -empty -delete || die
 }
