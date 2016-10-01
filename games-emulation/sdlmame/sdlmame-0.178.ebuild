@@ -49,7 +49,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	x11-proto/xineramaproto"
 
-S=${WORKDIR}
+S=${WORKDIR}/mame
 
 SYSCONFDIR="/etc/${PN}"
 DATADIR="/usr/share/${PN}"
@@ -76,7 +76,7 @@ src_unpack() {
 }
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-0.177-qt.patch
+	"${FILESDIR}"/${PN}-0.178-qt.patch
 )
 
 src_prepare() {
