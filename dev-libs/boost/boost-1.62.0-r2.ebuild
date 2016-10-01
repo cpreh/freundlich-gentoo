@@ -3,6 +3,7 @@
 # $Id$
 
 EAPI="6"
+RESTRICT="mirror"
 PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
 inherit eutils flag-o-matic multiprocessing python-r1 toolchain-funcs versionator multilib-minimal
