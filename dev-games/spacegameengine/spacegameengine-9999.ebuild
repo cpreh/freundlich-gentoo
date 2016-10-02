@@ -64,9 +64,6 @@ RDEPEND="
 			x11-libs/libXrandr
 		)
 	)
-	sprite? (
-		~dev-cpp/majutsu-9999
-	)
 	tools? (
 		~dev-cpp/libawl-9999
 	)
