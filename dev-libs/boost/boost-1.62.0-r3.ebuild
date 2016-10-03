@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="6"
+EAPI=6
 RESTRICT="mirror"
 PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
@@ -17,7 +17,7 @@ SRC_URI="http://downloads.sourceforge.net/project/boost/boost/${PV}/${MY_P}.tar.
 
 LICENSE="Boost-1.0"
 SLOT="0/${PV}" # ${PV} instead ${MAJOR_V} due to bug 486122
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS=""
 
 IUSE="context debug doc icu +nls mpi python static-libs +threads tools"
 
@@ -97,7 +97,7 @@ create_user-config.jam() {
 		fi
 	fi
 
-	cat > "${BOOST_ROOT}/user-config.jam" << __EOF__
+	cat > "${BOOST_ROOT}/user-config.jam" << __EOF__ || die
 using ${compiler} : ${compiler_version} : ${compiler_executable} : <cflags>"${CFLAGS}" <cxxflags>"${CXXFLAGS}" <linkflags>"${LDFLAGS}" ;
 ${mpi_configuration}
 ${python_configuration}
@@ -167,8 +167,8 @@ src_configure() {
 		[[ $(gcc-version) > 4.3 ]] && append-flags -mno-altivec
 	fi
 
-	# Do _not_ use C++11 yet, make sure to force GNU C++ 98 standard.
-	append-cxxflags -std=gnu++98
+	# Use C++14 globally as of 1.62
+	append-cxxflags -std=c++14
 
 	use icu && OPTIONS+=(
 			"-sICU_PATH=${EPREFIX}/usr"
@@ -188,13 +188,18 @@ src_configure() {
 			--without-coroutine
 			--without-coroutine2
 		)
+	use threads || OPTIONS+=(
+			--without-thread
+		)
 
 	OPTIONS+=(
 		pch=off
 		--boost-build="${EPREFIX}"/usr/share/boost-build
-		--prefix="${ED}usr"
+		--prefix="${ED%/}/usr"
 		--layout=system
-		threading=$(usex threads multi single)
+		# building with threading=single is currently not possible
+		# https://svn.boost.org/trac/boost/ticket/7105
+		threading=multi
 		link=$(usex static-libs shared,static shared)
 	)
 
@@ -262,35 +267,35 @@ multilib_src_compile() {
 	fi
 
 	if tools_needed; then
-		pushd tools > /dev/null || die
+		pushd tools >/dev/null || die
 
 		ejam \
 			"${OPTIONS[@]}" \
 			${PYTHON_OPTIONS} \
 			|| die "Building of Boost tools failed"
-		popd > /dev/null || die
+		popd >/dev/null || die
 	fi
 }
 
 multilib_src_install_all() {
 	if ! use python; then
-		rm -r "${ED}"/usr/include/boost/python* || die
+		rm -r "${ED%/}"/usr/include/boost/python* || die
 	fi
 
 	if ! use nls; then
-		rm -r "${ED}"/usr/include/boost/locale || die
+		rm -r "${ED%/}"/usr/include/boost/locale || die
 	fi
 
 	if ! use context; then
-		rm -r "${ED}"/usr/include/boost/context || die
-		rm -r "${ED}"/usr/include/boost/coroutine{,2} || die
-		rm "${ED}"/usr/include/boost/asio/spawn.hpp || die
+		rm -r "${ED%/}"/usr/include/boost/context || die
+		rm -r "${ED%/}"/usr/include/boost/coroutine{,2} || die
+		rm "${ED%/}"/usr/include/boost/asio/spawn.hpp || die
 	fi
 
 	if use doc; then
-		find libs/*/* -iname "test" -or -iname "src" | xargs rm -rf
-		find doc -name Jamfile.v2 -or -name build -or -name *.manifest | xargs rm -f
-		find tools -name Jamfile.v2 -or -name src -or -name *.cpp -or -name *.hpp | xargs rm -rf
+		find libs/*/* -iname "test" -or -iname "src" -delete || die
+		find doc -name Jamfile.v2 -or -name build -or -name *.manifest -delete || die
+		find tools -name Jamfile.v2 -or -name src -or -name *.cpp -or -name *.hpp -delete || die
 		docinto html
 		dodoc *.{htm,html,png,css}
 		dodoc -r doc libs more tools
@@ -329,8 +334,8 @@ multilib_src_install() {
 		ejam \
 			"${OPTIONS[@]}" \
 			${PYTHON_OPTIONS} \
-			--includedir="${ED}usr/include" \
-			--libdir="${ED}usr/$(get_libdir)" \
+			--includedir="${ED%/}/usr/include" \
+			--libdir="${ED%/}/usr/$(get_libdir)" \
 			install || die "Installation of Boost libraries failed"
 
 		if python_bindings_needed; then
@@ -342,7 +347,7 @@ multilib_src_install() {
 				local moddir=$(python_get_sitedir)/boost
 				# moddir already includes eprefix
 				mkdir -p "${D}${moddir}" || die
-				mv "${ED}usr/$(get_libdir)/mpi.so" "${D}${moddir}" || die
+				mv "${ED%/}/usr/$(get_libdir)/mpi.so" "${D}${moddir}" || die
 				cat << EOF > "${D}${moddir}/__init__.py" || die
 import sys
 if sys.platform.startswith('linux'):
@@ -367,7 +372,7 @@ EOF
 		installation
 	fi
 
-	pushd "${ED}usr/$(get_libdir)" > /dev/null || die
+	pushd "${ED%/}/usr/$(get_libdir)" >/dev/null || die
 
 	local ext=$(get_libname)
 	if use threads; then
@@ -377,7 +382,7 @@ EOF
 		done
 	fi
 
-	popd > /dev/null || die
+	popd >/dev/null || die
 
 	if tools_needed; then
 		dobin dist/bin/*
@@ -394,7 +399,7 @@ EOF
 	if [[ ${CHOST} == *-darwin* ]]; then
 		einfo "Working around completely broken build-system(tm)"
 		local d
-		for d in "${ED}"usr/lib/*.dylib; do
+		for d in "${ED%/}"/usr/lib/*.dylib; do
 			if [[ -f ${d} ]]; then
 				# fix the "soname"
 				ebegin "  correcting install_name of ${d#${ED}}"
@@ -424,7 +429,9 @@ pkg_preinst() {
 	# resorting to dirty hacks like these. Removes lingering symlinks
 	# from the slotted versions.
 	local symlink
-	for symlink in "${EROOT}usr/include/boost" "${EROOT}usr/share/boostbook"; do
-		[[ -L ${symlink} ]] && rm -f "${symlink}"
+	for symlink in "${EROOT%/}/usr/include/boost" "${EROOT%/}/usr/share/boostbook"; do
+		if [[ -L ${symlink} ]]; then
+			rm -f "${symlink}" || die
+		fi
 	done
 }

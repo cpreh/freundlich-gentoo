@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="6"
+EAPI=6
 
 RESTRICT="mirror test"
 
@@ -17,7 +17,7 @@ SRC_URI="http://downloads.sourceforge.net/project/boost/boost/${PV}/boost_${MY_P
 
 LICENSE="Boost-1.0"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~ia64-hpux ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS=""
 IUSE="examples python test"
 
 RDEPEND="python? ( ${PYTHON_DEPS} )
@@ -54,9 +54,9 @@ src_unpack() {
 src_prepare() {
 	default
 
-	pushd ../ &>/dev/null || die
+	pushd ../ >/dev/null || die
 	eapply "${FILESDIR}/${PN}-1.54.0-fix-test.patch"
-	popd &>/dev/null || die
+	popd >/dev/null || die
 
 	# Remove stripping option
 	# Fix python components build on multilib systems, bug #496446
@@ -102,7 +102,7 @@ src_compile() {
 		toolset=cc
 	fi
 
-	CC=$(tc-getCC) ./build.sh ${toolset} -d+2 $(use_with python python "${EROOT}"/usr) || die "building bjam failed"
+	CC=$(tc-getCC) ./build.sh ${toolset} -d+2 $(use_with python python "${EROOT%/}"/usr) || die "building bjam failed"
 }
 
 src_install() {
@@ -113,12 +113,12 @@ src_install() {
 		../boost-build.jam bootstrap.jam build-system.jam ../example/user-config.jam *.py \
 		build kernel options tools util
 
-	rm "${ED}/usr/share/boost-build/build/project.ann.py" || die "removing faulty python file failed"
+	rm "${ED%/}/usr/share/boost-build/build/project.ann.py" || die "removing faulty python file failed"
 	if ! use python; then
-		find "${ED}/usr/share/boost-build" -iname "*.py" -delete || die "removing experimental python files failed"
+		find "${ED%/}/usr/share/boost-build" -iname "*.py" -delete || die "removing experimental python files failed"
 	fi
 
-	dodoc ../notes/{changes,release_procedure,build_dir_option,relative_source_paths}.txt
+	dodoc ../notes/{changes,hacking,release_procedure,build_dir_option,relative_source_paths}.txt
 
 	if use examples; then
 		dodoc -r ../example
