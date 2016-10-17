@@ -12,13 +12,13 @@ OPENGL_REQUIRED="optional"
 WEBKIT_REQUIRED="optional"
 inherit kde4-base fdo-mime multilib toolchain-funcs flag-o-matic
 
-APPS_VERSION="16.08.1" # Don't forget to bump this
+APPS_VERSION="16.08.2" # Don't forget to bump this
 
 DESCRIPTION="KDE libraries needed by all KDE programs"
 [[ ${KDE_BUILD_TYPE} != live ]] && \
 SRC_URI="mirror://kde/stable/applications/${APPS_VERSION}/src/${P}.tar.xz"
 
-KEYWORDS="amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
 LICENSE="LGPL-2.1"
 IUSE="cpu_flags_x86_3dnow acl altivec +bzip2 +crypt debug doc fam jpeg2k
 kerberos libressl lzma cpu_flags_x86_mmx nls openexr +policykit spell
@@ -131,9 +131,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.9.3-werror.patch"
 	"${FILESDIR}/${PN}-4.10.0-udisks.patch"
 	"${FILESDIR}/${PN}-4.14.20-FindQt4.patch"
-	"${FILESDIR}/${PN}-4.14.20-strigi-optional.patch"
 	"${FILESDIR}/${PN}-4.14.22-webkit.patch"
-	"${FILESDIR}/${PN}-4.14.17-gcc6_narrowing_hack.patch"
 	"${FILESDIR}/${PN}-4.14.17-glibc_trunc.patch"
 )
 
