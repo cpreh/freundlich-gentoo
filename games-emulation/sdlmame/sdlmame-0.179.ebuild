@@ -26,7 +26,6 @@ REQUIRED_USE="|| ( arcade mess )"
 RDEPEND="!games-emulation/sdlmametools
 	!games-emulation/sdlmess
 	dev-libs/expat
-	dev-libs/libuv
 	media-libs/fontconfig
 	media-libs/flac
 	media-libs/libsdl2[joystick,opengl?,sound,threads,video,X]
@@ -49,7 +48,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	x11-proto/xineramaproto"
 
-S=${WORKDIR}/mame
+S=${WORKDIR}
 
 SYSCONFDIR="/etc/${PN}"
 DATADIR="/usr/share/${PN}"
@@ -89,7 +88,6 @@ src_prepare() {
 #	enable_feature USE_SYSTEM_LIB_LUA
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
 	enable_feature USE_SYSTEM_LIB_ZLIB
-	enable_feature USE_SYSTEM_LIB_UV
 
 	# Disable warnings being treated as errors and enable verbose build output
 	enable_feature NOWERROR
