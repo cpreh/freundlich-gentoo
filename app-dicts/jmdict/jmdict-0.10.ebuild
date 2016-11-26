@@ -6,8 +6,8 @@ EAPI=6
 RESTRICT="mirror"
 
 DESCRIPTION="Japanese dictionary by Florian Blümel"
-HOMEPAGE="http://jmdict.sourceforge.net/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.xz"
+HOMEPAGE="https://github.com/freundlich/jmdict"
+SRC_URI="https://github.com/freundlich/${PN}/archive/${PV}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
@@ -17,4 +17,4 @@ RDEPEND=">=dev-db/sqlite-3
         dev-libs/expat"
 DEPEND="${RDEPEND}
         sys-devel/make"
-PDEPEND="app-dicts/jmdict-data"
+PDEPEND=">=app-dicts/jmdict-data-9999-r1"
