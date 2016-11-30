@@ -34,6 +34,7 @@ RDEPEND="!games-emulation/sdlmametools
 	sys-libs/zlib
 	virtual/jpeg:0
 	virtual/opengl
+	>=dev-db/sqlite-3
 	alsa? ( media-libs/alsa-lib
 		media-libs/portmidi )
 	debug? ( dev-qt/qtcore:5
@@ -84,6 +85,7 @@ src_prepare() {
 	enable_feature USE_SYSTEM_LIB_EXPAT
 	enable_feature USE_SYSTEM_LIB_FLAC
 	enable_feature USE_SYSTEM_LIB_JPEG
+	enable_feature USE_SYSTEM_LIB_SQLITE3
 # Use bundled lua for now to ensure correct compilation (ref. b.g.o #407091)
 #	enable_feature USE_SYSTEM_LIB_LUA
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
