@@ -11,7 +11,7 @@ inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="http://fcppt.org"
-SRC_URI="http://fcppt.org/downloads/${P}.tar.xz"
+SRC_URI="https://github.com/freundlich/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="Boost-1.0"
 SLOT="0"
