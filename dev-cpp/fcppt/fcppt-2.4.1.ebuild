@@ -6,7 +6,7 @@ EAPI=6
 
 RESTRICT="mirror"
 
-CMAKE_MIN_VERSION="3.0.0"
+CMAKE_MIN_VERSION="3.1.0"
 inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
