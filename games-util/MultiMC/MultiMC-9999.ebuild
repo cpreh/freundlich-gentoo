@@ -42,7 +42,8 @@ src_configure() {
 }
 
 src_install() {
-	dobin "${BUILD_DIR}"/MultiMC
+	newbin "${BUILD_DIR}"/MultiMC MultiMC_impl
+	dobin "${FILESDIR}"/MultiMC
 	dolib "${BUILD_DIR}"/libMultiMC_{gui,logic,nbt++,rainbow}.so
 	insinto /usr/bin/jars
 	doins "${BUILD_DIR}"/jars/{JavaCheck.jar,NewLaunch.jar}
