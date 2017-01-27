@@ -29,13 +29,13 @@ RDEPEND="!games-emulation/sdlmametools
 	media-libs/fontconfig
 	media-libs/flac
 	media-libs/libsdl2[joystick,opengl?,sound,threads,video,X]
-	media-libs/portaudio
 	media-libs/sdl2-ttf
 	sys-libs/zlib
 	virtual/jpeg:0
 	virtual/opengl
 	>=dev-db/sqlite-3
 	alsa? ( media-libs/alsa-lib
+		media-libs/portaudio
 		media-libs/portmidi )
 	debug? ( dev-qt/qtcore:5
 		dev-qt/qtgui:5
@@ -106,6 +106,7 @@ src_prepare() {
 		enable_feature USE_SYSTEM_LIB_PORTMIDI
 	else
 		enable_feature NO_USE_MIDI
+		enable_feature NO_USE_PORTAUDIO
 	fi
 
 	sed -i \
