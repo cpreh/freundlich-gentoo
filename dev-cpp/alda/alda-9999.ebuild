@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="static-libs test"
 
 RDEPEND="
-	>=dev-libs/boost-1.50
+	>=dev-libs/boost-1.50:=
 	~dev-cpp/fcppt-9999
 	"
 DEPEND="

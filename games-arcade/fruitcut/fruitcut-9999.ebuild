@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+cegui"
 
 DEPEND="
-	>=dev-libs/boost-1.49.0
+	>=dev-libs/boost-1.49.0:=
 	~dev-cpp/fcppt-9999
 	~dev-cpp/libawl-9999
 	~dev-cpp/mizuiro-9999

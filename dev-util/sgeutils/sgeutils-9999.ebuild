@@ -19,7 +19,7 @@ IUSE="+sge"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
-	dev-libs/boost
+	>=dev-libs/boost-1.48.0:=
 	sge? (
 		~dev-games/spacegameengine-9999[parse,parsejson]
 	)

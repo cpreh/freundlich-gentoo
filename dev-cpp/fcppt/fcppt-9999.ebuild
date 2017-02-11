@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="doc +examples static-libs test"
 
 RDEPEND="
-	>=dev-libs/boost-1.47.0
+	>=dev-libs/boost-1.47.0:=
 	"
 DEPEND="
 	${RDEPEND}
