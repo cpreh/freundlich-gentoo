@@ -57,10 +57,10 @@ src_configure() {
 }
 
 src_install() {
-	exeinto "/usr/$(get_libdir)"
+	exeinto /usr/$(get_libdir)
 	newexe "${BUILD_DIR}"/${PN} ${PN}_impl
 	dobin "${FILESDIR}"/${PN}
 	dolib "${BUILD_DIR}"/libMultiMC_{gui,logic,nbt++,rainbow}.so
-	insinto /usr/bin/jars
+	insinto /usr/$(get_libdir)/jars
 	doins "${BUILD_DIR}"/jars/{JavaCheck.jar,NewLaunch.jar}
 }
