@@ -1,2 +1,2 @@
 #!/bin/sh
-MultiMC_impl -d "${HOME}"/.MultiMC "$@"
+/usr/lib/MultiMC_impl -d "${HOME}"/.MultiMC "$@"
