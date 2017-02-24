@@ -90,6 +90,8 @@ src_prepare() {
 #	enable_feature USE_SYSTEM_LIB_LUA
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
 	enable_feature USE_SYSTEM_LIB_ZLIB
+#	Currently broken
+#	enable_feature USE_SYSTEM_LIB_UTF8PROC
 
 	# Disable warnings being treated as errors and enable verbose build output
 	enable_feature NOWERROR
