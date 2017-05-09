@@ -1,0 +1,9 @@
+--- MultiMC5-0.5.1/api/logic/QObjectPtr.h	2017-05-09 19:57:17.800678293 +0200
++++ MultiMC5-0.5.1/api/logic/QObjectPtr.h	2017-05-09 19:57:28.950674476 +0200
+@@ -1,5 +1,6 @@
+ #pragma once
+ 
++#include <functional>
+ #include <memory>
+ #include <QObject>
+ 

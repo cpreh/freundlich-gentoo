@@ -41,6 +41,10 @@ DEPEND="
 	${RDEPEND}
 	"
 
+PATCHES=(
+	"${FILESDIR}"/${P}-gcc7.patch
+)
+
 src_unpack() {
 	default
 
