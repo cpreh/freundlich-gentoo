@@ -1,0 +1,30 @@
+commit af60798be93c2178ec61ba7bf8a622522085a23f
+Author: Heiko Becker <heirecka@exherbo.org>
+Date:   Thu May 4 20:32:57 2017 +0200
+
+    Add missing includes to fix building with libstdc++7
+
+diff --git a/paludis/filter.hh b/paludis/filter.hh
+index 7ed4b68fe..2ef558d07 100644
+--- a/paludis/filter.hh
++++ b/paludis/filter.hh
+@@ -34,6 +34,7 @@
+ #include <paludis/match_package-fwd.hh>
+ #include <paludis/repository-fwd.hh>
+ #include <memory>
++#include <functional>
+ 
+ /** \file
+  * Declarations for the Filter class.
+diff --git a/paludis/util/executor.cc b/paludis/util/executor.cc
+index aca881fcd..79754d615 100644
+--- a/paludis/util/executor.cc
++++ b/paludis/util/executor.cc
+@@ -27,6 +27,7 @@
+ #include <mutex>
+ #include <condition_variable>
+ #include <iostream>
++#include <functional>
+ 
+ using namespace paludis;
+ 
