@@ -9,7 +9,7 @@ inherit cmake-utils git-r3
 
 DESCRIPTION="A serialization library"
 HOMEPAGE=""
-EGIT_REPO_URI="git://github.com/freundlich/alda.git"
+EGIT_REPO_URI="https://github.com/freundlich/alda.git"
 
 LICENSE="LGPL-2.0"
 SLOT="0"

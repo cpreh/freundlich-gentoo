@@ -9,7 +9,7 @@ inherit cmake-utils git-r3
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="http://fcppt.org"
-EGIT_REPO_URI="git://github.com/freundlich/fcppt.git"
+EGIT_REPO_URI="https://github.com/freundlich/fcppt.git"
 
 LICENSE="Boost-1.0"
 SLOT="0"

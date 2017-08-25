@@ -7,7 +7,7 @@ EAPI=6
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="git://github.com/freundlich/spacegameengine.git"
+EGIT_REPO_URI="https://github.com/freundlich/spacegameengine.git"
 
 DESCRIPTION="An easy to use game engine written in C++"
 HOMEPAGE="http://freundlich.github.com/spacegameengine/"

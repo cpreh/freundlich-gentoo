@@ -7,7 +7,7 @@ EAPI=6
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="git://github.com/pmiddend/fruitcut.git"
+EGIT_REPO_URI="https://github.com/pmiddend/fruitcut.git"
 DESCRIPTION="Arcade game where the goal is to cut fruits to earn points."
 HOMEPAGE="http://fruitcut.com/"
 

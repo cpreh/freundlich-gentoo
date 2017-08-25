@@ -7,7 +7,7 @@ EAPI=6
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="git://github.com/freundlich/libawl.git"
+EGIT_REPO_URI="https://github.com/freundlich/libawl.git"
 
 DESCRIPTION="Abstract Window Library"
 HOMEPAGE=""
