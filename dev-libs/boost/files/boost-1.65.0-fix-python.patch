@@ -1,0 +1,107 @@
+--- a/boostcpp.jam
++++ b/boostcpp.jam
+@@ -104,7 +104,7 @@
+ python-id = [ option.get "python-buildid" ] ;
+ if $(python-id)
+ {
+-    PYTHON_ID = [ regex.replace $(python-id) [*\\/:.\"\'] _ ] ;
++    PYTHON_ID = [ regex.replace $(python-id) [*\\/:\"\'] _ ] ;
+ }
+
+
+--- a/libs/python/build/Jamfile	2017-08-25 10:35:12.244075532 +0200
++++ b/libs/python/build/Jamfile	2017-08-25 10:41:02.764639625 +0200
+@@ -50,6 +50,13 @@
+ 
+ rule lib_boost_python ( version )
+ {
++    local python_major_version = [ MATCH "^([^.]+)" : [ feature.values python ] ] ;
++    local python2 ;
++    if $(python_major_version) = 2
++    {
++        python2 = true ;
++    }
++
+     lib $(lib_boost_python($(version)))
+         : # sources
+         list.cpp
+@@ -83,6 +90,7 @@
+         :   # requirements
+             <link>static:<define>BOOST_PYTHON_STATIC_LIB 
+             <define>BOOST_PYTHON_SOURCE
++            [ cond $(python2) : <cxxflags>-fno-strict-aliasing ]
+           
+             # On Windows, all code using Python has to link to the Python
+             # import library.
+@@ -96,7 +104,7 @@
+             # python_for_extensions is a target defined by Boost.Build to
+             # provide the Python include paths, and on Windows, the Python
+             # import library, as usage requirements.
+-            [ cond [ python.configured ] : <library>/python//python_for_extensions ]
++            [ cond [ python.configured ] : <library>/python//python ]
+             
+             # we prevent building when there is no python available
+             # as it's not possible anyway, and to cause dependents to
+@@ -120,46 +128,6 @@
+         ;
+ }
+ 
+-lib_boost_numpy(2) = boost_numpy ;
+-lib_boost_numpy(3) = boost_numpy3 ;
+-
+-lib_boost_numpy($(py2-version)) = $(lib_boost_numpy(2)) ;
+-lib_boost_numpy($(py3-version)) = $(lib_boost_numpy(3)) ;
+-
+-rule lib_boost_numpy ( version )
+-{
+-    numpy-include = [ python.numpy-include ] ;
+-    lib $(lib_boost_numpy($(version)))
+-        : # sources
+-        numpy/dtype.cpp
+-        numpy/matrix.cpp
+-        numpy/ndarray.cpp
+-        numpy/numpy.cpp
+-        numpy/scalars.cpp
+-        numpy/ufunc.cpp
+-        :   # requirements
+-            <link>static:<define>BOOST_NUMPY_STATIC_LIB 
+-            <define>BOOST_NUMPY_SOURCE
+-            [ cond [ python.numpy ] : <library>/python//python_for_extensions ]
+-            [ unless [ python.numpy ] : <build>no ]
+-            <include>$(numpy-include)
+-            <library>$(lib_boost_python($(version)))
+-            <python-debugging>on:<define>BOOST_DEBUG_PYTHON
+-            <python>$(version)
+-
+-            -<tag>@$(BOOST_JAMROOT_MODULE)%$(BOOST_JAMROOT_MODULE).tag
+-            <tag>@$(BOOST_JAMROOT_MODULE)%$(BOOST_JAMROOT_MODULE).python-tag
+-
+-            <conditional>@python.require-py
+-
+-        :   # default build
+-            <link>shared
+-        :   # usage requirements
+-			<link>static:<define>BOOST_NUMPY_STATIC_LIB
+-            <python-debugging>on:<define>BOOST_DEBUG_PYTHON
+-        ;
+-}
+-
+ libraries = ;
+ 
+ for local N in 2 3
+@@ -173,15 +141,6 @@
+     {
+         alias $(lib_boost_python($(N))) ;
+     }
+-    if $(py$(N)-version) && [ python.numpy ]
+-    {
+-        lib_boost_numpy $(py$(N)-version) ;
+-        libraries += $(lib_boost_numpy($(py$(N)-version))) ;
+-    }
+-    else
+-    {
+-        alias $(lib_boost_numpy($(N))) ;
+-    }
+ }
+ 
+ boost-install $(libraries) ;
