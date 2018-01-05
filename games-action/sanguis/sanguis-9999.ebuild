@@ -19,6 +19,7 @@ IUSE="+client tools"
 
 DEPEND="
 	>=dev-cpp/fcppt-9999
+	~dev-cpp/brigand-9999
 	~dev-cpp/alda-9999
 	>=dev-libs/boost-1.51.0:=
 	~dev-games/spacegameengine-9999[charconv,config,console,font,parse,parsejson,timer]

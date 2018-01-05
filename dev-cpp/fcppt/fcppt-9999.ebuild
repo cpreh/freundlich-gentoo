@@ -18,6 +18,7 @@ IUSE="doc +examples static-libs test"
 
 RDEPEND="
 	>=dev-libs/boost-1.47.0:=
+	~dev-cpp/brigand-9999
 	"
 DEPEND="
 	${RDEPEND}
