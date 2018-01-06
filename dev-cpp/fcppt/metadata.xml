@@ -3,6 +3,7 @@
 <pkgmetadata>
 <herd>no-herd</herd>
 	<use>
+		<flag name='boost'>Build fcppt with Boost support.</flag>
 		<flag name='examples'>Build examples to further test compilation. They won't be installed.</flag>
 	</use>
 </pkgmetadata>
