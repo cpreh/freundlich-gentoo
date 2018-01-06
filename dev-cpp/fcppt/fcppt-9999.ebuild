@@ -27,10 +27,9 @@ DEPEND="
 	doc? (
 		>=app-doc/doxygen-1.7.5[latex]
 	)
-"
-
-REQUIRED_USE="
-	test? ( boost )
+	test? (
+		>=dev-libs/boost-1.47.0
+	)
 "
 
 src_configure() {
