@@ -16,20 +16,27 @@ SRC_URI="https://github.com/freundlich/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="doc +examples static-libs test"
+IUSE="boost doc +examples static-libs test"
 
 RDEPEND="
-	>=dev-libs/boost-1.47.0:=
+	~dev-cpp/brigand-9999
+	boost? (
+		>=dev-libs/boost-1.47.0:=
+	)
 	"
 DEPEND="
 	${RDEPEND}
 	doc? (
 		>=app-doc/doxygen-1.7.5[latex]
 	)
+	test? (
+		>=dev-libs/boost-1.47.0
+	)
 "
 
 src_configure() {
 	local mycmakeargs=(
+		-D ENABLE_BOOST="$(usex boost)"
 		-D ENABLE_DOC="$(usex doc)"
 		-D ENABLE_EXAMPLES="$(usex examples)"
 		-D ENABLE_STATIC="$(usex static-libs)"
