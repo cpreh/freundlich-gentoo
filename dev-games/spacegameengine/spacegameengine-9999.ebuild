@@ -46,6 +46,7 @@ RDEPEND="
 		virtual/opencl
 	)
 	pango? (
+		media-libs/fontconfig
 		media-libs/freetype
 		x11-libs/pango
 	)
@@ -81,7 +82,9 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	>=app-doc/doxygen-1.7.5[latex]
+	doc? (
+		>=app-doc/doxygen-1.7.5[latex]
+	)
 "
 
 REQUIRED_USE="
@@ -165,6 +168,9 @@ src_configure() {
 		-D ENABLE_OPENAL="$(usex openal)"
 		-D ENABLE_OPENCL="$(usex opencl)"
 		-D ENABLE_OPENGL="$(usex opengl)"
+		-D ENABLE_OPENGL_EGL=OFF
+		-D ENABLE_OPENGL_WAYLAND=OFF
+		-D ENABLE_OPENGL_X11=ON
 		-D ENABLE_PANGO="$(usex pango)"
 		-D ENABLE_PARSE="$(usex parse)"
 		-D ENABLE_PARSEINI="$(usex parseini)"
