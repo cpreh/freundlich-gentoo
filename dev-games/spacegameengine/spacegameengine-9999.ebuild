@@ -199,7 +199,6 @@ src_configure() {
 		-D ENABLE_WAVE="$(usex wave)"
 		-D ENABLE_X11INPUT="$(usex x11input)"
 		-D ENABLE_WLINPUT=OFF
-		-D BULLET_INCLUDE_DIR=/usr/include/bullet
 	)
 
 	cmake-utils_src_configure
