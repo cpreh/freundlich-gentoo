@@ -26,8 +26,10 @@ REQUIRED_USE="|| ( arcade mess )"
 RDEPEND="!games-emulation/sdlmametools
 	!games-emulation/sdlmess
 	dev-libs/expat
+	dev-libs/rapidjson
 	media-libs/fontconfig
 	media-libs/flac
+	media-libs/glm
 	media-libs/libsdl2[joystick,opengl?,sound,threads,video,X]
 	media-libs/sdl2-ttf
 	sys-libs/zlib
@@ -92,6 +94,11 @@ src_prepare() {
 	enable_feature USE_SYSTEM_LIB_ZLIB
 #	Currently broken
 #	enable_feature USE_SYSTEM_LIB_UTF8PROC
+
+#	Requires asio-1.11
+#	enable_feature USE_SYSTEM_LIB_ASIO
+	enable_feature USE_SYSTEM_LIB_GLM
+	enable_feature USE_SYSTEM_LIB_RAPIDJSON
 
 	# Disable warnings being treated as errors and enable verbose build output
 	enable_feature NOWERROR
