@@ -6,9 +6,9 @@ EAPI=6
 CMAKE_MIN_VERSION="3.1"
 inherit cmake-utils
 
-LIBNBTPP_VERSION="multimc-0.5.0"
+LIBNBTPP_VERSION="92f8d57227feb94643378ecf595626c60c0f59b8"
 LIBNBTPP_DISTFILE="libnbtplusplus-${LIBNBTPP_VERSION}.tar.gz"
-QUAZIP_VERSION="multimc-2"
+QUAZIP_VERSION="683e2ec8ada758d6e48d31ec606840802e6941b7"
 QUAZIP_DISTFILE="multimc-quazip-${QUAZIP_VERSION}.tar.gz"
 
 DESCRIPTION="A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once"
@@ -44,17 +44,9 @@ DEPEND="
 	${RDEPEND}
 "
 
-PATCHES=(
-	"${FILESDIR}"/${P}-fix-share-path.patch
-)
-
 src_configure() {
 	local mycmakeargs=(
-		-D CMAKE_BUILD_WITH_INSTALL_RPATH=ON
 		-D MultiMC_LAYOUT=lin-system
-		-D MultiMC_BINARY_DEST_DIR="bin"
-		-D MultiMC_LIBRARY_DEST_DIR="$(get_libdir)"
-		-D MultiMC_SHARE_DEST_DIR="share/multimc"
 	)
 
 	cmake-utils_src_configure
