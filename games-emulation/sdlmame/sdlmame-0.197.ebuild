@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa +arcade debug +mess opengl tools"
+IUSE="alsa +arcade debug +mess openmp opengl tools"
 REQUIRED_USE="|| ( arcade mess )"
 
 # MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
@@ -110,8 +110,7 @@ src_prepare() {
 	use debug && enable_feature DEBUG
 	use tools && enable_feature TOOLS
 	disable_feature NO_X11 # bgfx needs X
-	# Currently broken
-	#use openmp && enable_feature OPENMP
+	use openmp && enable_feature OPENMP
 
 	if use alsa ; then
 		enable_feature USE_SYSTEM_LIB_PORTMIDI
