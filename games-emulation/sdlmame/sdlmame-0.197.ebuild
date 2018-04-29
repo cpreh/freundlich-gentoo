@@ -26,6 +26,7 @@ REQUIRED_USE="|| ( arcade mess )"
 RDEPEND="!games-emulation/sdlmametools
 	!games-emulation/sdlmess
 	dev-libs/expat
+	dev-libs/pugixml
 	dev-libs/rapidjson
 	media-libs/fontconfig
 	media-libs/flac
@@ -99,6 +100,7 @@ src_prepare() {
 #	enable_feature USE_SYSTEM_LIB_ASIO
 	enable_feature USE_SYSTEM_LIB_GLM
 	enable_feature USE_SYSTEM_LIB_RAPIDJSON
+	enable_feature USE_SYSTEM_LIB_PUGIXML
 
 	# Disable warnings being treated as errors and enable verbose build output
 	enable_feature NOWERROR
