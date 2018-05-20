@@ -23,6 +23,9 @@ RDEPEND="
 	"
 DEPEND="
 	${RDEPEND}
+	test? (
+		dev-cpp/catch
+	)
 "
 
 src_configure() {

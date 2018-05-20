@@ -28,7 +28,7 @@ DEPEND="
 		>=app-doc/doxygen-1.7.5[latex]
 	)
 	test? (
-		>=dev-libs/boost-1.47.0
+		dev-cpp/catch
 	)
 "
 

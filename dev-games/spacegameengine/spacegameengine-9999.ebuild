@@ -85,6 +85,9 @@ DEPEND="
 	doc? (
 		>=app-doc/doxygen-1.7.5[latex]
 	)
+	test? (
+		dev-cpp/catch
+	)
 "
 
 REQUIRED_USE="
