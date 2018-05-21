@@ -25,6 +25,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/catch
+		dev-cpp/fcppt[catch]
 	)
 "
 
