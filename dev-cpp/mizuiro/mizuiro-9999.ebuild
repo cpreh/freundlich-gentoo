@@ -18,7 +18,9 @@ KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
 DEPEND="
-	test? ( dev-libs/boost )
+	test? (
+		dev-cpp/catch
+	)
 "
 RDEPEND=""
 
