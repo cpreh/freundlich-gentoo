@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=6
+EAPI=7
 PYTHON_COMPAT=( python2_7 )
 inherit python-any-r1 toolchain-funcs qmake-utils
 
@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa +arcade debug +mess openmp opengl tools"
+IUSE="alsa +arcade debug +mess openmp tools"
 REQUIRED_USE="|| ( arcade mess )"
 
 # MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
@@ -23,15 +23,15 @@ REQUIRED_USE="|| ( arcade mess )"
 #  MAME build only			+arcade -mess	(mamearcade)
 #  MESS build only			-arcade +mess	(mess)
 # games-emulation/sdlmametools is dropped and enabled instead by the 'tools' useflag
-RDEPEND="!games-emulation/sdlmametools
-	!games-emulation/sdlmess
+RDEPEND="
+	>=dev-cpp/asio-1.11
 	dev-libs/expat
 	dev-libs/pugixml
 	dev-libs/rapidjson
 	media-libs/fontconfig
 	media-libs/flac
 	media-libs/glm
-	media-libs/libsdl2[joystick,opengl?,sound,threads,video,X]
+	media-libs/libsdl2[joystick,opengl,sound,threads,video,X]
 	media-libs/sdl2-ttf
 	sys-libs/zlib
 	virtual/jpeg:0
@@ -96,8 +96,7 @@ src_prepare() {
 #	Currently broken
 #	enable_feature USE_SYSTEM_LIB_UTF8PROC
 
-#	Requires asio-1.11
-#	enable_feature USE_SYSTEM_LIB_ASIO
+	enable_feature USE_SYSTEM_LIB_ASIO
 	enable_feature USE_SYSTEM_LIB_GLM
 	enable_feature USE_SYSTEM_LIB_RAPIDJSON
 	enable_feature USE_SYSTEM_LIB_PUGIXML
@@ -238,10 +237,4 @@ pkg_postinst() {
 	elog "It is strongly recommended to change either the system-wide"
 	elog "  ${SYSCONFDIR}/mame.ini or use a per-user setup at ~/.${PN}/mame.ini"
 	elog
-	if use opengl ; then
-		elog "You built ${PN} with opengl support and should set"
-		elog "\"video\" to \"opengl\" in mame.ini to take advantage of that"
-		elog
-		elog "For more info see http://wiki.mamedev.org"
-	fi
 }
