@@ -4,9 +4,7 @@
 
 EAPI=6
 
-RESTRICT="mirror"
-
-CMAKE_MIN_VERSION="3.1.0"
+CMAKE_MIN_VERSION="3.7.0"
 inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
@@ -16,12 +14,15 @@ SRC_URI="https://github.com/freundlich/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="boost doc +examples static-libs test"
+IUSE="boost catch doc +examples static-libs test"
 
 RDEPEND="
 	~dev-cpp/brigand-9999
 	boost? (
 		>=dev-libs/boost-1.47.0:=
+	)
+	catch? (
+		dev-cpp/catch
 	)
 	"
 DEPEND="
@@ -30,13 +31,18 @@ DEPEND="
 		>=app-doc/doxygen-1.7.5[latex]
 	)
 	test? (
-		>=dev-libs/boost-1.47.0
+		dev-cpp/catch
 	)
+"
+
+REQUIRED_USE="
+	test? ( catch )
 "
 
 src_configure() {
 	local mycmakeargs=(
 		-D ENABLE_BOOST="$(usex boost)"
+		-D ENABLE_CATCH="$(usex catch)"
 		-D ENABLE_DOC="$(usex doc)"
 		-D ENABLE_EXAMPLES="$(usex examples)"
 		-D ENABLE_STATIC="$(usex static-libs)"

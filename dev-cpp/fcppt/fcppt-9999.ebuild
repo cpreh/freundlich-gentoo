@@ -4,7 +4,7 @@
 
 EAPI=6
 
-CMAKE_MIN_VERSION="3.0.0"
+CMAKE_MIN_VERSION="3.7.0"
 inherit cmake-utils git-r3
 
 DESCRIPTION="Freundlich's C++ toolkit"
