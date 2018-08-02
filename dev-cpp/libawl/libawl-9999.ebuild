@@ -26,7 +26,6 @@ RDEPEND="
 
 DEPEND="
 	${RDEPEND}
-	x11-proto/xproto
 "
 
 src_configure() {
