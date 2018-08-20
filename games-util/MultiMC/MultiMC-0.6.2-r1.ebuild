@@ -8,7 +8,7 @@ inherit cmake-utils
 
 LIBNBTPP_VERSION="92f8d57227feb94643378ecf595626c60c0f59b8"
 LIBNBTPP_DISTFILE="libnbtplusplus-${LIBNBTPP_VERSION}.tar.gz"
-QUAZIP_VERSION="683e2ec8ada758d6e48d31ec606840802e6941b7"
+QUAZIP_VERSION="469b97b618314ec009a37cad22e9d2541d6481f7"
 QUAZIP_DISTFILE="multimc-quazip-${QUAZIP_VERSION}.tar.gz"
 
 DESCRIPTION="A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once"
@@ -43,6 +43,10 @@ DEPEND="
 	dev-qt/qtchooser
 	${RDEPEND}
 "
+
+PATCHES=(
+	"${FILESDIR}/${P}-Qt-5.11.patch"
+)
 
 src_configure() {
 	local mycmakeargs=(
