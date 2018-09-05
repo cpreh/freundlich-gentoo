@@ -149,7 +149,6 @@ src_configure() {
 		-D ENABLE_CONSOLEGFX="$(usex consolegfx)"
 		-D ENABLE_DOC="$(usex doc)"
 		-D ENABLE_EXAMPLES="$(usex examples)"
-		-D INSTALL_EXAMPLES="$(usex examples)"
 		-D ENABLE_EVDEV="$(usex evdev)"
 		-D ENABLE_FONT="$(usex font)"
 		-D ENABLE_FONTBITMAP="$(usex fontbitmap)"
