@@ -17,12 +17,17 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
+RDEPEND="
+	~dev-cpp/brigand-9999
+	~dev-cpp/fcppt-9999
+"
+
 DEPEND="
+	${RDEPEND}
 	test? (
 		dev-cpp/catch
 	)
 "
-RDEPEND=""
 
 src_configure() {
 	local mycmakeargs=(
