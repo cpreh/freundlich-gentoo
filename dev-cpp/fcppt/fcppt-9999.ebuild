@@ -14,7 +14,7 @@ EGIT_REPO_URI="https://github.com/freundlich/fcppt.git"
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="boost catch doc +examples static-libs test"
+IUSE="boost catch doc examples static-libs test"
 
 RDEPEND="
 	~dev-cpp/brigand-9999
@@ -42,6 +42,8 @@ REQUIRED_USE="
 src_configure() {
 	local mycmakeargs=(
 		-D ENABLE_BOOST="$(usex boost)"
+		-D ENABLE_FILESYSTEM="$(usex boost)"
+		-D ENABLE_SYSTEM="$(usex boost)"
 		-D ENABLE_CATCH="$(usex catch)"
 		-D ENABLE_DOC="$(usex doc)"
 		-D ENABLE_EXAMPLES="$(usex examples)"
