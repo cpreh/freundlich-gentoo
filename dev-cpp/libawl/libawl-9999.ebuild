@@ -20,7 +20,7 @@ IUSE="+examples static-libs"
 RDEPEND="
 	>=dev-libs/boost-1.47.0:=
 	~dev-cpp/brigand-9999
-	~dev-cpp/fcppt-9999
+	~dev-cpp/fcppt-9999[boost]
 	x11-libs/libX11
 "
 
