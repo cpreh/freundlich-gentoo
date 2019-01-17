@@ -44,10 +44,6 @@ DEPEND="
 	${RDEPEND}
 "
 
-PATCHES=(
-	"${FILESDIR}/${P}-Qt-5.11.patch"
-)
-
 src_configure() {
 	local mycmakeargs=(
 		-D MultiMC_LAYOUT=lin-system
