@@ -26,7 +26,7 @@ resource_tree rucksack rucksackviewport scenic +shader +sprite static-libs
 RDEPEND="
 	~dev-cpp/fcppt-9999[boost]
 	~dev-cpp/brigand-9999
-	>=dev-libs/boost-1.59.0:=
+	>=dev-libs/boost-1.59.0:=[nls]
 	cegui? (
 		>=dev-games/cegui-0.8.0
 	)
