@@ -21,6 +21,10 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="${PYTHON_DEPS}
 	dev-python/PyQt5[gui,svg,webengine,widgets,${PYTHON_USEDEP}]
+	|| (
+		dev-python/PyQtWebEngine[${PYTHON_USEDEP}]
+		dev-python/PyQt5[webengine]
+	)
 	>=dev-python/httplib2-0.7.4[${PYTHON_USEDEP}]
 	dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
 	dev-python/decorator[${PYTHON_USEDEP}]
