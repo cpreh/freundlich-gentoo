@@ -20,7 +20,7 @@ IUSE="+recording +sound"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="${PYTHON_DEPS}
-	dev-python/PyQt5[gui,svg,widgets,${PYTHON_USEDEP}]
+	dev-python/PyQt5[gui,svg,webchannel,widgets,${PYTHON_USEDEP}]
 	|| (
 		dev-python/PyQtWebEngine[${PYTHON_USEDEP}]
 		dev-python/PyQt5[webengine]
