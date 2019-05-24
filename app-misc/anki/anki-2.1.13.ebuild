@@ -28,6 +28,7 @@ RDEPEND="${PYTHON_DEPS}
 	>=dev-python/httplib2-0.7.4[${PYTHON_USEDEP}]
 	dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
 	dev-python/decorator[${PYTHON_USEDEP}]
+	dev-python/jsonschema[${PYTHON_USEDEP}]
 	dev-python/markdown[${PYTHON_USEDEP}]
 	dev-python/pyaudio[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
