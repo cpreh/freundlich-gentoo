@@ -15,13 +15,16 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+examples static-libs"
+IUSE="+examples sdl static-libs"
 
 RDEPEND="
 	>=dev-libs/boost-1.47.0:=
 	~dev-cpp/brigand-9999
 	~dev-cpp/fcppt-9999[boost]
 	x11-libs/libX11
+	sdl? (
+		media-libs/libsdl2
+	)
 "
 
 DEPEND="
@@ -33,6 +36,7 @@ src_configure() {
 		-D ENABLE_X11=ON
 		-D ENABLE_WAYLAND=OFF
 		-D ENABLE_EXAMPLES="$(usex examples)"
+		-D ENABLE_SDL="$(usex sdl)"
 		-D ENABLE_STATIC="$(usex static-libs)"
 	)
 
