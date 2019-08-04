@@ -20,7 +20,7 @@ IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
-resource_tree rucksack rucksackviewport scenic +shader +sprite static-libs
+resource_tree rucksack rucksackviewport scenic sdl sdlinput +shader +sprite static-libs
 +systems test +texture +timer tools +viewport +vorbis +wave +window +x11input"
 
 RDEPEND="
@@ -48,6 +48,13 @@ RDEPEND="
 	opencl? (
 		virtual/opencl
 	)
+	opengl? (
+		x11-libs/libX11
+		x11-libs/libXrandr
+		sdl? (
+			media-libs/libsdl2[opengl]
+		)
+	)
 	pango? (
 		media-libs/fontconfig
 		media-libs/freetype
@@ -64,10 +71,13 @@ RDEPEND="
 	)
 	rendereropengl? (
 		virtual/opengl
-		opengl? (
-			x11-libs/libX11
-			x11-libs/libXrandr
-		)
+	)
+	sdl? (
+		~dev-cpp/libawl-9999[sdl]
+		media-libs/libsdl2
+	)
+	sdlinput? (
+		media-libs/libsdl2[joystick]
 	)
 	tools? (
 		~dev-cpp/libawl-9999
@@ -129,6 +139,7 @@ REQUIRED_USE="
 	renderer? ( image2d image3d imagecolor imageds imageds2d log plugin )
 	rucksackviewport? ( renderer rucksack viewport )
 	scenic? ( camera cg charconv config imagecolor image2d line_drawer modelobj parsejson renderer shader viewport )
+	sdlinput? ( sdl )
 	shader? ( cg renderer )
 	sprite? ( image renderer texture )
 	systems? ( audio config font image2d input log media parse parseini plugin renderer sprite texture viewport window )
@@ -190,6 +201,8 @@ src_configure() {
 		-D ENABLE_RUCKSACK="$(usex rucksack)"
 		-D ENABLE_RUCKSACKVIEWPORT="$(usex rucksackviewport)"
 		-D ENABLE_SCENIC="$(usex scenic)"
+		-D ENABLE_SDL="$(usex sdl)"
+		-D ENABLE_SDLINPUT="$(usex sdlinput)"
 		-D ENABLE_SHADER="$(usex shader)"
 		-D ENABLE_SPRITE="$(usex sprite)"
 		-D ENABLE_STATIC="$(usex static-libs)"
