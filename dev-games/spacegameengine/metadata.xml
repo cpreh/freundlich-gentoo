@@ -3,6 +3,7 @@
 <pkgmetadata>
 <herd>no-herd</herd>
 	<use>
+		<flag name='X'>Enable X11 support. Enables the X11 OpenGL backend.</flag>
 		<flag name='audio'>Build the audio core library</flag>
 		<flag name='audio_null'>Build the audio null plugin that doesn't do any audio output</flag>
 		<flag name='camera'>Build the camera library which provides an fps-like camera</flag>
@@ -13,6 +14,7 @@
 		<flag name='console'>Build the console base library</flag>
 		<flag name='consolegfx'>Build the console graphics library which provides a quake-like console</flag>
 		<flag name='devil'>Build the devil image loader plugin which loads bmp, jpeg, png, tiff and others</flag>
+		<flag name='egl'>Enables the EGL OpenGL backend.</flag>
 		<flag name='examples'>Build and install examples</flag>
 		<flag name='evdev'>Build evdev plugin which handles joysticks and gamepads using /dev/input/event*</flag>
 		<flag name='font'>Build the font core library</flag>
@@ -49,6 +51,8 @@
 		<flag name='rucksack'>Build the rucksack library which provides layouts for rectangles</flag>
 		<flag name='rucksackviewport'>Build the rucksack viewport library which provides a viewport-based widget</flag>
 		<flag name='scenic'>Build the scenic library which provides scene management</flag>
+		<flag name='sdl'>Enable SDL2 support. Enables the SDL2 OpenGL backend.</flag>
+		<flag name='sdlinput'>Build the SDL2 input plugin</flag>
 		<flag name='shader'>Build the shader library which makes the process of creating shaders easier</flag>
 		<flag name='sprite'>Build the sprite library</flag>
 		<flag name='systems'>Build the systems library which provides an easy way to initialize sge's plugins</flag>
@@ -58,7 +62,9 @@
 		<flag name='viewport'>Build the viewport library which provides automatic managing of the viewport</flag>
 		<flag name='vorbis'>Build the vorbis audio loader library</flag>
 		<flag name='wave'>Build the wave audio loader library</flag>
+		<flag name='wayland'>Enable Wayland support. Enables the Wayland OpenGL backend.</flag>
 		<flag name='window'>Build the window library which wraps awl windows</flag>
+		<flag name='wlinput'>Build the Wayland input plugin</flag>
 		<flag name='x11input'>Build the x11input plugin which uses XI2 to handle cursors, mice and keyboards</flag>
 	</use>
 </pkgmetadata>

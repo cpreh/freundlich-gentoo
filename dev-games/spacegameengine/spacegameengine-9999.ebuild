@@ -15,18 +15,21 @@ HOMEPAGE="http://freundlich.github.com/spacegameengine/"
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+audio audio_null +camera cegui +cg +charconv +config +console
-+consolegfx doc examples evdev +font +fontbitmap +fontdraw gui graph +image
+IUSE="+X +audio audio_null +camera cegui +cg +charconv +config +console
++consolegfx doc egl examples evdev +font +fontbitmap +fontdraw gui graph +image
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
 resource_tree rucksack rucksackviewport scenic sdl sdlinput +shader +sprite static-libs
-+systems test +texture +timer tools +viewport +vorbis +wave +window +x11input"
++systems test +texture +timer tools +viewport +vorbis +wave wayland +window wlinput +x11input"
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
 	~dev-cpp/brigand-9999
 	>=dev-libs/boost-1.59.0:=
+	X? (
+		~dev-cpp/libawl-9999[X]
+	)
 	charconv? (
 		dev-libs/boost[nls]
 	)
@@ -49,10 +52,18 @@ RDEPEND="
 		virtual/opencl
 	)
 	opengl? (
-		x11-libs/libX11
-		x11-libs/libXrandr
+		X? (
+			x11-libs/libX11
+			x11-libs/libXrandr
+		)
+		egl? (
+			media-libs/mesa[egl]
+		)
 		sdl? (
 			media-libs/libsdl2[opengl]
+		)
+		wayland? (
+			dev-libs/wayland
 		)
 	)
 	pango? (
@@ -85,8 +96,15 @@ RDEPEND="
 	vorbis? (
 		media-libs/libvorbis
 	)
+	wayland? (
+		~dev-cpp/libawl-9999[wayland]
+	)
 	window? (
 		~dev-cpp/libawl-9999
+	)
+	wlinput? (
+		dev-libs/wayland
+		x11-libs/libxkbcommon
 	)
 	x11input? (
 		x11-libs/libXi
@@ -147,7 +165,8 @@ REQUIRED_USE="
 	viewport? ( renderer window )
 	vorbis? ( audio log media plugin )
 	wave? ( audio log media plugin )
-	x11input? ( input log plugin window )
+	x11input? ( X input log plugin window )
+	wlinput? ( charconv input log plugin wayland window )
 "
 
 src_configure() {
@@ -184,9 +203,10 @@ src_configure() {
 		-D ENABLE_OPENAL="$(usex openal)"
 		-D ENABLE_OPENCL="$(usex opencl)"
 		-D ENABLE_OPENGL="$(usex opengl)"
-		-D ENABLE_OPENGL_EGL=OFF
-		-D ENABLE_OPENGL_WAYLAND=OFF
-		-D ENABLE_OPENGL_X11=ON
+		-D ENABLE_OPENGL_EGL="$(usex egl)"
+		-D ENABLE_OPENGL_SDL="$(usex sdl)"
+		-D ENABLE_OPENGL_WAYLAND="$(usex wayland)"
+		-D ENABLE_OPENGL_X11="$(usex X)"
 		-D ENABLE_PANGO="$(usex pango)"
 		-D ENABLE_PARSE="$(usex parse)"
 		-D ENABLE_PARSEINI="$(usex parseini)"
@@ -216,7 +236,7 @@ src_configure() {
 		-D ENABLE_WINDOW="$(usex window)"
 		-D ENABLE_WAVE="$(usex wave)"
 		-D ENABLE_X11INPUT="$(usex x11input)"
-		-D ENABLE_WLINPUT=OFF
+		-D ENABLE_WLINPUT="$(usex wlinput)"
 	)
 
 	cmake-utils_src_configure
