@@ -15,14 +15,19 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+examples sdl static-libs"
+IUSE="+X +examples sdl static-libs wayland"
 
 RDEPEND="
 	~dev-cpp/brigand-9999
 	~dev-cpp/fcppt-9999
-	x11-libs/libX11
+	X? (
+		x11-libs/libX11
+	)
 	sdl? (
 		media-libs/libsdl2
+	)
+	wayland? (
+		dev-libs/wayland
 	)
 "
 
@@ -32,11 +37,11 @@ DEPEND="
 
 src_configure() {
 	local mycmakeargs=(
-		-D ENABLE_X11=ON
-		-D ENABLE_WAYLAND=OFF
 		-D ENABLE_EXAMPLES="$(usex examples)"
 		-D ENABLE_SDL="$(usex sdl)"
 		-D ENABLE_STATIC="$(usex static-libs)"
+		-D ENABLE_X11="$(usex X)"
+		-D ENABLE_WAYLAND="$(usex wayland)"
 	)
 
 	cmake-utils_src_configure
