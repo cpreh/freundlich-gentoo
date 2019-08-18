@@ -19,7 +19,7 @@ IUSE="static-libs test"
 RDEPEND="
 	>=dev-libs/boost-1.50:=
 	~dev-cpp/brigand-9999
-	~dev-cpp/fcppt-9999[boost]
+	~dev-cpp/fcppt-9999
 	"
 DEPEND="
 	${RDEPEND}

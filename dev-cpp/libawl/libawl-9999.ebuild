@@ -18,9 +18,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+examples sdl static-libs"
 
 RDEPEND="
-	>=dev-libs/boost-1.47.0:=
 	~dev-cpp/brigand-9999
-	~dev-cpp/fcppt-9999[boost]
+	~dev-cpp/fcppt-9999
 	x11-libs/libX11
 	sdl? (
 		media-libs/libsdl2

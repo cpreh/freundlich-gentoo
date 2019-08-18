@@ -3,7 +3,7 @@
 <pkgmetadata>
 <herd>no-herd</herd>
 	<use>
-		<flag name='boost'>Build fcppt_boost, fcppt_system and fcppt_filesystem.</flag>
+		<flag name='boost'>Build fcppt_boost.</flag>
 		<flag name='catch'>Build fcppt_catch. Required to run the tests.</flag>
 		<flag name='examples'>Build examples to further test compilation. They won't be installed.</flag>
 	</use>

@@ -21,7 +21,6 @@ DEPEND=""
 RDEPEND="${DEPEND}"
 
 RDEPEND="
-	>=dev-libs/boost-1.47.0:=
 	~dev-cpp/fcppt-9999
 	~dev-cpp/libawl-9999
 	~dev-games/spacegameengine-9999[font,fontdraw,image,imagecolor,input,renderer,sprite,systems,texture,viewport,window]
