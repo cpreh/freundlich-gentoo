@@ -25,7 +25,7 @@ resource_tree rucksack rucksackviewport scenic sdl sdlinput +shader +sprite stat
 
 RDEPEND="
 	~dev-cpp/fcppt-9999
-	~dev-cpp/brigand-9999
+	dev-cpp/metal
 	>=dev-libs/boost-1.59.0:=
 	X? (
 		~dev-cpp/libawl-9999[X]

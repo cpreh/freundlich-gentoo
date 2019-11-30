@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="boost catch doc examples static-libs test"
 
 RDEPEND="
-	~dev-cpp/brigand-9999
+	dev-cpp/metal
 	boost? (
 		>=dev-libs/boost-1.47.0:=
 	)

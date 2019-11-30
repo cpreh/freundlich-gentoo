@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+X +examples sdl static-libs wayland"
 
 RDEPEND="
-	~dev-cpp/brigand-9999
+	dev-cpp/metal
 	~dev-cpp/fcppt-9999
 	X? (
 		x11-libs/libX11
