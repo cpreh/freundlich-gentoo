@@ -3,6 +3,8 @@
 
 EAPI=7
 
+inherit cmake-utils
+
 DESCRIPTION="Metal is a single-header C++11 library designed to make you love template metaprogramming."
 HOMEPAGE="https://github.com/brunocodutra/metal"
 SRC_URI="https://github.com/brunocodutra/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -14,8 +16,3 @@ IUSE=""
 
 DEPEND=""
 RDEPEND="${DEPEND}"
-
-src_install() {
-	doheader -r include/metal
-	doheader include/metal.hpp
-}
