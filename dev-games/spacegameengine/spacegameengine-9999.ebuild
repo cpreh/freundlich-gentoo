@@ -16,7 +16,7 @@ LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+X +audio audio_null +camera cegui +cg +charconv +config +console
-+consolegfx doc egl examples evdev +font +fontbitmap +fontdraw gui graph +image
++consolegfx +cursor doc egl examples evdev +font +fontbitmap +fontdraw gui graph +image
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
 +parsejson +plugin +png postprocessing projectile +renderer +rendereropengl
@@ -128,6 +128,7 @@ REQUIRED_USE="
 	cegui? ( charconv imagecolor image2d input log renderer viewport )
 	console? ( font )
 	consolegfx? ( console font fontdraw imagecolor input renderer )
+	cursor? ( input renderer sprite texture )
 	evdev? ( input log plugin window )
 	font? ( imagecolor image2d log plugin )
 	fontbitmap? ( font imagecolor image2d log parsejson )
@@ -180,6 +181,7 @@ src_configure() {
 		-D ENABLE_CONFIG="$(usex config)"
 		-D ENABLE_CONSOLE="$(usex console)"
 		-D ENABLE_CONSOLEGFX="$(usex consolegfx)"
+		-D ENABLE_CURSOR="$(usex cursor)"
 		-D ENABLE_DOC="$(usex doc)"
 		-D ENABLE_EXAMPLES="$(usex examples)"
 		-D ENABLE_EVDEV="$(usex evdev)"
