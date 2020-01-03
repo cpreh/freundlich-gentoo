@@ -10,7 +10,7 @@ MY_PV="${PV/.}"
 
 DESCRIPTION="Multiple Arcade Machine Emulator + Multi Emulator Super System (MESS)"
 HOMEPAGE="http://mamedev.org/"
-SRC_URI="https://github.com/mamedev/mame/releases/download/mame${MY_PV}/mame${MY_PV}s.zip -> mame-${PV}.zip"
+SRC_URI="https://github.com/mamedev/mame/archive/mame${MY_PV}.tar.gz"
 
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
@@ -48,11 +48,10 @@ RDEPEND="
 	${PYTHON_DEPS}"
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
-	app-arch/unzip
 	virtual/pkgconfig
 	x11-base/xorg-proto"
 
-S=${WORKDIR}
+S="${WORKDIR}/mame-mame${MY_PV}"
 
 SYSCONFDIR="/etc/${PN}"
 DATADIR="/usr/share/${PN}"
@@ -70,12 +69,6 @@ enable_feature() {
 
 pkg_setup() {
 	python-any-r1_pkg_setup
-}
-
-src_unpack() {
-	default
-	unzip -q ./mame.zip
-	rm -f mame.zip || die
 }
 
 PATCHES=(
