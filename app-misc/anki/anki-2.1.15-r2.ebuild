@@ -20,19 +20,21 @@ IUSE="+recording +sound"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="${PYTHON_DEPS}
-	dev-python/PyQt5[gui,svg,webchannel,widgets,${PYTHON_USEDEP}]
-	|| (
-		dev-python/PyQtWebEngine[${PYTHON_USEDEP}]
-		dev-python/PyQt5[webengine]
-	)
-	>=dev-python/httplib2-0.7.4[${PYTHON_USEDEP}]
-	dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
-	dev-python/decorator[${PYTHON_USEDEP}]
-	dev-python/jsonschema[${PYTHON_USEDEP}]
-	dev-python/markdown[${PYTHON_USEDEP}]
-	dev-python/pyaudio[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/send2trash[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/PyQt5[gui,svg,webchannel,widgets,${PYTHON_MULTI_USEDEP}]
+		|| (
+			dev-python/PyQtWebEngine[${PYTHON_MULTI_USEDEP}]
+			dev-python/PyQt5[webengine]
+		)
+		>=dev-python/httplib2-0.7.4[${PYTHON_MULTI_USEDEP}]
+		dev-python/beautifulsoup:4[${PYTHON_MULTI_USEDEP}]
+		dev-python/decorator[${PYTHON_MULTI_USEDEP}]
+		dev-python/jsonschema[${PYTHON_MULTI_USEDEP}]
+		dev-python/markdown[${PYTHON_MULTI_USEDEP}]
+		dev-python/pyaudio[${PYTHON_MULTI_USEDEP}]
+		dev-python/requests[${PYTHON_MULTI_USEDEP}]
+		dev-python/send2trash[${PYTHON_MULTI_USEDEP}]
+	')
 	recording? ( media-sound/lame )
 	sound? ( media-video/mpv )
 "
