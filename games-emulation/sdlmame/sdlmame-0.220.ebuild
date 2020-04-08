@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/archive/mame${MY_PV}.tar.gz"
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa +arcade debug +mess openmp tools"
+IUSE="alsa +arcade debug +mess openmp pcap tools"
 REQUIRED_USE="|| ( arcade mess )"
 
 # MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
@@ -43,6 +43,7 @@ RDEPEND="
 	debug? ( dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5 )
+	pcap? ( net-libs/libpcap )
 	x11-libs/libX11
 	x11-libs/libXinerama
 	${PYTHON_DEPS}"
@@ -110,6 +111,8 @@ src_prepare() {
 		enable_feature NO_USE_MIDI
 		enable_feature NO_USE_PORTAUDIO
 	fi
+
+	use pcap && enable_feature USE_PCAP
 
 	sed -i \
 		-e 's/-Os//' \
