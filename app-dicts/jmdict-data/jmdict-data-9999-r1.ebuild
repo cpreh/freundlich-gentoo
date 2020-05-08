@@ -11,11 +11,12 @@ SRC_URI=""
 LICENSE=""
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+RESTRICT="network-sandbox"
 IUSE=""
 
 DEPEND="app-arch/gzip
-        >=app-dicts/jmdict-0.6
-        net-misc/wget
+		>=app-dicts/jmdict-0.6
+		net-misc/wget
 		sys-apps/coreutils"
 RDEPEND=""
 
