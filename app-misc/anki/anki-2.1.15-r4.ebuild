@@ -1,31 +1,28 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 PYTHON_COMPAT=( python{3_7,3_8} )
 PYTHON_REQ_USE="sqlite"
 
-inherit eutils python-single-r1 xdg
+inherit desktop optfeature python-single-r1 xdg
 
 DESCRIPTION="A spaced-repetition memory training program (flash cards)"
 HOMEPAGE="https://apps.ankiweb.net"
+SRC_URI="https://apps.ankiweb.net/downloads/archive/${P}-source.tgz -> ${P}.tgz"
 
-SRC_URI="https://apps.ankiweb.net/downloads/current/${P}-source.tgz -> ${P}.tgz"
-
-LICENSE="GPL-3"
+LICENSE="AGPL-3+ BSD MIT GPL-3+ CC-BY-SA-3.0 Apache-2.0 CC-BY-2.5"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+recording +sound"
+IUSE="test"
+RESTRICT="!test? ( test )"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		dev-python/PyQt5[gui,svg,webchannel,widgets,${PYTHON_MULTI_USEDEP}]
-		|| (
-			dev-python/PyQtWebEngine[${PYTHON_MULTI_USEDEP}]
-			dev-python/PyQt5[webengine]
-		)
+		>=dev-python/PyQtWebEngine-5.12[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/httplib2-0.7.4[${PYTHON_MULTI_USEDEP}]
 		dev-python/beautifulsoup:4[${PYTHON_MULTI_USEDEP}]
 		dev-python/decorator[${PYTHON_MULTI_USEDEP}]
@@ -35,16 +32,20 @@ RDEPEND="${PYTHON_DEPS}
 		dev-python/requests[${PYTHON_MULTI_USEDEP}]
 		dev-python/send2trash[${PYTHON_MULTI_USEDEP}]
 	')
-	recording? ( media-sound/lame )
-	sound? ( media-video/mpv )
 "
-DEPEND="${RDEPEND}"
+BDEPEND="test? (
+	${RDEPEND}
+	$(python_gen_cond_dep '
+		dev-python/nose[${PYTHON_MULTI_USEDEP}]
+		dev-python/mock[${PYTHON_MULTI_USEDEP}]
+		')
+	)
+"
 
-PATCHES=( "${FILESDIR}"/${PN}-2.1.0_beta25-web-folder.patch )
-
-pkg_setup() {
-	python-single-r1_pkg_setup
-}
+PATCHES=(
+	"${FILESDIR}"/${PN}-2.1.0_beta25-web-folder.patch
+	"${FILESDIR}"/${PN}-2.1.15-mpv-args.patch
+)
 
 src_prepare() {
 	default
@@ -54,6 +55,16 @@ src_prepare() {
 
 src_compile() {
 	:;
+}
+
+src_test() {
+	sed -e "s:nose=nosetests$:nose=\"${EPYTHON} ${EROOT}/usr/bin/nosetests\":" \
+		-i tools/tests.sh || die
+	sed -e "s:nose=nosetests3$:nose=\"${EPYTHON} ${EROOT}/usr/bin/nosetests3\":" \
+		-i tools/tests.sh || die
+	sed -e "s:which nosetests3:which ${EROOT}/usr/bin/nosetests3:" \
+		-i tools/tests.sh || die
+	./tools/tests.sh || die
 }
 
 src_install() {
@@ -73,4 +84,11 @@ src_install() {
 	# site-packages/aqt/mediasrv.py wants the directory
 	insinto /usr/share/anki
 	doins -r web
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	optfeature "LaTeX in cards" "app-text/texlive app-text/dvipng"
+	optfeature "Record sound" "dev-python/pyaudio media-sound/lame"
+	optfeature "Playback sound" media-video/mpv media-video/mplayer
 }
