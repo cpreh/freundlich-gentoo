@@ -23,9 +23,10 @@ REQUIRED_USE="|| ( arcade mess )"
 #  MAME build only			+arcade -mess	(mamearcade)
 #  MESS build only			-arcade +mess	(mess)
 # games-emulation/sdlmametools is dropped and enabled instead by the 'tools' useflag
-#>=dev-cpp/asio-1.13
+#=dev-cpp/asio-1.11*
 RDEPEND="
 	dev-libs/expat
+	dev-libs/libutf8proc
 	dev-libs/pugixml
 	dev-libs/rapidjson
 	media-libs/fontconfig
@@ -87,10 +88,10 @@ src_prepare() {
 #	enable_feature USE_SYSTEM_LIB_LUA
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
 	enable_feature USE_SYSTEM_LIB_ZLIB
-#	Currently broken
-#	enable_feature USE_SYSTEM_LIB_UTF8PROC
+	enable_feature USE_SYSTEM_LIB_UTF8PROC
 
-#	enable_feature USE_SYSTEM_LIB_ASIO
+	# Needs old asio
+	#enable_feature USE_SYSTEM_LIB_ASIO
 	enable_feature USE_SYSTEM_LIB_GLM
 	enable_feature USE_SYSTEM_LIB_RAPIDJSON
 	enable_feature USE_SYSTEM_LIB_PUGIXML
