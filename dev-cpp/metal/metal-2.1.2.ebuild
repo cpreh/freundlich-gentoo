@@ -12,7 +12,17 @@ SRC_URI="https://github.com/brunocodutra/${PN}/archive/v${PV}.tar.gz -> ${P}.tar
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="doc"
 
-DEPEND=""
+DEPEND="doc? ( app-doc/doxygen )"
 RDEPEND="${DEPEND}"
+
+src_configure() {
+	local mycmakeargs=(
+		-D METAL_BUILD_DOC="$(usex doc)"
+		-D METAL_BUILD_EXAMPLES=OFF
+		-D METAL_BUILD_TESTS=OFF
+	)
+
+	cmake-utils_src_configure
+}
