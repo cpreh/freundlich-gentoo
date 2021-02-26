@@ -153,7 +153,7 @@ src_compile() {
 
 src_install() {
 	local MAMEBIN
-	local suffix="$(use amd64 && echo 64)$(use debug && echo d)"
+	local suffix="$(use debug && echo d)"
 	local f
 
 	function mess_install() {
