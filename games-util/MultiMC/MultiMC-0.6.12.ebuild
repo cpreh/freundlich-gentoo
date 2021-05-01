@@ -44,6 +44,11 @@ DEPEND="
 	${RDEPEND}
 "
 
+PATCHES=(
+	"${FILESDIR}/${P}-include-limits.patch"
+	"${FILESDIR}/${P}-fix-comparison-warning.patch"
+)
+
 src_configure() {
 	local mycmakeargs=(
 		-D MultiMC_LAYOUT=lin-system
