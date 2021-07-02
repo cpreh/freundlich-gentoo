@@ -17,7 +17,6 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+net static-libs test"
 
 RDEPEND="
-	dev-cpp/metal
 	~dev-cpp/fcppt-9999
 	net? (
 		>=dev-libs/boost-1.50:=

@@ -18,7 +18,6 @@ KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
 RDEPEND="
-	dev-cpp/metal
 	~dev-cpp/fcppt-9999
 "
 
