@@ -21,7 +21,7 @@ DEPEND="app-arch/gzip
 RDEPEND=""
 
 src_unpack() {
-	wget -t 1 http://ftp.monash.edu.au/pub/nihongo/JMdict.gz || die "wget failed"
+	wget -t 1 ftp://ftp.edrdg.org/pub/Nihongo//JMdict.gz || die "wget failed"
 	mkdir "${S}" || die "mkdir ${S} failed"
 	zcat JMdict.gz > "${S}"/JMdict || die "zcat failed"
 }
