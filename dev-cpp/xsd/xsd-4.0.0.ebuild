@@ -15,7 +15,7 @@ IUSE="ace doc examples test zlib"
 
 RDEPEND="
 	>=dev-libs/xerces-c-3.0.0
-	dev-libs/boost:=[threads]
+	dev-libs/boost:=[threads(+)]
 	dev-cpp/libcutl
 	>=dev-cpp/libxsd-frontend-2.0.0
 	ace? ( dev-libs/ace )
