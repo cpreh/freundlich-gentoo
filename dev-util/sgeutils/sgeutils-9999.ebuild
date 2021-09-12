@@ -7,10 +7,10 @@ EAPI=7
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="https://github.com/freundlich/sgeutils.git"
+EGIT_REPO_URI="https://github.com/cpreh/sgeutils.git"
 
 DESCRIPTION="Utils for developing C++/cmake based projects"
-HOMEPAGE="https://github.com/freundlich/sgeutils"
+HOMEPAGE=""
 
 LICENSE="GPL-2"
 SLOT="0"

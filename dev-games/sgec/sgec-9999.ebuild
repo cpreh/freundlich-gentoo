@@ -7,10 +7,10 @@ EAPI=7
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="https://github.com/freundlich/sgec.git"
+EGIT_REPO_URI="https://github.com/cpreh/sgec.git"
 
 DESCRIPTION="C bindings for spacegameengine"
-HOMEPAGE="http://freundlich.github.com/sgec/"
+HOMEPAGE=""
 
 LICENSE="LGPL-2"
 SLOT="0"

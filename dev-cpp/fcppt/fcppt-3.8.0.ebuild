@@ -8,8 +8,8 @@ CMAKE_MIN_VERSION="3.7.0"
 inherit cmake-utils
 
 DESCRIPTION="Freundlich's C++ toolkit"
-HOMEPAGE="http://fcppt.org"
-SRC_URI="https://github.com/freundlich/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://fcppt.org"
+SRC_URI="https://github.com/cpreh/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="Boost-1.0"
 SLOT="0"

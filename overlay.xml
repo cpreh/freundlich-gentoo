@@ -4,10 +4,10 @@
 	<repo quality="stable" status="unofficial" priority="50">
 		<name>freundlich</name>
 		<description>Freundlich's Gentoo overlay</description>
-		<homepage>https://github.com/freundlich/freundlich-gentoo</homepage>
+		<homepage>https://github.com/cpreh/freundlich-gentoo</homepage>
 		<owner type="person">
 		<name>Freundlich</name>
 		</owner>
-		<source type="git">https://github.com/freundlich/freundlich-gentoo.git</source>
+		<source type="git">https://github.com/cpreh/freundlich-gentoo.git</source>
 	</repo>
 </repositories>

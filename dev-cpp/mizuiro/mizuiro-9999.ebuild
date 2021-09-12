@@ -7,7 +7,7 @@ EAPI=7
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="https://github.com/freundlich/mizuiro.git"
+EGIT_REPO_URI="https://github.com/cpreh/mizuiro.git"
 
 DESCRIPTION="A generic image library"
 HOMEPAGE=""

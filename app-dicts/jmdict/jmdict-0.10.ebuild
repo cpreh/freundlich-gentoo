@@ -6,8 +6,8 @@ EAPI=6
 RESTRICT="mirror"
 
 DESCRIPTION="Japanese dictionary by Florian Blümel"
-HOMEPAGE="https://github.com/freundlich/jmdict"
-SRC_URI="https://github.com/freundlich/${PN}/archive/${PV}.tar.gz"
+HOMEPAGE="https://github.com/cpreh/jmdict"
+SRC_URI="https://github.com/cpreh/${PN}/archive/${PV}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"

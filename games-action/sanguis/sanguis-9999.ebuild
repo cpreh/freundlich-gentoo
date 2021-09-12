@@ -7,10 +7,10 @@ EAPI=7
 CMAKE_MIN_VERSION="3.0.0"
 inherit cmake-utils git-r3
 
-EGIT_REPO_URI="https://github.com/freundlich/sanguis.git"
+EGIT_REPO_URI="https://github.com/cpreh/sanguis.git"
 
 DESCRIPTION="A crimsonland clone"
-HOMEPAGE="https://github.com/freundlich/sanguis"
+HOMEPAGE=""
 
 LICENSE="GPL-2"
 SLOT="0"

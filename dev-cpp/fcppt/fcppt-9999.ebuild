@@ -8,8 +8,8 @@ CMAKE_MIN_VERSION="3.7.0"
 inherit cmake-utils git-r3
 
 DESCRIPTION="Freundlich's C++ toolkit"
-HOMEPAGE="http://fcppt.org"
-EGIT_REPO_URI="https://github.com/freundlich/fcppt.git"
+HOMEPAGE="https://fcppt.org"
+EGIT_REPO_URI="https://github.com/cpreh/fcppt.git"
 
 LICENSE="Boost-1.0"
 SLOT="0"
