@@ -17,7 +17,6 @@ KEYWORDS="~amd64 ~x86"
 IUSE="boost catch doc examples static-libs test"
 
 RDEPEND="
-	dev-cpp/metal
 	boost? (
 		>=dev-libs/boost-1.47.0:=
 	)
@@ -42,7 +41,6 @@ REQUIRED_USE="
 src_configure() {
 	local mycmakeargs=(
 		-D ENABLE_BOOST="$(usex boost)"
-		-D ENABLE_FILESYSTEM=ON
 		-D ENABLE_CATCH="$(usex catch)"
 		-D ENABLE_DOC="$(usex doc)"
 		-D ENABLE_EXAMPLES="$(usex examples)"
