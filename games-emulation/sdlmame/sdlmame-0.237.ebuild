@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=7
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_9 )
 inherit python-any-r1 toolchain-funcs qmake-utils
 
 MY_PV="${PV/.}"
