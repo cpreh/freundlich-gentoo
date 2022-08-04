@@ -47,11 +47,11 @@ src_configure() {
 		-D ENABLE_TEST="$(usex test)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	# Remove empty directories created by doxygen
 	find "${D}" -type d -empty -delete || die

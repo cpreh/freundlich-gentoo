@@ -32,5 +32,5 @@ src_configure() {
 		-D ENABLE_TEST="$(usex test)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }

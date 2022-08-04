@@ -33,5 +33,5 @@ src_configure() {
 		-D ENABLE_EXAMPLES=OFF
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }

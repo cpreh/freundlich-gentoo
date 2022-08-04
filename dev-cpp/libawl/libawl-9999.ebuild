@@ -42,5 +42,5 @@ src_configure() {
 		-D ENABLE_WAYLAND="$(usex wayland)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }

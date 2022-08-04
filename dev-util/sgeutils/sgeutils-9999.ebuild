@@ -30,5 +30,5 @@ src_configure() {
 		-D ENABLE_SGE="$(usex sge)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }

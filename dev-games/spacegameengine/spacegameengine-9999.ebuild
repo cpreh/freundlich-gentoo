@@ -239,5 +239,5 @@ src_configure() {
 		-D ENABLE_WLINPUT="$(usex wlinput)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
