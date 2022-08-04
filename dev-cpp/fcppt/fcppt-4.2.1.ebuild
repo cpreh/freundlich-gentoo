@@ -2,10 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=7
+EAPI=8
 
-CMAKE_MIN_VERSION="3.7.0"
-inherit cmake-utils
+inherit cmake
 
 DESCRIPTION="Freundlich's C++ toolkit"
 HOMEPAGE="https://fcppt.org"
