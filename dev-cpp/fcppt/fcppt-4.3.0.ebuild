@@ -20,7 +20,7 @@ RDEPEND="
 		>=dev-libs/boost-1.47.0:=
 	)
 	catch? (
-		dev-cpp/catch
+		>=dev-cpp/catch-3
 	)
 	"
 DEPEND="
@@ -29,7 +29,7 @@ DEPEND="
 		>=app-doc/doxygen-1.7.5[latex]
 	)
 	test? (
-		dev-cpp/catch
+		>=dev-cpp/catch-3
 	)
 "
 
