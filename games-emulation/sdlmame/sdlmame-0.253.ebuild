@@ -15,14 +15,8 @@ SRC_URI="https://github.com/mamedev/mame/archive/mame${MY_PV}.tar.gz"
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa +arcade debug +mess openmp pcap pulseaudio tools"
-REQUIRED_USE="|| ( arcade mess )"
+IUSE="alsa debug openmp pcap pulseaudio tools"
 
-# MESS (games-emulation/sdlmess) has been merged into MAME upstream since mame-0.162 (see below)
-#  MAME/MESS build combined (default)	+arcade +mess	(mame)
-#  MAME build only			+arcade -mess	(mamearcade)
-#  MESS build only			-arcade +mess	(mess)
-# games-emulation/sdlmametools is dropped and enabled instead by the 'tools' useflag
 #=dev-cpp/asio-1.11*
 RDEPEND="
 	dev-libs/expat
@@ -125,11 +119,8 @@ src_prepare() {
 }
 
 src_compile() {
-	local targetargs
+	local targetargs="SUBTARGET=mame"
 	local qtdebug=$(usex debug 1 0)
-
-	use arcade && ! use mess && targetargs="SUBTARGET=arcade"
-	! use arcade && use mess && targetargs="SUBTARGET=mess"
 
 	function my_emake() {
 		# Workaround conflicting $ARCH variable used by both Gentoo's
@@ -159,30 +150,14 @@ src_install() {
 	local suffix="$(use debug && echo d)"
 	local f
 
-	function mess_install() {
-		dosym ${MAMEBIN} "${BINDIR}"/mess${suffix}
-		dosym ${MAMEBIN} "${BINDIR}"/sdlmess
-		newman docs/man/mess.6 sdlmess.6
-		doman docs/man/mess.6
-	}
-	if use arcade ; then
-		if use mess ; then
-			MAMEBIN="mame${suffix}"
-			mess_install
-		else
-			MAMEBIN="mamearcade${suffix}"
-		fi
-		doman docs/man/mame.6
-		newman docs/man/mame.6 ${PN}.6
-	elif use mess ; then
-		MAMEBIN="mess${suffix}"
-		mess_install
-	fi
+	MAMEBIN="mame${suffix}"
+	doman docs/man/mame.6
+	newman docs/man/mame.6 ${PN}.6
 	dobin ${MAMEBIN}
 	dosym ${MAMEBIN} "${BINDIR}/${PN}"
 
 	insinto "${DATADIR}"
-	doins -r keymaps $(use mess && echo hash)
+	doins -r keymaps $(echo hash)
 
 	# Create default mame.ini and inject Gentoo settings into it
 	#  Note that '~' does not work and '$HOME' must be used
