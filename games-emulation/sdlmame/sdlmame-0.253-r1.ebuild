@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=7
-PYTHON_COMPAT=( python3_10 )
+EAPI=8
+PYTHON_COMPAT=( python3_{10..11} )
 inherit python-any-r1 toolchain-funcs qmake-utils
 
 MY_PV="${PV/.}"
