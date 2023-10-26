@@ -20,7 +20,7 @@ IUSE="alsa debug openmp pcap pulseaudio tools"
 #=dev-cpp/asio-1.11*
 RDEPEND="
 	dev-libs/expat
-	dev-libs/libutf8proc
+	dev-libs/libutf8proc:=
 	dev-libs/pugixml
 	dev-libs/rapidjson
 	media-libs/fontconfig
