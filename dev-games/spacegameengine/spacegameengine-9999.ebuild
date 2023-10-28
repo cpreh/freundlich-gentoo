@@ -14,7 +14,7 @@ HOMEPAGE=""
 LICENSE="Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+X +audio audio_null +camera cegui +cg +charconv +config +console
+IUSE="+X +audio audio_null +camera +cg +charconv +config +console
 +consolegfx +cursor doc egl examples evdev +font +fontbitmap +fontdraw gui graph +image
 +image2d +image3d +imagecolor +imageds +imageds2d +input +line_drawer +log
 +media modelmd3 modelobj +openal opencl +opengl +pango +parse +parseini
@@ -30,9 +30,6 @@ RDEPEND="
 	)
 	charconv? (
 		dev-libs/boost[nls]
-	)
-	cegui? (
-		>=dev-games/cegui-0.8.0
 	)
 	cg? (
 		>=media-gfx/nvidia-cg-toolkit-3
@@ -123,7 +120,6 @@ REQUIRED_USE="
 	audio? ( log media plugin )
 	audio_null? ( audio plugin )
 	camera? ( input log parsejson renderer viewport timer )
-	cegui? ( charconv imagecolor image2d input log renderer viewport )
 	console? ( font )
 	consolegfx? ( console font fontdraw imagecolor input renderer )
 	cursor? ( input renderer sprite texture )
@@ -173,7 +169,6 @@ src_configure() {
 		-D ENABLE_AUDIO="$(usex audio)"
 		-D ENABLE_AUDIO_NULL="$(usex audio_null)"
 		-D ENABLE_CAMERA="$(usex camera)"
-		-D ENABLE_CEGUI="$(usex cegui)"
 		-D ENABLE_CG="$(usex cg)"
 		-D ENABLE_CHARCONV="$(usex charconv)"
 		-D ENABLE_CONFIG="$(usex config)"
