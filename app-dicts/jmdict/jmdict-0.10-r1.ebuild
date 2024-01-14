@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=6
+EAPI=8
 RESTRICT="mirror"
 
 DESCRIPTION="Japanese dictionary by Florian Blümel"
@@ -13,8 +13,10 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-RDEPEND=">=dev-db/sqlite-3
-        dev-libs/expat"
-DEPEND="${RDEPEND}
-        sys-devel/make"
+RDEPEND="
+	>=dev-db/sqlite-3
+	dev-libs/expat"
+DEPEND="
+	${RDEPEND}
+	dev-build/make"
 PDEPEND=">=app-dicts/jmdict-data-9999-r1"
