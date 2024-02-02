@@ -19,6 +19,7 @@ IUSE="alsa debug openmp pcap pulseaudio tools"
 
 #=dev-cpp/asio-1.11*
 RDEPEND="
+	app-arch/zstd
 	dev-libs/expat
 	dev-libs/libutf8proc:=
 	dev-libs/pugixml
@@ -82,6 +83,7 @@ src_prepare() {
 # Use bundled lua for now to ensure correct compilation (ref. b.g.o #407091)
 #	enable_feature USE_SYSTEM_LIB_LUA
 	enable_feature USE_SYSTEM_LIB_PORTAUDIO
+	enable_feature USE_SYSTEM_LIB_ZSTD
 	enable_feature USE_SYSTEM_LIB_ZLIB
 	enable_feature USE_SYSTEM_LIB_UTF8PROC
 
