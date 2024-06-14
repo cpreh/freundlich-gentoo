@@ -26,7 +26,6 @@ DEPEND="
 		dev-games/spacegameengine[audio,consolegfx,cursor,fontdraw,gui,imagecolor,image2d,input,log,parseini,renderer,rucksack,rucksackviewport,sprite,systems,texture,viewport,window]
 	)
 	tools? (
-		dev-qt/qtwidgets:5
 		dev-games/spacegameengine[image2d]
 	)
 "
