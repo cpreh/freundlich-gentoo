@@ -26,7 +26,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	doc? (
-		>=app-doc/doxygen-1.7.5[latex]
+		>=app-doc/doxygen-1.11.0
 	)
 	test? (
 		>=dev-cpp/catch-3
