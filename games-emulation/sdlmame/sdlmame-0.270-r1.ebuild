@@ -27,7 +27,7 @@ RDEPEND="
 	media-libs/fontconfig
 	media-libs/flac
 	media-libs/glm
-	media-libs/libsdl2[joystick,opengl,sound,threads,video,X]
+	media-libs/libsdl2[joystick,opengl,sound,threads(+),video,X]
 	media-libs/sdl2-ttf
 	sys-libs/zlib
 	virtual/jpeg:0
