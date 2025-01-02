@@ -139,7 +139,7 @@ src_compile() {
 	my_emake -j1 generate
 
 	my_emake ${targetargs} \
-		SDL_INI_PATH="\$\$\$\$HOME/.sdlmame;${SYSCONFDIR}" \
+		INI_PATH="\$\$\$\$HOME/.sdlmame;${SYSCONFDIR}" \
 		USE_QTDEBUG=${qtdebug}
 
 	if use tools ; then
