@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/archive/mame${MY_PV}.tar.gz"
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa debug openmp pcap pulseaudio tools"
+IUSE="alsa debug openmp pipewire pcap pulseaudio tools"
 
 #=dev-cpp/asio-1.11*
 RDEPEND="
@@ -41,6 +41,7 @@ RDEPEND="
 		dev-qt/qtwidgets:5 )
 	pcap? ( net-libs/libpcap )
 	pulseaudio? ( media-sound/pulseaudio )
+	pipewire? ( media-video/pipewire )
 	x11-libs/libX11
 	x11-libs/libXinerama
 	${PYTHON_DEPS}"
@@ -113,6 +114,8 @@ src_prepare() {
 	use pcap && enable_feature USE_PCAP
 
 	! use pulseaudio && enable_feature NO_USE_PULSEAUDIO
+
+	! use pipewire && enable_feature NO_USE_PIPEWIRE
 
 	sed -i \
 		-e 's/-Os//' \
