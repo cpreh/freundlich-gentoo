@@ -40,7 +40,7 @@ RDEPEND="
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5 )
 	pcap? ( net-libs/libpcap )
-	pulseaudio? ( media-sound/pulseaudio )
+	pulseaudio? ( media-libs/libpulse )
 	pipewire? ( media-video/pipewire )
 	x11-libs/libX11
 	x11-libs/libXinerama
