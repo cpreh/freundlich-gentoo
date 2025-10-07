@@ -3,9 +3,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..14} )
 
-inherit cmake python-any-r1
+inherit cmake-multilib python-any-r1
 
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
@@ -15,7 +15,7 @@ else
 	SRC_URI="https://github.com/catchorg/Catch2/archive/v${PV}.tar.gz -> ${MY_P}.tar.gz"
 	S="${WORKDIR}/${MY_P}"
 
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 
 DESCRIPTION="Modern C++ header-only framework for unit-tests"
@@ -32,7 +32,7 @@ pkg_setup() {
 	use test && python-any-r1_pkg_setup
 }
 
-src_configure() {
+multilib_src_configure() {
 	local mycmakeargs=(
 		-DCATCH_DEVELOPMENT_BUILD=ON
 		-DCATCH_ENABLE_WERROR=OFF
