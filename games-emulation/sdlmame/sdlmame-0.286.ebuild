@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/archive/mame${MY_PV}.tar.gz"
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa debug openmp pipewire pcap pulseaudio tools"
+IUSE="alsa debug openmp pipewire pcap pulseaudio sdl3 tools"
 
 #=dev-cpp/asio-1.11*
 RDEPEND="
@@ -27,8 +27,12 @@ RDEPEND="
 	media-libs/fontconfig
 	media-libs/flac
 	media-libs/glm
-	media-libs/libsdl2[joystick,opengl,sound,threads(+),video,X]
-	media-libs/sdl2-ttf
+	!sdl3? (
+		media-libs/libsdl2[joystick,opengl,sound,video,X]
+		media-libs/sdl2-ttf )
+	sdl3? (
+		media-libs/libsdl3[opengl,X]
+		media-libs/sdl3-ttf )
 	sys-libs/zlib
 	virtual/jpeg:0
 	virtual/opengl
@@ -66,6 +70,10 @@ enable_feature() {
 	sed -i -e "/^#.*$1.*=/s:^#[ 	]*::"  makefile || die
 }
 
+set_feature() {
+	sed -i -e "s/^#.*$1.*=.*/$1 = $2/g"  makefile || die
+}
+
 pkg_setup() {
 	python-any-r1_pkg_setup
 }
@@ -101,6 +109,7 @@ src_prepare() {
 	use amd64 && enable_feature PTR64
 	use debug && enable_feature DEBUG
 	use tools && enable_feature TOOLS
+	use sdl3 && set_feature OSD sdl3
 	disable_feature NO_X11 # bgfx needs X
 	use openmp && enable_feature OPENMP
 
