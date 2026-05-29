@@ -15,7 +15,7 @@ SRC_URI="https://github.com/mamedev/mame/archive/mame${MY_PV}.tar.gz"
 LICENSE="GPL-2+ BSD-2 MIT CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="alsa debug openmp pipewire pcap pulseaudio sdl3 tools"
+IUSE="alsa openmp pipewire pcap pulseaudio sdl3 tools"
 
 #=dev-cpp/asio-1.11*
 RDEPEND="
@@ -40,9 +40,6 @@ RDEPEND="
 	alsa? ( media-libs/alsa-lib
 		media-libs/portaudio
 		media-libs/portmidi )
-	debug? ( dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5 )
 	pcap? ( net-libs/libpcap )
 	pulseaudio? ( media-libs/libpulse )
 	pipewire? ( media-video/pipewire )
@@ -78,10 +75,6 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 }
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-0.178-qt.patch
-)
-
 src_prepare() {
 	default
 	# Disable using bundled libraries
@@ -107,7 +100,6 @@ src_prepare() {
 	enable_feature VERBOSE
 
 	use amd64 && enable_feature PTR64
-	use debug && enable_feature DEBUG
 	use tools && enable_feature TOOLS
 	use sdl3 && set_feature OSD sdl3
 	disable_feature NO_X11 # bgfx needs X
@@ -134,7 +126,6 @@ src_prepare() {
 
 src_compile() {
 	local targetargs="SUBTARGET=mame"
-	local qtdebug=$(usex debug 1 0)
 
 	function my_emake() {
 		# Workaround conflicting $ARCH variable used by both Gentoo's
@@ -143,7 +134,6 @@ src_compile() {
 		OVERRIDE_CC=$(tc-getCC) \
 		OVERRIDE_CXX=$(tc-getCXX) \
 		OVERRIDE_LD=$(tc-getCXX) \
-		QT_HOME="$(qt5_get_libdir)/qt5" \
 		ARCH= \
 			emake "$@" \
 				AR=$(tc-getAR)
@@ -152,19 +142,18 @@ src_compile() {
 
 	my_emake ${targetargs} \
 		INI_PATH="\$\$\$\$HOME/.sdlmame;${SYSCONFDIR}" \
-		USE_QTDEBUG=${qtdebug}
+		USE_QTDEBUG=0
 
 	if use tools ; then
-		my_emake -j1 TARGET=ldplayer USE_QTDEBUG=${qtdebug}
+		my_emake -j1 TARGET=ldplayer
 	fi
 }
 
 src_install() {
 	local MAMEBIN
-	local suffix="$(use debug && echo d)"
 	local f
 
-	MAMEBIN="mame${suffix}"
+	MAMEBIN="mame"
 	doman docs/man/mame.6
 	newman docs/man/mame.6 ${PN}.6
 	dobin ${MAMEBIN}
@@ -217,7 +206,7 @@ src_install() {
 			newbin ${f} ${PN}-${f}
 			newman docs/man/${f}.1 ${PN}-${f}.1
 		done
-		newbin ldplayer${suffix} ${PN}-ldplayer
+		newbin ldplayer ${PN}-ldplayer
 		newman docs/man/ldplayer.1 ${PN}-ldplayer.1
 	fi
 }
